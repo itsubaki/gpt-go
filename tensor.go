@@ -1,6 +1,10 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+
+	"gonum.org/v1/gonum/stat/distuv"
+)
 
 type Tensor struct {
 	Shape []int
@@ -59,7 +63,7 @@ func (t *Tensor) Mul(other *Tensor) *Tensor {
 func (t *Tensor) Print() {
 	if len(t.Shape) == 1 {
 		for _, v := range t.Data {
-			fmt.Print(v, " ")
+			fmt.Printf("%.3f ", v)
 		}
 		fmt.Println()
 		return
@@ -68,7 +72,7 @@ func (t *Tensor) Print() {
 	if len(t.Shape) == 2 {
 		for i := 0; i < t.Shape[0]; i++ {
 			for j := 0; j < t.Shape[1]; j++ {
-				fmt.Print(t.Data[i*t.Shape[1]+j], " ")
+				fmt.Printf("%.3f ", t.Data[i*t.Shape[1]+j])
 			}
 			fmt.Println()
 		}
@@ -78,6 +82,7 @@ func (t *Tensor) Print() {
 	panic("unsupported Tensor Shape for print")
 }
 
+// Zero creates zero-filled tensor
 func Zero(dims ...int) *Tensor {
 	shape := make([]int, len(dims))
 	copy(shape, dims)
@@ -87,6 +92,28 @@ func Zero(dims ...int) *Tensor {
 		size *= dim
 	}
 	data := make([]float64, size)
+
+	return &Tensor{
+		Shape: shape,
+		Data:  data,
+	}
+}
+
+// RandN creates a tensor with normally distributed random values
+func RandN(dims ...int) *Tensor {
+	shape := make([]int, len(dims))
+	copy(shape, dims)
+
+	size := 1
+	for _, dim := range dims {
+		size *= dim
+	}
+	data := make([]float64, size)
+
+	dist := distuv.Normal{Mu: 0, Sigma: 1}
+	for i := 0; i < size; i++ {
+		data[i] = dist.Rand()
+	}
 
 	return &Tensor{
 		Shape: shape,

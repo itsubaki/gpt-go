@@ -10,8 +10,8 @@ const (
 // What if we codegenerate files for different tensors/linear layers
 func main() {
 
-	tokenEmbeds := Zero(vocabSize, embedSize)
-	positionEmbeds := Zero(blockSize, embedSize)
+	tokenEmbeds := RandN(vocabSize, embedSize)
+	positionEmbeds := RandN(blockSize, embedSize)
 
 	tokenEmbeds.Print()
 	positionEmbeds.Print()
