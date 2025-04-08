@@ -40,9 +40,9 @@ func (l *Linear) Backward(input *Tensor, gradOutput *Tensor) *Tensor {
 
 	// Calculate gradient with respect to the weights
 	// WeightGrad is [Out, In]
-	l.WeightGrad = input.Mul(gradOutput)
+	l.WeightGrad = input.T().Mul(gradOutput)
 
-	inputGrad := gradOutput.Mul(l.Weight)
+	inputGrad := gradOutput.Mul(l.Weight.T())
 
 	return inputGrad
 }

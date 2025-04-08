@@ -21,15 +21,10 @@ func Test3to1Model(t *testing.T) {
 	output := layer.Forward(input)
 	r.Equal([]float64{6.0}, output.Data)
 
-	_ = layer.Backward(input, Tensor2D(
-		[][]float64{
-			{1, 0, 0},
-			{0, 1, 0},
-			{0, 0, 1},
-		}))
+	_ = layer.Backward(input, Scalar(1.0))
 	//r.Equal([]float64{2.0, 2.0, 4.0}, inputGrad.Data)
 
-	//r.Equal([]float64{1.0, 0.0, 1.0}, layer.WeightGrad.Data)
+	r.Equal([]float64{1.0, 0.0, 1.0}, layer.WeightGrad.Data)
 }
 
 //func Test3to2Model(t *testing.T) {
