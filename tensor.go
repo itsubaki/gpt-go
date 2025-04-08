@@ -11,24 +11,98 @@ type Tensor struct {
 	Data  []float64
 }
 
-func Scal(value float64) *Tensor {
-	return Tensor1d([]float64{value})
+// Zero creates zero-filled tensor
+func Zero(dims ...int) *Tensor {
+	shape := make([]int, len(dims))
+	copy(shape, dims)
+
+	size := 1
+	for _, dim := range dims {
+		size *= dim
+	}
+	data := make([]float64, size)
+
+	return &Tensor{
+		Shape: shape,
+		Data:  data,
+	}
+}
+
+// RandN creates a tensor with normally distributed random values
+func RandN(dims ...int) *Tensor {
+	shape := make([]int, len(dims))
+	copy(shape, dims)
+
+	size := 1
+	for _, dim := range dims {
+		size *= dim
+	}
+	data := make([]float64, size)
+
+	dist := distuv.Normal{Mu: 0, Sigma: 1}
+	for i := 0; i < size; i++ {
+		data[i] = dist.Rand()
+	}
+
+	return &Tensor{
+		Shape: shape,
+		Data:  data,
+	}
+}
+
+func Tensor1D(data []float64) *Tensor {
+	return &Tensor{
+		Shape: []int{1, len(data)},
+		Data:  data,
+	}
+}
+
+func Tensor2D(data [][]float64) *Tensor {
+	rows := len(data)
+	cols := len(data[0])
+	flatData := make([]float64, rows*cols)
+
+	for i := 0; i < rows; i++ {
+		for j := 0; j < cols; j++ {
+			flatData[i*cols+j] = data[i][j]
+		}
+	}
+
+	return &Tensor{
+		Shape: []int{rows, cols},
+		Data:  flatData,
+	}
+}
+
+func Tensor3D(data [][][]float64) *Tensor {
+	rows := len(data)
+	cols := len(data[0])
+	depth := len(data[0][0])
+	flatData := make([]float64, rows*cols*depth)
+
+	for i := 0; i < rows; i++ {
+		for j := 0; j < cols; j++ {
+			for k := 0; k < depth; k++ {
+				flatData[i*cols*depth+j*depth+k] = data[i][j][k]
+			}
+		}
+	}
+
+	return &Tensor{
+		Shape: []int{rows, cols, depth},
+		Data:  flatData,
+	}
+}
+
+func Scal(val float64) *Tensor {
+	return &Tensor{
+		Shape: []int{1, 1},
+		Data:  []float64{val},
+	}
 }
 
 func (t *Tensor) At(indexes ...int) float64 {
-	if len(indexes) != len(t.Shape) {
-		panic("index out of range")
-	}
-
-	offset := 0
-	for i, index := range indexes {
-		if index >= t.Shape[i] {
-			panic("index out of range")
-		}
-		offset += index * t.Shape[i]
-	}
-
-	return t.Data[offset]
+	return t.Data[t.offset(indexes...)]
 }
 
 func (t *Tensor) Set(val float64, indexes ...int) {
@@ -36,16 +110,7 @@ func (t *Tensor) Set(val float64, indexes ...int) {
 		panic("index out of range")
 	}
 
-	// TODO reuse
-	offset := 0
-	for i, index := range indexes {
-		if index >= t.Shape[i] {
-			panic("index out of range")
-		}
-		offset += index * t.Shape[i]
-	}
-
-	t.Data[offset] = val
+	t.Data[t.offset(indexes...)] = val
 }
 
 func (t *Tensor) Mul(other *Tensor) *Tensor {
@@ -58,7 +123,7 @@ func (t *Tensor) Mul(other *Tensor) *Tensor {
 		for i := range t.Data {
 			result[i] = t.Data[i] * other.Data[i]
 		}
-		return Tensor1d(result)
+		return Tensor1D(result)
 	}
 
 	if len(t.Shape) == 2 {
@@ -74,7 +139,7 @@ func (t *Tensor) Mul(other *Tensor) *Tensor {
 				}
 			}
 		}
-		return Tensor1d(result)
+		return Tensor1D(result)
 	}
 
 	panic("unsupported Tensor Shape")
@@ -123,85 +188,43 @@ func (t *Tensor) Sum() float64 {
 	panic("unsupported Tensor Shape for sum")
 }
 
-// Zero creates zero-filled tensor
-func Zero(dims ...int) *Tensor {
-	shape := make([]int, len(dims))
-	copy(shape, dims)
-
-	size := 1
-	for _, dim := range dims {
-		size *= dim
-	}
-	data := make([]float64, size)
-
-	return &Tensor{
-		Shape: shape,
-		Data:  data,
-	}
-}
-
-// RandN creates a tensor with normally distributed random values
-func RandN(dims ...int) *Tensor {
-	shape := make([]int, len(dims))
-	copy(shape, dims)
-
-	size := 1
-	for _, dim := range dims {
-		size *= dim
-	}
-	data := make([]float64, size)
-
-	dist := distuv.Normal{Mu: 0, Sigma: 1}
-	for i := 0; i < size; i++ {
-		data[i] = dist.Rand()
-	}
-
-	return &Tensor{
-		Shape: shape,
-		Data:  data,
-	}
-}
-
-func Tensor1d(data []float64) *Tensor {
-	return &Tensor{
-		Shape: []int{1, len(data)},
-		Data:  data,
-	}
-}
-
-func Tensor2d(data [][]float64) *Tensor {
-	rows := len(data)
-	cols := len(data[0])
-	flatData := make([]float64, rows*cols)
-
-	for i := 0; i < rows; i++ {
-		for j := 0; j < cols; j++ {
-			flatData[i*cols+j] = data[i][j]
+// offset calculates the flat offset in the data array based on the provided indexes
+func (t *Tensor) offset(indexes ...int) int {
+	// Special case for scalar (1x1) tensor
+	if len(t.Shape) == 2 && t.Shape[0] == 1 && t.Shape[1] == 1 {
+		// Allow calling with an empty slice or [0] for scalars
+		if len(indexes) == 0 || (len(indexes) == 1 && indexes[0] == 0) {
+			return 0
 		}
 	}
 
-	return &Tensor{
-		Shape: []int{rows, cols},
-		Data:  flatData,
-	}
-}
-
-func Tensor3d(data [][][]float64) *Tensor {
-	rows := len(data)
-	cols := len(data[0])
-	depth := len(data[0][0])
-	flatData := make([]float64, rows*cols*depth)
-
-	for i := 0; i < rows; i++ {
-		for j := 0; j < cols; j++ {
-			for k := 0; k < depth; k++ {
-				flatData[i*cols*depth+j*depth+k] = data[i][j][k]
-			}
+	// Special case for 1xN vector tensor - use just column index
+	if len(t.Shape) == 2 && t.Shape[0] == 1 && len(indexes) == 1 {
+		if indexes[0] >= 0 && indexes[0] < t.Shape[1] {
+			return indexes[0]
 		}
 	}
 
-	return &Tensor{
-		Shape: []int{rows, cols, depth},
-		Data:  flatData,
+	// Standard case - require full indexing
+	if len(indexes) != len(t.Shape) {
+		msg := fmt.Sprintf("can't get value from tensor with shape %v at index %v", t.Shape, indexes)
+		panic(msg)
 	}
+
+	// Calculate the linear offset
+	offset := 0
+	stride := 1
+
+	// Iterate in reverse order (column-major)
+	for i := len(t.Shape) - 1; i >= 0; i-- {
+		if indexes[i] < 0 || indexes[i] >= t.Shape[i] {
+			msg := fmt.Sprintf("can't get value from tensor with shape %v at index %v", t.Shape, indexes)
+			panic(msg)
+		}
+
+		offset += indexes[i] * stride
+		stride *= t.Shape[i]
+	}
+
+	return offset
 }

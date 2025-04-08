@@ -20,9 +20,9 @@ func NewLinear(in, out int) *Linear {
 // Forward computes the output based on the input (forward pass)
 // TODO add guards
 // TODO add bias
-func (l *Linear) Forward(input Tensor) float64 {
+func (l *Linear) Forward(input *Tensor) float64 {
 	// Fix move to tests
-	l.Weight = Tensor2d(
+	l.Weight = Tensor2D(
 		[][]float64{
 			{2},
 			{2},
@@ -39,17 +39,19 @@ func (l *Linear) Forward(input Tensor) float64 {
 // 1. Gradient of the loss with respect to the weights
 // 2. Gradient of the loss with respect to the input
 // 3. Gradient of the loss with respect to the bias (skip for now)
-func (l *Linear) Backward(input Tensor, gradOutput []float64) []float64 {
-	if len(gradOutput) != l.Out {
-		panic("Gradient output size does not match layer output size")
-	}
+func (l *Linear) Backward(input *Tensor, gradOutput *Tensor) []float64 {
+	// TODO function to check shapes?
+	//if len(gradOutput.Shape) != l.Out {
+	//	panic("Gradient output size does not match layer output size")
+	//}
 
 	// Calculate gradient with respect to the weights
 	// WeightGrad is [Out, In]
 	for i := 0; i < l.Out; i++ {
 		for j := 0; j < l.In; j++ {
-			existingGrad := l.WeightGrad.At(i, j)
-			newGrad := gradOutput[i] * input.At(j)
+			existingGrad := l.WeightGrad.At(j, i)
+			// TODO generalize
+			newGrad := gradOutput.At(0, 0) * input.At(i, j)
 			l.WeightGrad.Set(existingGrad+newGrad, i, j)
 		}
 	}

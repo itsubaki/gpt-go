@@ -14,9 +14,12 @@ func main() {
 	//tokenEmbeds := RandN(vocabSize, embedSize)
 	//positionEmbeds := RandN(blockSize, embedSize)
 
-	input := Tensor1d([]float64{1, 0, 1})
+	input := Tensor1D([]float64{1, 0, 1})
+	layer := NewLinear(3, 1)
 
-	l := NewLinear(3, 1)
-	sum := l.Forward(*input)
-	fmt.Println("Sum:", sum)
+	output := layer.Forward(input)
+	fmt.Println("Sum:", output)
+
+	grad := layer.Backward(input, Scal(1))
+	fmt.Println("Gradient:", grad)
 }
