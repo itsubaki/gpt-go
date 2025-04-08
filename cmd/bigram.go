@@ -609,8 +609,8 @@ func sampleFromDistribution(probs []float64) int {
 }
 
 func main() {
-	_ = MyTensor([]float64{1, 2, 3})
-	_ = Scalar(5)
+	//_ = MyTensor([]float64{1, 2, 3})
+	//_ = Scalar(5)
 
 	// Download Shakespeare Data if it doesn't exist
 	filePath := "input.txt"
