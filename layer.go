@@ -1,32 +1,64 @@
 package main
 
 type Linear struct {
-	In, Out int
-	Weight  Tensor
-	Bias    float64
+	In, Out    int
+	Weight     *Tensor
+	WeightGrad *Tensor
+	Bias       float64
 }
 
 func NewLinear(in, out int) *Linear {
 	return &Linear{
-		In:     in,
-		Out:    out,
-		Weight: Tensor{Shape: []int{out, in}, Data: make([]float64, out*in)},
-		Bias:   0,
+		In:         in,
+		Out:        out,
+		Weight:     RandN(in, out),
+		WeightGrad: Zero(in, out),
+		Bias:       0,
 	}
 }
 
-func (l *Linear) Forward(input []float64) []float64 {
-	output := make([]float64, l.Out)
+// Forward computes the output based on the input (forward pass)
+// TODO add guards
+// TODO add bias
+func (l *Linear) Forward(input Tensor) float64 {
+	// Fix move to tests
+	l.Weight = Tensor2d(
+		[][]float64{
+			{2},
+			{2},
+			{4},
+		})
+	result := input.Mul(l.Weight)
+
+	return result.Sum()
+}
+
+// Backward computes the gradient of the loss with respect to the input (backward pass).
+// Returns the gradient of the loss with respect to the input.
+// We must compute:
+// 1. Gradient of the loss with respect to the weights
+// 2. Gradient of the loss with respect to the input
+// 3. Gradient of the loss with respect to the bias (skip for now)
+func (l *Linear) Backward(input Tensor, gradOutput []float64) []float64 {
+	if len(gradOutput) != l.Out {
+		panic("Gradient output size does not match layer output size")
+	}
+
+	// Calculate gradient with respect to the weights
+	// WeightGrad is [Out, In]
 	for i := 0; i < l.Out; i++ {
-		sum := l.Bias
 		for j := 0; j < l.In; j++ {
-			sum += input[j] * l.Weight.At(i*l.In+j)
+			existingGrad := l.WeightGrad.At(i, j)
+			newGrad := gradOutput[i] * input.At(j)
+			l.WeightGrad.Set(existingGrad+newGrad, i, j)
 		}
-		output[i] = sum
 	}
-	return output
+
+	gradInput := make([]float64, l.In)
+
+	return gradInput
 }
 
-func (l *Linear) Backward(gradOutput []float64) {
-
+func (l *Linear) ZeroGrad() {
+	l.WeightGrad = Zero(l.Out, l.In)
 }

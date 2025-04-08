@@ -12,7 +12,7 @@ type Tensor struct {
 }
 
 func Scal(value float64) *Tensor {
-	return Tensor1D([]float64{value})
+	return Tensor1d([]float64{value})
 }
 
 func (t *Tensor) At(indexes ...int) float64 {
@@ -31,6 +31,23 @@ func (t *Tensor) At(indexes ...int) float64 {
 	return t.Data[offset]
 }
 
+func (t *Tensor) Set(val float64, indexes ...int) {
+	if len(indexes) != len(t.Shape) {
+		panic("index out of range")
+	}
+
+	// TODO reuse
+	offset := 0
+	for i, index := range indexes {
+		if index >= t.Shape[i] {
+			panic("index out of range")
+		}
+		offset += index * t.Shape[i]
+	}
+
+	t.Data[offset] = val
+}
+
 func (t *Tensor) Mul(other *Tensor) *Tensor {
 	if len(t.Shape) != len(other.Shape) {
 		panic("Tensor shapes do not match")
@@ -41,10 +58,14 @@ func (t *Tensor) Mul(other *Tensor) *Tensor {
 		for i := range t.Data {
 			result[i] = t.Data[i] * other.Data[i]
 		}
-		return Tensor1D(result)
+		return Tensor1d(result)
 	}
 
 	if len(t.Shape) == 2 {
+		if t.Shape[1] != other.Shape[0] {
+			panic(fmt.Sprintf("Tensor shapes do not match for multiplication: %v and %v", t.Shape, other.Shape))
+		}
+
 		result := make([]float64, t.Shape[0]*other.Shape[1])
 		for i := 0; i < t.Shape[0]; i++ {
 			for j := 0; j < other.Shape[1]; j++ {
@@ -53,7 +74,7 @@ func (t *Tensor) Mul(other *Tensor) *Tensor {
 				}
 			}
 		}
-		return Tensor1D(result)
+		return Tensor1d(result)
 	}
 
 	panic("unsupported Tensor Shape")
@@ -80,6 +101,26 @@ func (t *Tensor) Print() {
 	}
 
 	panic("unsupported Tensor Shape for print")
+}
+
+func (t *Tensor) Sum() float64 {
+	if len(t.Shape) == 1 {
+		sum := 0.0
+		for _, v := range t.Data {
+			sum += v
+		}
+		return sum
+	}
+
+	if len(t.Shape) == 2 {
+		sum := 0.0
+		for _, v := range t.Data {
+			sum += v
+		}
+		return sum
+	}
+
+	panic("unsupported Tensor Shape for sum")
 }
 
 // Zero creates zero-filled tensor
@@ -121,14 +162,14 @@ func RandN(dims ...int) *Tensor {
 	}
 }
 
-func Tensor1D(data []float64) *Tensor {
+func Tensor1d(data []float64) *Tensor {
 	return &Tensor{
-		Shape: []int{len(data)},
+		Shape: []int{1, len(data)},
 		Data:  data,
 	}
 }
 
-func Tensor2D(data [][]float64) *Tensor {
+func Tensor2d(data [][]float64) *Tensor {
 	rows := len(data)
 	cols := len(data[0])
 	flatData := make([]float64, rows*cols)
@@ -145,7 +186,7 @@ func Tensor2D(data [][]float64) *Tensor {
 	}
 }
 
-func Tensor3D(data [][][]float64) *Tensor {
+func Tensor3d(data [][][]float64) *Tensor {
 	rows := len(data)
 	cols := len(data[0])
 	depth := len(data[0][0])
