@@ -101,6 +101,7 @@ func Scalar(val float64) *Tensor {
 	}
 }
 
+// TODO pluck out rows/cols
 func (t *Tensor) At(indexes ...int) float64 {
 	return t.Data[t.offset(indexes...)]
 }

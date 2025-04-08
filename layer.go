@@ -20,17 +20,10 @@ func NewLinear(in, out int) *Linear {
 // Forward computes the output based on the input (forward pass)
 // TODO add guards
 // TODO add bias
-func (l *Linear) Forward(input *Tensor) float64 {
-	// Fix move to tests
-	l.Weight = Tensor2D(
-		[][]float64{
-			{2},
-			{2},
-			{4},
-		})
+func (l *Linear) Forward(input *Tensor) *Tensor {
 	result := input.Mul(l.Weight)
 
-	return result.Sum()
+	return result
 }
 
 // Backward computes the gradient of the loss with respect to the input (backward pass).
@@ -47,23 +40,9 @@ func (l *Linear) Backward(input *Tensor, gradOutput *Tensor) *Tensor {
 
 	// Calculate gradient with respect to the weights
 	// WeightGrad is [Out, In]
-	for i := 0; i < l.Out; i++ {
-		for j := 0; j < l.In; j++ {
-			existingGrad := l.WeightGrad.At(j, i)
-			// TODO generalize for grad with a few outputs
-			newGrad := gradOutput.At(0, i) * input.At(i, j)
-			l.WeightGrad.Set(existingGrad+newGrad, j, i)
-		}
-	}
+	l.WeightGrad = input.Mul(gradOutput)
 
-	inputGrad := Zeros(input.Shape...)
-	for i := 0; i < l.Out; i++ {
-		for j := 0; j < l.In; j++ {
-			existingGrad := inputGrad.At(j)
-			newGrad := gradOutput.At(0, i) * l.Weight.At(j, i)
-			inputGrad.Set(existingGrad+newGrad, j)
-		}
-	}
+	inputGrad := gradOutput.Mul(l.Weight)
 
 	return inputGrad
 }
