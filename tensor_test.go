@@ -35,6 +35,22 @@ func TestAtMatrix(t *testing.T) {
 	r.Equal(tensor.At(1, 1), 4.0)
 }
 
+func TestMulVector(t *testing.T) {
+	r := require.New(t)
+
+	tensorA := Tensor1D([]float64{1, 2, 3})
+	tensorB := Tensor2D(
+		[][]float64{
+			{4},
+			{5},
+			{6},
+		})
+	result := tensorA.Mul(tensorB)
+
+	expected := Tensor1D([]float64{32})
+	r.Equal(expected.Data, result.Data)
+}
+
 func TestMulMatrix(t *testing.T) {
 	r := require.New(t)
 

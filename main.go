@@ -20,6 +20,6 @@ func main() {
 	output := layer.Forward(input)
 	fmt.Println("Sum:", output)
 
-	grad := layer.Backward(input, Scal(1))
+	grad := layer.Backward(input, Scalar(1))
 	fmt.Println("Gradient:", grad.Data)
 }

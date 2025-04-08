@@ -94,7 +94,7 @@ func Tensor3D(data [][][]float64) *Tensor {
 	}
 }
 
-func Scal(val float64) *Tensor {
+func Scalar(val float64) *Tensor {
 	return &Tensor{
 		Shape: []int{1, 1},
 		Data:  []float64{val},
