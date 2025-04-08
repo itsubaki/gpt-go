@@ -88,19 +88,19 @@ func (bl *BackwardLinear) Backward(outputGrad *Matrix) *Matrix {
 
 	for b := 0; b < batchSize; b++ {
 		for o := 0; o < bl.linear.outFeatures; o++ {
-			grad := outputGrad.Get(b, o)
+			outputGrad := outputGrad.Get(b, o)
 
-			bl.biasGrad.Add(0, o, grad)
+			bl.biasGrad.Add(0, o, outputGrad)
 
 			// For each input feature
 			for i := 0; i < bl.linear.inFeatures; i++ {
 				// Add to weights gradient
 				inputVal := bl.inputCache.Get(b, i)
-				bl.weightsGrad.Add(i, o, grad*inputVal)
+				bl.weightsGrad.Add(i, o, outputGrad*inputVal)
 
 				// Add to input gradient
 				weightVal := bl.linear.weights.Get(i, o)
-				inputGrad.Set(b, i, inputGrad.Get(b, i)+grad*weightVal)
+				inputGrad.Set(b, i, inputGrad.Get(b, i)+outputGrad*weightVal)
 			}
 		}
 	}
@@ -196,9 +196,7 @@ func (be *BackwardEmbedding) Forward2D(indices [][]int) *Tensor {
 	return be.embedding.Forward2D(indices)
 }
 
-// Backward computes gradients for the embedding layer
 func (be *BackwardEmbedding) Backward(outputGrad *TensorGradient) {
-	// Zero out the gradients
 	be.embedding.weightsGrad.Zero()
 
 	// Accumulate gradients for each output position

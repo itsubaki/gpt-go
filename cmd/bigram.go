@@ -46,13 +46,13 @@ func (g *Gradient) Zero() {
 	}
 }
 
+// TODO also replace with tensor
 // TensorGradient represents the gradients for a Tensor
 type TensorGradient struct {
 	dim1, dim2, dim3 int
 	data             []float64
 }
 
-// NewTensorGradient creates a new TensorGradient with the given dimensions
 func NewTensorGradient(dim1, dim2, dim3 int) *TensorGradient {
 	return &TensorGradient{
 		dim1: dim1,
@@ -609,7 +609,10 @@ func sampleFromDistribution(probs []float64) int {
 }
 
 func main() {
-	// Download Shakespeare data if it doesn't exist
+	_ = MyTensor([]float64{1, 2, 3})
+	_ = Scalar(5)
+
+	// Download Shakespeare Data if it doesn't exist
 	filePath := "input.txt"
 
 	if _, err := os.Stat(filePath); os.IsNotExist(err) {
@@ -762,12 +765,12 @@ func (tp *TextProcessor) VocabSize() int {
 	return len(tp.chars)
 }
 
-// GetBatch creates training batches from encoded data
+// GetBatch creates training batches from encoded Data
 func GetBatch(data []int, batchSize, blockSize int) ([][]int, [][]int) {
 	// Create random indices
 	dataLen := len(data) - blockSize
 	if dataLen <= 0 {
-		panic("Not enough data for the given block size")
+		panic("Not enough Data for the given block size")
 	}
 
 	// Create xb and yb arrays
