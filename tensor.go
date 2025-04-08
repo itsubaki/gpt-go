@@ -185,6 +185,24 @@ func (t *Tensor) Sum() float64 {
 	panic("unsupported Tensor Shape for sum")
 }
 
+func (t *Tensor) T() *Tensor {
+	if len(t.Shape) != 2 {
+		panic("Transpose only supported for 2D tensors")
+	}
+
+	result := make([]float64, len(t.Data))
+	for i := 0; i < t.Shape[0]; i++ {
+		for j := 0; j < t.Shape[1]; j++ {
+			result[j*t.Shape[0]+i] = t.Data[i*t.Shape[1]+j]
+		}
+	}
+
+	return &Tensor{
+		Shape: []int{t.Shape[1], t.Shape[0]},
+		Data:  result,
+	}
+}
+
 // offset calculates the flat offset in the data array based on the provided indexes
 func (t *Tensor) offset(indexes ...int) int {
 	// Special case for scalar (1x1) tensor

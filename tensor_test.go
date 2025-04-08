@@ -85,3 +85,42 @@ func TestOffset(t *testing.T) {
 	r.Equal(tensor.offset(1, 0), 2)
 	r.Equal(tensor.offset(1, 1), 3)
 }
+
+func TestTransposeVector(t *testing.T) {
+	r := require.New(t)
+
+	tensor := Tensor1D([]float64{1, 2, 3})
+	result := tensor.T()
+
+	expected := Tensor2D([][]float64{
+		{1},
+		{2},
+		{3},
+	})
+	r.Equal(result.Data, expected.Data)
+
+	tensor2 := Tensor2D([][]float64{
+		{1},
+		{2},
+		{3},
+	})
+
+	r.Equal([]float64{1, 2, 3}, tensor2.T().Data)
+}
+
+func TestTransposeMatrix(t *testing.T) {
+	r := require.New(t)
+
+	tensor := Tensor2D([][]float64{
+		{1, 2},
+		{3, 4},
+	})
+
+	result := tensor.T()
+	expected := Tensor2D([][]float64{
+		{1, 3},
+		{2, 4},
+	})
+
+	r.Equal(result.Data, expected.Data)
+}
