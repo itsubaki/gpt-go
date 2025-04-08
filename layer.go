@@ -12,7 +12,7 @@ func NewLinear(in, out int) *Linear {
 		In:         in,
 		Out:        out,
 		Weight:     RandN(in, out),
-		WeightGrad: Zero(in, out),
+		WeightGrad: Zeros(in, out),
 		Bias:       0,
 	}
 }
@@ -39,7 +39,7 @@ func (l *Linear) Forward(input *Tensor) float64 {
 // 1. Gradient of the loss with respect to the weights
 // 2. Gradient of the loss with respect to the input
 // 3. Gradient of the loss with respect to the bias (skip for now)
-func (l *Linear) Backward(input *Tensor, gradOutput *Tensor) []float64 {
+func (l *Linear) Backward(input *Tensor, gradOutput *Tensor) *Tensor {
 	// TODO function to check shapes?
 	//if len(gradOutput.Shape) != l.Out {
 	//	panic("Gradient output size does not match layer output size")
@@ -50,17 +50,24 @@ func (l *Linear) Backward(input *Tensor, gradOutput *Tensor) []float64 {
 	for i := 0; i < l.Out; i++ {
 		for j := 0; j < l.In; j++ {
 			existingGrad := l.WeightGrad.At(j, i)
-			// TODO generalize
-			newGrad := gradOutput.At(0, 0) * input.At(i, j)
-			l.WeightGrad.Set(existingGrad+newGrad, i, j)
+			// TODO generalize for grad with a few outputs
+			newGrad := gradOutput.At(0, i) * input.At(i, j)
+			l.WeightGrad.Set(existingGrad+newGrad, j, i)
 		}
 	}
 
-	gradInput := make([]float64, l.In)
+	inputGrad := Zeros(input.Shape...)
+	for i := 0; i < l.Out; i++ {
+		for j := 0; j < l.In; j++ {
+			existingGrad := inputGrad.At(j)
+			newGrad := gradOutput.At(0, i) * l.Weight.At(j, i)
+			inputGrad.Set(existingGrad+newGrad, j)
+		}
+	}
 
-	return gradInput
+	return inputGrad
 }
 
 func (l *Linear) ZeroGrad() {
-	l.WeightGrad = Zero(l.Out, l.In)
+	l.WeightGrad = Zeros(l.Out, l.In)
 }

@@ -11,8 +11,8 @@ type Tensor struct {
 	Data  []float64
 }
 
-// Zero creates zero-filled tensor
-func Zero(dims ...int) *Tensor {
+// Zeros creates zero-filled tensor
+func Zeros(dims ...int) *Tensor {
 	shape := make([]int, len(dims))
 	copy(shape, dims)
 
@@ -106,10 +106,6 @@ func (t *Tensor) At(indexes ...int) float64 {
 }
 
 func (t *Tensor) Set(val float64, indexes ...int) {
-	if len(indexes) != len(t.Shape) {
-		panic("index out of range")
-	}
-
 	t.Data[t.offset(indexes...)] = val
 }
 
