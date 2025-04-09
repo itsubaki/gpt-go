@@ -6,9 +6,24 @@ import (
 	"gonum.org/v1/gonum/stat/distuv"
 )
 
+// Maybe do this for more compact way?
+type d2 [][]float64
+
+var tensor = d2{
+	{1.0},
+	{2.0},
+	{3.0},
+}
+
+// scalar, d1, d2, d3 would implement data
+// The initialization would look like this:
+// tensor := d1{1, 2, 3}
+// tensor := d2{{1, 2}, {3, 4}}
+
 type Tensor struct {
-	Shape []int
-	Data  []float64
+	RawData interface{}
+	Shape   []int
+	Data    []float64
 }
 
 // Zeros creates zero-filled tensor

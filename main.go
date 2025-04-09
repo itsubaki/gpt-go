@@ -10,6 +10,7 @@ var tokenEmbeds = RandN(vocabSize, embedSize)
 var layer = NewLinear(embedSize, vocabSize)
 
 func forward(indexes *Tensor, targets *Tensor) {
+
 	layer.ZeroGrad()
 
 	//for _, index := range indexes.Data {
@@ -22,6 +23,7 @@ func forward(indexes *Tensor, targets *Tensor) {
 // Embeddings are basically tensors under the hood
 // What if we codegenerate files for different tensors/linear layers
 func main() {
+	ten := Tensor{nil}
 	//positionEmbeds := RandN(blockSize, embedSize)
 
 	//input := Tensor1D([]float64{1, 0, 1})
