@@ -9,14 +9,15 @@ import (
 func Test3to1Model(t *testing.T) {
 	r := require.New(t)
 
-	input := Tensor1D(1, 0, 1)
+	input := Tensor2D(
+		1, 0, 1
+	)
 	layer := NewLinear(3, 1)
-	layer.Weight = Tensor2D(
-		[][]float64{
-			{2},
-			{2},
-			{4},
-		})
+	layer.Weight = T2{
+		{2},
+		{2},
+		{4},
+	}.Tensor()
 
 	output, _ := layer.Forward(input, nil)
 	r.Equal([]float64{6.0}, output.Data)
@@ -28,6 +29,35 @@ func Test3to1Model(t *testing.T) {
 }
 
 func Test3to2Model(t *testing.T) {
+	r := require.New(t)
+
+	layer := NewLinear(3, 2)
+	layer.Weight = T2{
+		{2, 3},
+		{2, 2},
+		{4, 1},
+	}.Tensor()
+
+	input := T2{
+		{1, 0, 1},
+	}.Tensor()
+	output, loss := layer.Forward(input, Tensor1D(1))
+	r.Equal([]float64{6.0, 4.0}, output.Data)
+	r.Equal(2.1269280110429727, loss)
+
+	grad := layer.Backward(input, Tensor1D(1, 1))
+	r.Equal([]float64{5.0, 4.0, 5.0}, grad.Data)
+
+	expectedGrad := T2{
+		{1.0, 1.0},
+		{0.0, 0.0},
+		{1.0, 1.0},
+	}.Tensor()
+
+	r.True(expectedGrad.Equal(layer.WeightGrad))
+}
+
+func TestBatchModel(t *testing.T) {
 	r := require.New(t)
 
 	layer := NewLinear(3, 2)

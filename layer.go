@@ -23,11 +23,14 @@ func NewLinear(in, out int) *Linear {
 // Forward computes the output based on the input (forward pass)
 // Targets parameter is used in learning.
 // Returns logits and loss
-// TODO add guards
+// input is B*T*C
+// targets is B*T
 func (l *Linear) Forward(input *Tensor, targets *Tensor) (*Tensor, float64) {
 	logits := input.Mul(l.Weight)
-	for i := 0; i < len(logits.Data); i++ {
-		logits.Data[i] += l.Bias.At(i).First()
+	for i := 0; i < logits.Shape[0]; i++ { // Batch
+		for j := 0; j < len(logits.At(i, j).Data); i++ {
+			logits.Data[i] += l.Bias.At(i).First()
+		}
 	}
 
 	loss := 0.0
@@ -44,7 +47,7 @@ func (l *Linear) Forward(input *Tensor, targets *Tensor) (*Tensor, float64) {
 // 1. Gradient of the loss with respect to the weights
 // 2. Gradient of the loss with respect to the bias
 // 3. Gradient of the loss with respect to the input
-// Input is B*T*C
+// input is B*T*C
 func (l *Linear) Backward(input *Tensor, gradOutput *Tensor) *Tensor {
 	// TODO function to check shapes?
 
