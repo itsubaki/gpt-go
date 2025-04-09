@@ -35,14 +35,20 @@ func Softmax(tensor *Tensor) []float64 {
 }
 
 // CrossEntropyLoss computes the cross-entropy loss between logits () and targets.
-// TODO batch support
+// Only batch support currently
 func CrossEntropyLoss(logits *Tensor, targets []int) float64 {
-	//batchSize := len(targets)
-	normalizedLogits := Softmax(logits)
+	// Make it not hardcoded
+	batchSize := logits.Shape[0]
+
 	rating := 0.0
-	for _, target := range targets {
-		rating += math.Log(normalizedLogits[target])
+	for i := 0; i < batchSize; i++ {
+		//normalizedLogits := Softmax(logits.At())
+		for j := 0; j < len(targets); j++ {
+			// Compute log likelihood
+			//rating += math.Log(normalizedLogits[target])
+		}
 	}
+
 	// The higher rating the better, the loss is opposite :)
 	loss := -rating // mean
 

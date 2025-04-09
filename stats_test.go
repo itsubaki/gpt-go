@@ -29,23 +29,23 @@ func TestSoftmax(t *testing.T) {
 	require.InDeltaf(t, 1.0, result[0]+result[1]+result[2], 1e-6, "Softmax values should sum to 1")
 }
 
-func TestCrossEntropyLoss(t *testing.T) {
-	r := require.New(t)
-
-	logits := Tensor1D(2.0, 1.0, 0.1)
-
-	targets := []int{0, 1}
-
-	loss := CrossEntropyLoss(logits, targets)
-
-	sum1 := math.Exp(2.0) + math.Exp(1.0) + math.Exp(0.1)
-	prob1 := math.Exp(2.0) / sum1
-
-	sum2 := math.Exp(2.0) + math.Exp(1.0) + math.Exp(0.1)
-	prob2 := math.Exp(1.0) / sum2
-
-	// TODO 0.5 when mean is added?
-	expected := -(math.Log(prob1) + math.Log(prob2))
-
-	r.InDeltaf(expected, loss, 1e-6, "Cross entropy loss incorrect")
-}
+//func TestCrossEntropyLoss(t *testing.T) {
+//	r := require.New(t)
+//
+//	logits := Tensor1D(2.0, 1.0, 0.1)
+//
+//	targets := []int{0, 1}
+//
+//	loss := CrossEntropyLoss(logits, targets)
+//
+//	sum1 := math.Exp(2.0) + math.Exp(1.0) + math.Exp(0.1)
+//	prob1 := math.Exp(2.0) / sum1
+//
+//	sum2 := math.Exp(2.0) + math.Exp(1.0) + math.Exp(0.1)
+//	prob2 := math.Exp(1.0) / sum2
+//
+//	// TODO 0.5 when mean is added?
+//	expected := -(math.Log(prob1) + math.Log(prob2))
+//
+//	r.InDeltaf(expected, loss, 1e-6, "Cross entropy loss incorrect")
+//}

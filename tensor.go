@@ -28,6 +28,12 @@ var tensor = d2{
 // everywhere in the code instead Tensor, and that I don't want.
 // So, we're left with flexible constructor then?
 // Or maybe quick function like t() accepting all sorts of data
+// > On the other hand, we can accept Tensor interfaces everywhere
+// And maybe better t1{}, t2{{}}, t3{{}} etc instead of d1 d2, because
+// we create tensors, not dimensions
+// > On the other hand, we don't need to init matrices manually, soo it may be pointless
+// On the other hand, in tests it will be good. And also in studying
+// Because our purpose is not prod-ready, but study-reading, so clarity should come first?
 
 type Tensor struct {
 	Shape []int
@@ -124,13 +130,29 @@ func Scalar(val float64) *Tensor {
 	}
 }
 
-// TODO pluck out rows/cols
-func (t *Tensor) At(indexes ...int) float64 {
-	return t.Data[t.offset(indexes...)]
+func (t *Tensor) First() float64 {
+	if len(t.Data) == 0 {
+		panic("Tensor is empty")
+	}
+
+	return t.Data[0]
 }
 
+// TODO pluck out rows/cols
+// TODO for 3d
+func (t *Tensor) At(indexes ...int) *Tensor {
+	x, y := t.offset(indexes...)
+
+	result := Tensor1D(t.Data[x:y]...)
+
+	return result
+}
+
+// Work only for individual elements
 func (t *Tensor) Set(val float64, indexes ...int) {
-	t.Data[t.offset(indexes...)] = val
+	x, _ := t.offset(indexes...)
+
+	t.Data[x] = val
 }
 
 func (t *Tensor) Mul(other *Tensor) *Tensor {
@@ -226,20 +248,33 @@ func (t *Tensor) T() *Tensor {
 	}
 }
 
-// offset calculates the flat offset in the data array based on the provided indexes
-func (t *Tensor) offset(indexes ...int) int {
+// offset calculates the start and limit offsets in the data array for slicing
+func (t *Tensor) offset(indexes ...int) (int, int) {
 	// Special case for scalar (1x1) tensor
 	if len(t.Shape) == 2 && t.Shape[0] == 1 && t.Shape[1] == 1 {
 		// Allow calling with an empty slice or [0] for scalars
 		if len(indexes) == 0 || (len(indexes) == 1 && indexes[0] == 0) {
-			return 0
+			return 0, 1
 		}
 	}
 
 	// Special case for 1xN vector tensor - use just column index
 	if len(t.Shape) == 2 && t.Shape[0] == 1 && len(indexes) == 1 {
 		if indexes[0] >= 0 && indexes[0] < t.Shape[1] {
-			return indexes[0]
+			// For a 1D vector, if we only get the row index, return that entire row
+			return indexes[0], indexes[0] + 1
+		}
+	}
+
+	// For rows or columns access with a single index (when tensor is 2D)
+	if len(t.Shape) == 2 && len(indexes) == 1 {
+		idx := indexes[0]
+		// If accessing a row
+		if idx >= 0 && idx < t.Shape[0] {
+			// Return the start of the row and the start of the next row
+			startOffset := idx * t.Shape[1]
+			endOffset := (idx + 1) * t.Shape[1]
+			return startOffset, endOffset
 		}
 	}
 
@@ -249,7 +284,7 @@ func (t *Tensor) offset(indexes ...int) int {
 		panic(msg)
 	}
 
-	// Calculate the linear offset
+	// Calculate the linear offset for a specific element
 	offset := 0
 	stride := 1
 
@@ -264,5 +299,6 @@ func (t *Tensor) offset(indexes ...int) int {
 		stride *= t.Shape[i]
 	}
 
-	return offset
+	// For a specific element, the range is just 1 element
+	return offset, offset + 1
 }
