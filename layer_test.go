@@ -38,8 +38,9 @@ func Test3to2Model(t *testing.T) {
 		{4, 1},
 	}.Tensor()
 
-	output, _ := layer.Forward(input, nil)
+	output, loss := layer.Forward(input, []int{1})
 	r.Equal([]float64{6.0, 4.0}, output.Data)
+	r.Equal(2.1269280110429727, loss)
 
 	grad := layer.Backward(input, Tensor1D(1, 1))
 	r.Equal([]float64{5.0, 4.0, 5.0}, grad.Data)

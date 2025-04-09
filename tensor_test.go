@@ -138,9 +138,9 @@ func TestOffset(t *testing.T) {
 func TestOffsetPluckOutRow1D(t *testing.T) {
 	r := require.New(t)
 
-	tensor := Tensor2D([][]float64{
+	tensor := T2{
 		{1, 2},
-	})
+	}.Tensor()
 
 	row := tensor.At(0)
 	r.Equal(row.Data, []float64{1, 2})

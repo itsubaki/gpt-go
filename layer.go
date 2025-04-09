@@ -27,7 +27,11 @@ func (l *Linear) Forward(input *Tensor, targets []int) (*Tensor, float64) {
 
 	loss := 0.0
 	if len(targets) != 0 {
-		loss = CrossEntropyLoss(logits, targets)
+		// Emulate batch
+		batch := T2{
+			logits.Data,
+		}.Tensor()
+		loss = CrossEntropyLoss(batch, targets)
 	}
 
 	return logits, loss
