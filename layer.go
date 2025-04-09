@@ -44,6 +44,7 @@ func (l *Linear) Forward(input *Tensor, targets *Tensor) (*Tensor, float64) {
 // 1. Gradient of the loss with respect to the weights
 // 2. Gradient of the loss with respect to the bias
 // 3. Gradient of the loss with respect to the input
+// Input is B*T*C
 func (l *Linear) Backward(input *Tensor, gradOutput *Tensor) *Tensor {
 	// TODO function to check shapes?
 

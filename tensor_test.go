@@ -110,6 +110,46 @@ func TestMulMatrix(t *testing.T) {
 	r.Equal(result.Data, expected.Data)
 }
 
+func TestMul3D(t *testing.T) {
+	r := require.New(t)
+
+	tensorA := Tensor3D([][][]float64{
+		{
+			{1, 2},
+			{3, 4},
+		},
+		{
+			{5, 6},
+			{7, 8},
+		},
+	})
+
+	tensorB := Tensor3D([][][]float64{
+		{
+			{5, 6},
+			{7, 8},
+		},
+		{
+			{9, 10},
+			{11, 12},
+		},
+	})
+
+	result := tensorA.Mul(tensorB)
+	expected := Tensor3D([][][]float64{
+		{
+			{19, 22},
+			{43, 50},
+		},
+		{
+			{111, 122},
+			{151, 166},
+		},
+	})
+
+	r.Equal(expected.Data, result.Data)
+}
+
 func TestOffset(t *testing.T) {
 	r := require.New(t)
 

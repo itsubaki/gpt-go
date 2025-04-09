@@ -325,6 +325,49 @@ func (t *Tensor) Mul(other *Tensor) *Tensor {
 		}
 	}
 
+	// Batched matrix multiplication (3D tensors)
+	if len(t.Shape) == 3 && len(other.Shape) == 3 {
+		// Check batch dimensions match
+		if t.Shape[0] != other.Shape[0] {
+			panic(fmt.Sprintf("Batch dimensions do not match for multiplication: %v and %v", t.Shape, other.Shape))
+		}
+
+		// Check inner dimensions for matrix multiplication
+		if t.Shape[2] != other.Shape[1] {
+			panic(fmt.Sprintf("Inner dimensions do not match for batched matrix multiplication: %v and %v", t.Shape, other.Shape))
+		}
+
+		batchSize := t.Shape[0]
+		rows := t.Shape[1]
+		innerDim := t.Shape[2]
+		cols := other.Shape[2]
+
+		result := make([]float64, batchSize*rows*cols)
+
+		// Loop through each batch
+		for b := 0; b < batchSize; b++ {
+			// Matrix multiplication for this batch
+			for i := 0; i < rows; i++ {
+				for j := 0; j < cols; j++ {
+					sum := 0.0
+					for k := 0; k < innerDim; k++ {
+						// Calculate indices in the flattened arrays
+						tIdx := b*(rows*innerDim) + i*innerDim + k
+						oIdx := b*(innerDim*cols) + k*cols + j
+						sum += t.Data[tIdx] * other.Data[oIdx]
+					}
+					// Store result in the flattened result array
+					result[b*(rows*cols)+i*cols+j] = sum
+				}
+			}
+		}
+
+		return &Tensor{
+			Shape: []int{batchSize, rows, cols},
+			Data:  result,
+		}
+	}
+
 	msg := fmt.Sprintf("Tensor multiplication not supported for shapes: %v and %v", t.Shape, other.Shape)
 	panic(msg)
 }
