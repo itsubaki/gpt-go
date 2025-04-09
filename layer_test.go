@@ -30,7 +30,6 @@ func Test3to1Model(t *testing.T) {
 func Test3to2Model(t *testing.T) {
 	r := require.New(t)
 
-	input := Tensor1D(1, 0, 1)
 	layer := NewLinear(3, 2)
 	layer.Weight = T2{
 		{2, 3},
@@ -38,6 +37,7 @@ func Test3to2Model(t *testing.T) {
 		{4, 1},
 	}.Tensor()
 
+	input := Tensor1D(1, 0, 1)
 	output, loss := layer.Forward(input, []int{1})
 	r.Equal([]float64{6.0, 4.0}, output.Data)
 	r.Equal(2.1269280110429727, loss)

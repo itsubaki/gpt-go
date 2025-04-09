@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 
 	"gonum.org/v1/gonum/stat/distuv"
 )
@@ -72,6 +73,8 @@ func Zeros(dims ...int) *Tensor {
 
 // RandN creates a tensor with normally distributed random values
 func RandN(dims ...int) *Tensor {
+	// TODO remove seed
+
 	shape := make([]int, len(dims))
 	copy(shape, dims)
 
@@ -81,7 +84,7 @@ func RandN(dims ...int) *Tensor {
 	}
 	data := make([]float64, size)
 
-	dist := distuv.Normal{Mu: 0, Sigma: 1}
+	dist := distuv.Normal{Mu: 0, Sigma: 1, Src: rand.New(rand.NewSource(32))}
 	for i := 0; i < size; i++ {
 		data[i] = dist.Rand()
 	}

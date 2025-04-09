@@ -7,6 +7,7 @@ type Linear struct {
 	Bias       float64
 }
 
+// TODO rename from new Linear to something other?
 func NewLinear(in, out int) *Linear {
 	return &Linear{
 		In:         in,
