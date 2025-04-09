@@ -46,12 +46,11 @@ func (l *Linear) Forward(input *Tensor, targets []int) (*Tensor, float64) {
 // 3. Gradient of the loss with respect to the bias (skip for now)
 func (l *Linear) Backward(input *Tensor, gradOutput *Tensor) *Tensor {
 	// TODO function to check shapes?
-	//if len(gradOutput.Shape) != l.Out {
-	//	panic("Gradient output size does not match layer output size")
-	//}
 
+	// Gradient of the loss with respect to the weights
 	l.WeightGrad = input.T().Mul(gradOutput)
 
+	// Gradient of the loss with respect to the input
 	inputGrad := gradOutput.Mul(l.Weight.T())
 
 	return inputGrad

@@ -5,8 +5,8 @@ import (
 )
 
 const (
-	epochs       = 100
-	learningRate = 0.1
+	epochs       = 10
+	learningRate = 0.01
 	//vocabSize    = 64
 	//embedSize    = 32
 	//blockSize    = 8
@@ -32,25 +32,33 @@ func main() {
 	// 1. Sum of numbers is >= 5
 	// 2. Sum of numbers is < 5
 	layer := NewLinear(3, 2)
+	layer.Weight = T2{
+		{2, 3},
+		{2, 2},
+		{4, 1},
+	}.Tensor()
 
 	// Training loop
+	input := Tensor1D(1, 0, 1)
+	targets := []int{1} // Our sum is less than 5, so the output should be 1
 	for i := 0; i < epochs; i++ {
-		input := Tensor1D(1, 2, 3)
-		targets := []int{0}
-
 		// Forward pass
 		logits, loss := layer.Forward(input, targets)
 		fmt.Printf("Epoch %d: Loss: %f\n", i, loss)
-		fmt.Printf("Logits: %v\n", Softmax(logits))
+		//layer.WeightGrad.Print()
+		//fmt.Printf("Logits: %v\n", Softmax(logits).Data)
 
 		// Backward pass
 		layer.ZeroGrad()
-		gradOutput := Tensor1D(1, 1) // GradOutput is currently 1, the derivative of the end graph
+
+		gradOut1 := logits.At(0).First() - 0
+		gradOut2 := logits.At(1).First() - 1
+		gradOutput := Tensor1D(gradOut1, gradOut2)
 		layer.Backward(input, gradOutput)
 
 		// Update weights
 		for i, _ := range layer.Weight.Data {
-			layer.Weight.Data[i] += learningRate * layer.WeightGrad.Data[i]
+			layer.Weight.Data[i] -= learningRate * layer.WeightGrad.Data[i]
 		}
 	}
 
