@@ -2,13 +2,14 @@ package main
 
 import (
 	"fmt"
-	"math/rand"
 )
 
 const (
-	vocabSize = 64
-	embedSize = 32
-	blockSize = 8
+	epochs       = 100
+	learningRate = 0.1
+	//vocabSize    = 64
+	//embedSize    = 32
+	//blockSize    = 8
 )
 
 //var tokenEmbeds = RandN(vocabSize, embedSize)
@@ -27,20 +28,30 @@ func forward(indexes *Tensor, targets *Tensor) {
 // Embeddings are basically tensors under the hood
 // What if we codegenerate files for different tensors/linear layers
 func main() {
-	rand.Seed(42)
-
 	// I want my nn to capture two outcomes:
 	// 1. Sum of numbers is >= 5
 	// 2. Sum of numbers is < 5
 	layer := NewLinear(3, 2)
 
 	// Training loop
-	epochs := 10
 	for i := 0; i < epochs; i++ {
+		input := Tensor1D(1, 2, 3)
+		targets := []int{0}
+
 		// Forward pass
-		output, loss := layer.Forward(Tensor1D(1, 2, 3), []int{0})
+		logits, loss := layer.Forward(input, targets)
 		fmt.Printf("Epoch %d: Loss: %f\n", i, loss)
-		fmt.Printf("Output: %v\n", output.Data)
+		fmt.Printf("Logits: %v\n", Softmax(logits))
+
+		// Backward pass
+		layer.ZeroGrad()
+		gradOutput := Tensor1D(1, 1) // GradOutput is currently 1, the derivative of the end graph
+		layer.Backward(input, gradOutput)
+
+		// Update weights
+		for i, _ := range layer.Weight.Data {
+			layer.Weight.Data[i] += learningRate * layer.WeightGrad.Data[i]
+		}
 	}
 
 }

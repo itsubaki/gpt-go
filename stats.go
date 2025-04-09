@@ -6,7 +6,7 @@ import (
 )
 
 // TODO only supports 1D tensors
-func Softmax(tensor *Tensor) []float64 {
+func Softmax(tensor *Tensor) *Tensor {
 	vec := tensor.Data
 	result := make([]float64, len(vec))
 
@@ -33,7 +33,7 @@ func Softmax(tensor *Tensor) []float64 {
 		result[i] /= sum
 	}
 
-	return result
+	return Tensor1D(result...)
 }
 
 // CrossEntropyLoss computes the cross-entropy loss between logits and targets.
@@ -49,7 +49,7 @@ func CrossEntropyLoss(logits *Tensor, targets []int) float64 {
 	for i := 0; i < batchSize; i++ {
 		normalizedLogits := Softmax(logits.At(i))
 		// Compute log likelihood
-		rating += math.Log(normalizedLogits[targets[i]])
+		rating += math.Log(normalizedLogits.At(targets[i]).First())
 	}
 
 	// The higher rating the better, the loss is opposite :)

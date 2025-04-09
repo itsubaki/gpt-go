@@ -16,12 +16,11 @@ func TestSoftmax(t *testing.T) {
 	// Came from pytorch
 	expected := []float64{0.6590011388859679, 0.24243297070471392, 0.09856589040931818}
 
-	r.Len(result, 3)
-	r.InDeltaf(expected[0], result[0], 1e-6, "First softmax value incorrect")
-	r.InDeltaf(expected[1], result[1], 1e-6, "Second softmax value incorrect")
-	r.InDeltaf(expected[2], result[2], 1e-6, "Third softmax value incorrect")
+	r.InDeltaf(expected[0], result.First(), 1e-6, "First softmax value incorrect")
+	r.InDeltaf(expected[1], result.At(1).First(), 1e-6, "Second softmax value incorrect")
+	r.InDeltaf(expected[2], result.At(2).First(), 1e-6, "Third softmax value incorrect")
 
-	r.InDeltaf(1.0, result[0]+result[1]+result[2], 1e-6, "Softmax values should sum to 1")
+	r.InDeltaf(1.0, result.First()+result.At(1).First()+result.At(2).First(), 1e-6, "Softmax values should sum to 1")
 }
 
 func TestCrossEntropyLoss(t *testing.T) {
