@@ -19,11 +19,19 @@ var tensor = d2{
 // The initialization would look like this:
 // tensor := d1{1, 2, 3}
 // tensor := d2{{1, 2}, {3, 4}}
+// Challenge is to convert it to tensor (we can't embed type in non-struct)
+// d2.Tensor() could be massive again
+// Or just leave it at
+// tensor := Tensor(d2{{1, 2}, {3, 4}})
+// what if copy-paste (code-generate) code in d1, d2, d3?
+// > IF we use a few different types, we would have to use <any>
+// everywhere in the code instead Tensor, and that I don't want.
+// So, we're left with flexible constructor then?
+// Or maybe quick function like t() accepting all sorts of data
 
 type Tensor struct {
-	RawData interface{}
-	Shape   []int
-	Data    []float64
+	Shape []int
+	Data  []float64
 }
 
 // Zeros creates zero-filled tensor

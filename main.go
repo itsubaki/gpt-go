@@ -23,7 +23,7 @@ func forward(indexes *Tensor, targets *Tensor) {
 // Embeddings are basically tensors under the hood
 // What if we codegenerate files for different tensors/linear layers
 func main() {
-	ten := Tensor{nil}
+	//ten := Tensor{nil}
 	//positionEmbeds := RandN(blockSize, embedSize)
 
 	//input := Tensor1D([]float64{1, 0, 1})
