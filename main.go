@@ -1,11 +1,10 @@
 package main
 
 const (
-	blockSize    = 8
-	batchSize    = 4
+	//blockSize    = 8
 	epochs       = 1
 	learningRate = 0.01
-	embedSize    = 32
+	embedSize    = 4
 )
 
 // Embeddings are basically tensors under the hood
@@ -13,16 +12,24 @@ const (
 func main() {
 	data, vocabSize := Data()
 
-	layer := NewLinear(vocabSize, embedSize)
+	embeds := RandN(vocabSize, embedSize)
+	layer := NewLinear(embedSize, vocabSize)
 	_ = layer
 
 	// Main training loop
 	for i := 0; i < epochs; i++ {
-		inputs, targets := Batch(data.Data, batchSize, blockSize)
-		inputs.Print()
-		targets.Print()
+		x, y := Batch(data.Data, 1, 1)
+		// No batches for now
+		x = x.At(0)
+		y = y.At(0)
 
-		//logits, loss := layer.Forward(inputs, targets)
+		embed := embeds.At(int(x.First()))
+		y.Print()
+		embed.Print()
+
+		//logits, loss := layer.Forward(embed, y)
+		//logits.Print()
+		//fmt.Printf("%v\n", loss)
 	}
 
 	return

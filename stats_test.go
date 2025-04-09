@@ -26,9 +26,7 @@ func TestSoftmax(t *testing.T) {
 func TestCrossEntropyLoss(t *testing.T) {
 	r := require.New(t)
 
-	logits := T2{
-		{2.0, 1.0, 0.1},
-	}.Tensor()
+	logits := Tensor1D(2.0, 1.0, 0.1)
 	targets := Tensor1D(0)
 
 	loss := CrossEntropyLoss(logits, targets)

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 
 	"gonum.org/v1/gonum/stat/distuv"
 )
@@ -83,7 +84,7 @@ func RandN(dims ...int) *Tensor {
 	}
 	data := make([]float64, size)
 
-	dist := distuv.Normal{Mu: 0, Sigma: 1}
+	dist := distuv.Normal{Mu: 0, Sigma: 1, Src: rand.New(rand.NewSource(42))} // TODO remove seed
 	for i := 0; i < size; i++ {
 		data[i] = dist.Rand()
 	}

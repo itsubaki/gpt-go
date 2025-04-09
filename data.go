@@ -8,6 +8,8 @@ import (
 )
 
 func Data() (*Tensor, int) {
+	rand.Seed(42) // TODO remove
+
 	filePath := "input.txt"
 
 	if _, err := os.Stat(filePath); os.IsNotExist(err) {

@@ -40,7 +40,6 @@ func Softmax(tensor *Tensor) *Tensor {
 // Rating is calculated for every batch, then summed and divided by batch size.
 func CrossEntropyLoss(logits *Tensor, targets *Tensor) float64 {
 	rating := 0.0
-	// One rating per every batch
 	for i := 0; i < len(targets.Data); i++ {
 		normalizedLogits := Softmax(logits)
 		// Compute log likelihood
