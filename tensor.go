@@ -156,6 +156,8 @@ func (t *Tensor) First() float64 {
 
 // TODO pluck out rows/cols
 // TODO for 3d
+// TODo Maybe float64 indexes?
+// TODO Maybe float64 instead of first, do we pluck rows anywhere?
 func (t *Tensor) At(indexes ...int) *Tensor {
 	x, y := t.offset(indexes...)
 

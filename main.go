@@ -3,7 +3,6 @@ package main
 import "fmt"
 
 const (
-	//blockSize    = 8
 	epochs       = 1
 	learningRate = 0.01
 	embedSize    = 4
@@ -20,32 +19,41 @@ func main() {
 
 	// Main training loop
 	for i := 0; i < epochs; i++ {
-		x, y := Batch(data.Data, 1, 1)
+		// Forward pass
 		// No batches for now
+		x, y := Batch(data.Data, 1, 1)
 		x = x.At(0)
 		y = y.At(0)
-		fmt.Printf("%v\n", y)
 
 		embed := embeds.At(int(x.First()))
-		y.Print()
-		embed.Print()
+		logits := layer.Forward(embed)
 
-		//if targets != nil {
-		//	loss := CrossEntropyLoss(logits, targets)
-		//}
+		// Backward pass
+		layer.ZeroGrad()
+		probs := Softmax(logits)
+		grads := make([]float64, vocabSize)
+		for j := 0; j < vocabSize; j++ {
+			oneHot := 0.0
+			if y.First() == float64(j) {
+				oneHot = 1.0
+			}
+			grads[j] = probs.At(j).First() - oneHot
+		}
+		gradOutput := Tensor1D(grads...)
+		layer.Backward(embed, gradOutput)
 
-		//logits, loss := layer.Forward(embed, y)
-		//logits.Print()
-		//fmt.Printf("Epoch %d, Loss: %f\n", i, loss)
+		// Update weights
+		for j := 0; j < len(layer.Weight.Data); j++ {
+			layer.Weight.Data[j] -= learningRate * layer.WeightGrad.Data[j]
+		}
+
+		// Update bias
+		for j := 0; j < len(layer.Bias.Data); j++ {
+			layer.Bias.Data[j] -= learningRate * layer.BiasGrad.Data[j]
+		}
+
+		loss := CrossEntropyLoss(logits, y.First())
+		fmt.Printf("Epoch %d, Loss: %f\n", i, loss)
 	}
 
-	return
-
-	//	// Backward pass
-	//	layer.ZeroGrad()
-	//	probs := Softmax(logits)
-	//	gradOut1 := probs.At(0).First() - 0
-	//	gradOut2 := probs.At(1).First() - 1
-	//	gradOutput := Tensor1D(gradOut1, gradOut2)
-	//	layer.Backward(input, gradOutput)
 }
