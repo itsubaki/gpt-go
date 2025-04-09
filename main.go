@@ -5,25 +5,9 @@ import (
 )
 
 const (
-	epochs       = 1000
+	epochs       = 1000000
 	learningRate = 0.01
-	//vocabSize    = 64
-	//embedSize    = 32
-	//blockSize    = 8
 )
-
-//var tokenEmbeds = RandN(vocabSize, embedSize)
-//var layer = NewLinear(embedSize, vocabSize)
-
-func forward(indexes *Tensor, targets *Tensor) {
-	//layer.ZeroGrad()
-
-	//for _, index := range indexes.Data {
-	//
-	//}
-	//
-	//layer.Forward()
-}
 
 // Embeddings are basically tensors under the hood
 // What if we codegenerate files for different tensors/linear layers
