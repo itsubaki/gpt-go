@@ -1,7 +1,10 @@
 // Maybe move to tensor?
 package main
 
-import "math"
+import (
+	"fmt"
+	"math"
+)
 
 // TODO only supports 1D tensors
 func Softmax(tensor *Tensor) []float64 {
@@ -34,39 +37,27 @@ func Softmax(tensor *Tensor) []float64 {
 	return result
 }
 
-// CrossEntropyLoss computes the cross-entropy loss between logits () and targets.
-// Only batch support currently
+// CrossEntropyLoss computes the cross-entropy loss between logits and targets.
+// Rating is calculated for every batch, then summed and divided by batch size.
+// Average loss across all batches is returned.
 func CrossEntropyLoss(logits *Tensor, targets []int) float64 {
 	// Make it not hardcoded
-	batchSize := logits.Shape[0]
+	// TODO add checks
+	batchSize := len(targets)
 
 	rating := 0.0
+	// One rating per every batch
 	for i := 0; i < batchSize; i++ {
-		//normalizedLogits := Softmax(logits.At())
-		for j := 0; j < len(targets); j++ {
-			// Compute log likelihood
-			//rating += math.Log(normalizedLogits[target])
-		}
+		fmt.Printf("%v\n", logits.At(i).Data)
+		normalizedLogits := Softmax(logits.At(i))
+		fmt.Printf("%v\n", normalizedLogits)
+		// Compute log likelihood
+		rating += math.Log(normalizedLogits[targets[i]])
+		fmt.Printf("%v\n", rating)
 	}
 
 	// The higher rating the better, the loss is opposite :)
-	loss := -rating // mean
+	loss := -rating / float64(batchSize)
 
-	//for i, target := range targets {
-	//	if target >= 0 && target < logits.cols {
-	//		// Extract logits for this sample
-	//		rowLogits := make([]float64, logits.cols)
-	//		for j := 0; j < logits.cols; j++ {
-	//			rowLogits[j] = logits.Get(i, j)
-	//		}
-	//
-	//		// Apply softmax
-	//		probs := Softmax(rowLogits)
-	//
-	//		// Compute negative log likelihood
-	//		loss -= math.Log(probs[target])
-	//	}
-	//}
-
-	return loss // / float64(batchSize)
+	return loss
 }

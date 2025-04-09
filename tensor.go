@@ -7,12 +7,11 @@ import (
 )
 
 // Maybe do this for more compact way?
-type d2 [][]float64
+type T2 [][]float64
 
-var tensor = d2{
-	{1.0},
-	{2.0},
-	{3.0},
+type Tensor struct {
+	Shape []int
+	Data  []float64
 }
 
 // scalar, d1, d2, d3 would implement data
@@ -34,10 +33,24 @@ var tensor = d2{
 // > On the other hand, we don't need to init matrices manually, soo it may be pointless
 // On the other hand, in tests it will be good. And also in studying
 // Because our purpose is not prod-ready, but study-reading, so clarity should come first?
+func (t2 T2) Tensor() *Tensor {
+	rows := len(t2)
+	cols := len(t2[0])
+	shape := []int{rows, cols}
 
-type Tensor struct {
-	Shape []int
-	Data  []float64
+	size := rows * cols
+	data := make([]float64, size)
+
+	for i, v := range t2 {
+		for j, val := range v {
+			data[i*cols+j] = val
+		}
+	}
+
+	return &Tensor{
+		Shape: shape,
+		Data:  data,
+	}
 }
 
 // Zeros creates zero-filled tensor
@@ -81,7 +94,7 @@ func RandN(dims ...int) *Tensor {
 
 func Tensor1D(data ...float64) *Tensor {
 	return &Tensor{
-		Shape: []int{1, len(data)},
+		Shape: []int{len(data)}, // Vector: just number of columns
 		Data:  data,
 	}
 }
@@ -98,7 +111,7 @@ func Tensor2D(data [][]float64) *Tensor {
 	}
 
 	return &Tensor{
-		Shape: []int{rows, cols},
+		Shape: []int{rows, cols}, // Matrix: rows and columns
 		Data:  flatData,
 	}
 }
@@ -118,14 +131,14 @@ func Tensor3D(data [][][]float64) *Tensor {
 	}
 
 	return &Tensor{
-		Shape: []int{rows, cols, depth},
+		Shape: []int{rows, cols, depth}, // Keep 3D as is
 		Data:  flatData,
 	}
 }
 
 func Scalar(val float64) *Tensor {
 	return &Tensor{
-		Shape: []int{1, 1},
+		Shape: []int{}, // Empty shape for scalar
 		Data:  []float64{val},
 	}
 }
@@ -143,156 +156,298 @@ func (t *Tensor) First() float64 {
 func (t *Tensor) At(indexes ...int) *Tensor {
 	x, y := t.offset(indexes...)
 
-	result := Tensor1D(t.Data[x:y]...)
+	// Return scalar if selecting a single element
+	if y-x == 1 {
+		return Scalar(t.Data[x])
+	}
 
-	return result
+	// Otherwise return a vector
+	return &Tensor{
+		Shape: []int{y - x},
+		Data:  t.Data[x:y],
+	}
 }
 
 // Work only for individual elements
 func (t *Tensor) Set(val float64, indexes ...int) {
 	x, _ := t.offset(indexes...)
-
 	t.Data[x] = val
 }
 
 func (t *Tensor) Mul(other *Tensor) *Tensor {
-	if len(t.Shape) != len(other.Shape) {
-		panic("Tensor shapes do not match")
+	// Special case for scalar multiplication
+	if len(t.Shape) == 0 || len(other.Shape) == 0 {
+		if len(t.Shape) == 0 && len(other.Shape) == 0 {
+			// Scalar * Scalar
+			return Scalar(t.Data[0] * other.Data[0])
+		} else if len(t.Shape) == 0 {
+			// Scalar * Tensor
+			scalar := t.Data[0]
+			result := make([]float64, len(other.Data))
+			for i, v := range other.Data {
+				result[i] = scalar * v
+			}
+			return &Tensor{
+				Shape: append([]int{}, other.Shape...),
+				Data:  result,
+			}
+		} else {
+			// Tensor * Scalar
+			scalar := other.Data[0]
+			result := make([]float64, len(t.Data))
+			for i, v := range t.Data {
+				result[i] = v * scalar
+			}
+			return &Tensor{
+				Shape: append([]int{}, t.Shape...),
+				Data:  result,
+			}
+		}
 	}
 
-	if len(t.Shape) == 1 {
+	// Vector * Vector (element-wise)
+	if len(t.Shape) == 1 && len(other.Shape) == 1 && t.Shape[0] == other.Shape[0] {
 		result := make([]float64, len(t.Data))
 		for i := range t.Data {
 			result[i] = t.Data[i] * other.Data[i]
 		}
-		return Tensor1D(result...)
+		return &Tensor{
+			Shape: []int{t.Shape[0]},
+			Data:  result,
+		}
 	}
 
-	if len(t.Shape) == 2 {
+	// Matrix multiplication
+	if len(t.Shape) == 2 && len(other.Shape) == 2 {
 		if t.Shape[1] != other.Shape[0] {
 			panic(fmt.Sprintf("Tensor shapes do not match for multiplication: %v and %v", t.Shape, other.Shape))
 		}
 
-		result := make([]float64, t.Shape[0]*other.Shape[1])
-		for i := 0; i < t.Shape[0]; i++ {
-			for j := 0; j < other.Shape[1]; j++ {
+		rows := t.Shape[0]
+		cols := other.Shape[1]
+		result := make([]float64, rows*cols)
+
+		for i := 0; i < rows; i++ {
+			for j := 0; j < cols; j++ {
 				for k := 0; k < t.Shape[1]; k++ {
-					result[i*other.Shape[1]+j] += t.Data[i*t.Shape[1]+k] * other.Data[k*other.Shape[1]+j]
+					result[i*cols+j] += t.Data[i*t.Shape[1]+k] * other.Data[k*cols+j]
 				}
 			}
 		}
-		return Tensor1D(result...)
+
+		return &Tensor{
+			Shape: []int{rows, cols},
+			Data:  result,
+		}
 	}
 
-	panic("unsupported Tensor Shape")
+	// Vector * Matrix or Matrix * Vector
+	if len(t.Shape) == 1 && len(other.Shape) == 2 {
+		// Treat vector as 1xN matrix
+		if t.Shape[0] != other.Shape[0] {
+			panic(fmt.Sprintf("Tensor shapes do not match for multiplication: %v and %v", t.Shape, other.Shape))
+		}
+
+		cols := other.Shape[1]
+		result := make([]float64, cols)
+
+		for j := 0; j < cols; j++ {
+			for k := 0; k < t.Shape[0]; k++ {
+				result[j] += t.Data[k] * other.Data[k*cols+j]
+			}
+		}
+
+		return &Tensor{
+			Shape: []int{cols},
+			Data:  result,
+		}
+	}
+
+	if len(t.Shape) == 2 && len(other.Shape) == 1 {
+		// Treat vector as Nx1 matrix
+		if t.Shape[1] != other.Shape[0] {
+			panic(fmt.Sprintf("Tensor shapes do not match for multiplication: %v and %v", t.Shape, other.Shape))
+		}
+
+		rows := t.Shape[0]
+		result := make([]float64, rows)
+
+		for i := 0; i < rows; i++ {
+			for k := 0; k < other.Shape[0]; k++ {
+				result[i] += t.Data[i*t.Shape[1]+k] * other.Data[k]
+			}
+		}
+
+		return &Tensor{
+			Shape: []int{rows},
+			Data:  result,
+		}
+	}
+
+	panic("unsupported Tensor Shape combination for multiplication")
 }
 
-// TODO Print in human-readable form
+// Print in human-readable form
 func (t *Tensor) Print() {
+	// For scalar
+	if len(t.Shape) == 0 {
+		fmt.Printf("%.3f\n", t.Data[0])
+		return
+	}
+
+	// For vector (1D)
 	if len(t.Shape) == 1 {
+		fmt.Print("[ ")
 		for _, v := range t.Data {
 			fmt.Printf("%.3f ", v)
 		}
-		fmt.Println()
+		fmt.Println("]")
 		return
 	}
 
+	// For matrix (2D)
 	if len(t.Shape) == 2 {
-		for i := 0; i < t.Shape[0]; i++ {
-			for j := 0; j < t.Shape[1]; j++ {
-				fmt.Printf("%.3f ", t.Data[i*t.Shape[1]+j])
+		rows, cols := t.Shape[0], t.Shape[1]
+		for i := 0; i < rows; i++ {
+			fmt.Print("[ ")
+			for j := 0; j < cols; j++ {
+				fmt.Printf("%.3f ", t.Data[i*cols+j])
 			}
-			fmt.Println()
+			fmt.Println("]")
 		}
 		return
 	}
 
-	panic("unsupported Tensor Shape for print")
+	// For 3D tensors and higher
+	fmt.Printf("Tensor with shape %v and data %v\n", t.Shape, t.Data)
 }
 
 func (t *Tensor) Sum() float64 {
-	if len(t.Shape) == 1 {
-		sum := 0.0
-		for _, v := range t.Data {
-			sum += v
-		}
-		return sum
+	sum := 0.0
+	for _, v := range t.Data {
+		sum += v
 	}
-
-	if len(t.Shape) == 2 {
-		sum := 0.0
-		for _, v := range t.Data {
-			sum += v
-		}
-		return sum
-	}
-
-	panic("unsupported Tensor Shape for sum")
+	return sum
 }
 
 func (t *Tensor) T() *Tensor {
-	if len(t.Shape) != 2 {
-		panic("Transpose only supported for 2D tensors")
-	}
-
-	result := make([]float64, len(t.Data))
-	for i := 0; i < t.Shape[0]; i++ {
-		for j := 0; j < t.Shape[1]; j++ {
-			result[j*t.Shape[0]+i] = t.Data[i*t.Shape[1]+j]
+	// Scalar transpose is the same scalar
+	if len(t.Shape) == 0 {
+		return &Tensor{
+			Shape: []int{},
+			Data:  []float64{t.Data[0]},
 		}
 	}
 
-	return &Tensor{
-		Shape: []int{t.Shape[1], t.Shape[0]},
-		Data:  result,
+	// Vector transpose depends on interpretation (could be row/column vector)
+	// Here we'll keep it simple and just return the same vector
+	if len(t.Shape) == 1 {
+		return &Tensor{
+			Shape: []int{t.Shape[0]},
+			Data:  append([]float64{}, t.Data...),
+		}
 	}
+
+	// Matrix transpose
+	if len(t.Shape) == 2 {
+		rows, cols := t.Shape[0], t.Shape[1]
+		result := make([]float64, len(t.Data))
+
+		for i := 0; i < rows; i++ {
+			for j := 0; j < cols; j++ {
+				result[j*rows+i] = t.Data[i*cols+j]
+			}
+		}
+
+		return &Tensor{
+			Shape: []int{cols, rows},
+			Data:  result,
+		}
+	}
+
+	panic("Transpose only supported for up to 2D tensors")
 }
 
 // offset calculates the start and limit offsets in the data array for slicing
 func (t *Tensor) offset(indexes ...int) (int, int) {
-	// Special case for scalar (1x1) tensor
-	if len(t.Shape) == 2 && t.Shape[0] == 1 && t.Shape[1] == 1 {
-		// Allow calling with an empty slice or [0] for scalars
-		if len(indexes) == 0 || (len(indexes) == 1 && indexes[0] == 0) {
+	// Case 1: Scalar
+	if len(t.Shape) == 0 {
+		if len(indexes) == 0 {
 			return 0, 1
 		}
+		panic("Cannot index into a scalar tensor")
 	}
 
-	// Special case for 1xN vector tensor - use just column index
-	if len(t.Shape) == 2 && t.Shape[0] == 1 && len(indexes) == 1 {
-		if indexes[0] >= 0 && indexes[0] < t.Shape[1] {
-			// For a 1D vector, if we only get the row index, return that entire row
-			return indexes[0], indexes[0] + 1
+	// Case 2: Vector (1D)
+	if len(t.Shape) == 1 {
+		if len(indexes) == 0 {
+			// Return the whole vector
+			return 0, len(t.Data)
 		}
-	}
 
-	// For rows or columns access with a single index (when tensor is 2D)
-	if len(t.Shape) == 2 && len(indexes) == 1 {
-		idx := indexes[0]
-		// If accessing a row
-		if idx >= 0 && idx < t.Shape[0] {
-			// Return the start of the row and the start of the next row
-			startOffset := idx * t.Shape[1]
-			endOffset := (idx + 1) * t.Shape[1]
-			return startOffset, endOffset
+		if len(indexes) == 1 {
+			idx := indexes[0]
+			if idx < 0 || idx >= t.Shape[0] {
+				panic(fmt.Sprintf("Index %d out of bounds for tensor with shape %v", idx, t.Shape))
+			}
+			// Return a specific element
+			return idx, idx + 1
 		}
+
+		panic(fmt.Sprintf("Too many indexes (%v) for vector with shape %v", indexes, t.Shape))
 	}
 
-	// Standard case - require full indexing
+	// Case 3: Matrix (2D)
+	if len(t.Shape) == 2 {
+		rows, cols := t.Shape[0], t.Shape[1]
+
+		if len(indexes) == 0 {
+			// Return the whole matrix
+			return 0, len(t.Data)
+		}
+
+		if len(indexes) == 1 {
+			// Return a whole row
+			idx := indexes[0]
+			if idx < 0 || idx >= rows {
+				panic(fmt.Sprintf("Row index %d out of bounds for tensor with shape %v", idx, t.Shape))
+			}
+			return idx * cols, (idx + 1) * cols
+		}
+
+		if len(indexes) == 2 {
+			// Return a specific element
+			row, col := indexes[0], indexes[1]
+			if row < 0 || row >= rows || col < 0 || col >= cols {
+				panic(fmt.Sprintf("Indexes %v out of bounds for tensor with shape %v", indexes, t.Shape))
+			}
+			idx := row*cols + col
+			return idx, idx + 1
+		}
+
+		panic(fmt.Sprintf("Too many indexes (%v) for matrix with shape %v", indexes, t.Shape))
+	}
+
+	// Case 4: Higher dimensional tensors
+	if len(indexes) == 0 {
+		// Return the whole tensor
+		return 0, len(t.Data)
+	}
+
 	if len(indexes) != len(t.Shape) {
-		msg := fmt.Sprintf("can't get value from tensor with shape %v at index %v", t.Shape, indexes)
-		panic(msg)
+		panic(fmt.Sprintf("Number of indexes (%d) doesn't match tensor dimensions (%d)",
+			len(indexes), len(t.Shape)))
 	}
 
 	// Calculate the linear offset for a specific element
 	offset := 0
 	stride := 1
 
-	// Iterate in reverse order (column-major)
+	// Calculate offset using row-major order (last dimension varies fastest)
 	for i := len(t.Shape) - 1; i >= 0; i-- {
 		if indexes[i] < 0 || indexes[i] >= t.Shape[i] {
-			msg := fmt.Sprintf("can't get value from tensor with shape %v at index %v", t.Shape, indexes)
-			panic(msg)
+			panic(fmt.Sprintf("Index %d out of bounds at dimension %d for tensor with shape %v",
+				indexes[i], i, t.Shape))
 		}
 
 		offset += indexes[i] * stride

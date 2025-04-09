@@ -6,6 +6,23 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func TestShape(t *testing.T) {
+	r := require.New(t)
+
+	scalar := Scalar(1)
+	r.Equal([]int{}, scalar.Shape)
+
+	tensor1d := Tensor1D(1, 2, 3)
+	r.Equal([]int{3}, tensor1d.Shape)
+
+	tensor2d := Tensor2D([][]float64{
+		{1, 2},
+		{3, 4},
+	})
+
+	r.Equal([]int{2, 2}, tensor2d.Shape)
+}
+
 func TestAtScalar(t *testing.T) {
 	r := require.New(t)
 
@@ -84,9 +101,43 @@ func TestOffset(t *testing.T) {
 	r.Equal(0, x)
 	r.Equal(1, y)
 
-	//r.Equal(tensor.offset(0, 1), 1)
-	//r.Equal(tensor.offset(1, 0), 2)
-	//r.Equal(tensor.offset(1, 1), 3)
+	x, y = tensor.offset(0, 1)
+	r.Equal(1, x)
+	r.Equal(2, y)
+
+	x, y = tensor.offset(1, 0)
+	r.Equal(2, x)
+	r.Equal(3, y)
+
+	x, y = tensor.offset(1, 1)
+	r.Equal(3, x)
+	r.Equal(4, y)
+}
+
+func TestOffsetPluckOutRow1D(t *testing.T) {
+	r := require.New(t)
+
+	tensor := Tensor2D([][]float64{
+		{1, 2},
+	})
+
+	row := tensor.At(0)
+	r.Equal(row.Data, []float64{1, 2})
+}
+
+func TestOffsetPluckOutRow2D(t *testing.T) {
+	r := require.New(t)
+
+	tensor := Tensor2D([][]float64{
+		{1, 2},
+		{3, 4},
+	})
+
+	row := tensor.At(0)
+	r.Equal(row.Data, []float64{1, 2})
+
+	row = tensor.At(1)
+	r.Equal(row.Data, []float64{3, 4})
 }
 
 func TestTransposeVector(t *testing.T) {
@@ -126,4 +177,21 @@ func TestTransposeMatrix(t *testing.T) {
 	})
 
 	r.Equal(result.Data, expected.Data)
+}
+
+func TestT2Builder(t *testing.T) {
+	r := require.New(t)
+
+	tensor := T2{
+		{1, 2},
+		{3, 4},
+	}.Tensor()
+	r.Equal(tensor.Shape, []int{2, 2})
+
+	expected := Tensor2D([][]float64{
+		{1, 2},
+		{3, 4},
+	})
+
+	r.Equal(tensor.Data, expected.Data)
 }
