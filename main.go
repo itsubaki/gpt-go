@@ -3,9 +3,9 @@ package main
 import "fmt"
 
 const (
-	epochs       = 1
-	learningRate = 0.01
-	embedSize    = 4
+	epochs       = 1000
+	learningRate = 0.001
+	embedSize    = 32
 )
 
 // Embeddings are basically tensors under the hood
@@ -17,13 +17,14 @@ func main() {
 	layer := NewLinear(embedSize, vocabSize)
 	_ = layer
 
+	xs, ys := Batch(data.Data, 1, 10)
+
 	// Main training loop
-	for i := 0; i < epochs; i++ {
+	for i := 0; i < len(ys.Data); i++ {
 		// Forward pass
 		// No batches for now
-		x, y := Batch(data.Data, 1, 1)
-		x = x.At(0)
-		y = y.At(0)
+		x := xs.At(0).At(i)
+		y := ys.At(0).At(i)
 
 		embed := embeds.At(int(x.First()))
 		logits := layer.Forward(embed)
@@ -49,11 +50,13 @@ func main() {
 
 		// Update bias
 		for j := 0; j < len(layer.Bias.Data); j++ {
-			layer.Bias.Data[j] -= learningRate * layer.BiasGrad.Data[j]
+			//layer.Bias.Data[j] -= learningRate * layer.BiasGrad.Data[j]
 		}
 
+		//if (i % 100) == 0 {
 		loss := CrossEntropyLoss(logits, y.First())
 		fmt.Printf("Epoch %d, Loss: %f\n", i, loss)
+		//}
 	}
 
 }
