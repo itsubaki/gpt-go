@@ -187,13 +187,25 @@ func TestTransposeVector(t *testing.T) {
 func TestTransposeMatrix(t *testing.T) {
 	r := require.New(t)
 
+	row := T2{
+		{1, 2, 3},
+	}.Tensor()
+
+	col := row.T()
+	expected := T2{
+		{1},
+		{2},
+		{3},
+	}.Tensor()
+	r.True(col.Equal(expected))
+
 	tensor := T2{
 		{1, 2},
 		{3, 4},
 	}.Tensor()
 
 	result := tensor.T()
-	expected := T2{
+	expected = T2{
 		{1, 3},
 		{2, 4},
 	}.Tensor()

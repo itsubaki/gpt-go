@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"math/rand"
 
 	"gonum.org/v1/gonum/stat/distuv"
 )
@@ -84,7 +83,7 @@ func RandN(dims ...int) *Tensor {
 	}
 	data := make([]float64, size)
 
-	dist := distuv.Normal{Mu: 0, Sigma: 1, Src: rand.New(rand.NewSource(32))}
+	dist := distuv.Normal{Mu: 0, Sigma: 1}
 	for i := 0; i < size; i++ {
 		data[i] = dist.Rand()
 	}
@@ -382,32 +381,15 @@ func (t *Tensor) T() *Tensor {
 		}
 	}
 
-	// Vector transpose: Convert between row and column vector
+	// For 1D vector, convert to a column vector (n×1 matrix)
 	if len(t.Shape) == 1 {
-		// Convert 1D vector (shape [n]) to a column vector (shape [n, 1])
 		return &Tensor{
 			Shape: []int{t.Shape[0], 1},
 			Data:  append([]float64{}, t.Data...),
 		}
 	}
 
-	// Handle special case: Convert column vector to 1D vector
-	if len(t.Shape) == 2 && t.Shape[1] == 1 {
-		return &Tensor{
-			Shape: []int{t.Shape[0]},
-			Data:  append([]float64{}, t.Data...),
-		}
-	}
-
-	// Handle special case: Convert row vector to 1D vector
-	if len(t.Shape) == 2 && t.Shape[0] == 1 {
-		return &Tensor{
-			Shape: []int{t.Shape[1]},
-			Data:  append([]float64{}, t.Data...),
-		}
-	}
-
-	// Matrix transpose
+	// Matrix transpose (including row vectors and column vectors)
 	if len(t.Shape) == 2 {
 		rows, cols := t.Shape[0], t.Shape[1]
 		result := make([]float64, len(t.Data))

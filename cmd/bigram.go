@@ -636,18 +636,8 @@ func main() {
 	fmt.Printf("Vocabulary size: %d\n", processor.VocabSize())
 	fmt.Printf("Vocabulary: %s\n", string(processor.chars[:min(100, len(processor.chars))]))
 
-	// Test encoding/decoding
-	testStr := "hii there"
-	encoded := processor.Encode(testStr)
-	decoded := processor.Decode(encoded)
-
-	fmt.Printf("Original: '%s'\n", testStr)
-	fmt.Printf("Encoded: %v\n", encoded)
-	fmt.Printf("Decoded: '%s'\n", decoded)
-
 	// Encode the entire dataset
 	encodedText := processor.Encode(text)
-	fmt.Printf("Encoded text length: %d\n", len(encodedText))
 
 	// Create model with the correct vocabulary size
 	vocabSize := processor.VocabSize()
@@ -657,41 +647,21 @@ func main() {
 	batchSize := 4
 	blockSize := 8
 
-	// Get a training batch
-	xb, yb := GetBatch(encodedText, batchSize, blockSize)
-
-	// Print batch shapes
-	fmt.Printf("xb shape: (%d, %d)\n", len(xb), len(xb[0]))
-	fmt.Printf("yb shape: (%d, %d)\n", len(yb), len(yb[0]))
-
-	// Print example from batch
-	fmt.Println("\nExample from batch:")
-	fmt.Printf("x[0]: %v\n", xb[0])
-	fmt.Printf("y[0]: %v\n", yb[0])
-	fmt.Printf("x[0] decoded: '%s'\n", processor.Decode(xb[0]))
-	fmt.Printf("y[0] decoded: '%s'\n", processor.Decode(yb[0]))
-
-	// Forward pass
-	_, loss := model.Forward(xb, yb)
-	fmt.Printf("\nInitial loss: %f\n", loss)
-
 	// Training settings
 	iterations := 5000
 	learningRate := 0.001
 
-	// Train the model
-	fmt.Println("\nTraining the model...")
 	TrainModel(model, encodedText, batchSize, blockSize, iterations, learningRate)
 
-	// Generate text after training
-	context := make([][]int, 1)
-	context[0] = []int{encodedText[0]} // Start with first token
-
-	generatedIndices := model.Generate(context, 500)
-	generatedText := processor.Decode(generatedIndices[0])
-
-	fmt.Println("\nGenerated text after training:")
-	fmt.Println(generatedText)
+	//// Generate text after training
+	//context := make([][]int, 1)
+	//context[0] = []int{encodedText[0]} // Start with first token
+	//
+	//generatedIndices := model.Generate(context, 500)
+	//generatedText := processor.Decode(generatedIndices[0])
+	//
+	//fmt.Println("\nGenerated text after training:")
+	//fmt.Println(generatedText)
 }
 
 func min(a, b int) int {

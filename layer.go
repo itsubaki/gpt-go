@@ -24,19 +24,15 @@ func NewLinear(in, out int) *Linear {
 // Targets parameter is used in learning.
 // Returns logits and loss
 // TODO add guards
-func (l *Linear) Forward(input *Tensor, targets []int) (*Tensor, float64) {
+func (l *Linear) Forward(input *Tensor, targets *Tensor) (*Tensor, float64) {
 	logits := input.Mul(l.Weight)
 	for i := 0; i < len(logits.Data); i++ {
 		logits.Data[i] += l.Bias.At(i).First()
 	}
 
 	loss := 0.0
-	if len(targets) != 0 {
-		// Emulate batch
-		batch := T2{
-			logits.Data,
-		}.Tensor()
-		loss = CrossEntropyLoss(batch, targets)
+	if targets != nil {
+		loss = CrossEntropyLoss(logits, targets)
 	}
 
 	return logits, loss
@@ -54,9 +50,8 @@ func (l *Linear) Backward(input *Tensor, gradOutput *Tensor) *Tensor {
 	// Gradient of the loss with respect to the weights
 	l.WeightGrad = input.T().Mul(gradOutput)
 
-	l.BiasGrad = gradOutput
-
 	// Gradient of the loss with respect to the bias
+	l.BiasGrad = gradOutput
 
 	// Gradient of the loss with respect to the input
 	inputGrad := gradOutput.Mul(l.Weight.T())
