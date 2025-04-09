@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 const (
 	//blockSize    = 8
 	epochs       = 1
@@ -22,14 +24,19 @@ func main() {
 		// No batches for now
 		x = x.At(0)
 		y = y.At(0)
+		fmt.Printf("%v\n", y)
 
 		embed := embeds.At(int(x.First()))
 		y.Print()
 		embed.Print()
 
+		//if targets != nil {
+		//	loss := CrossEntropyLoss(logits, targets)
+		//}
+
 		//logits, loss := layer.Forward(embed, y)
 		//logits.Print()
-		//fmt.Printf("%v\n", loss)
+		//fmt.Printf("Epoch %d, Loss: %f\n", i, loss)
 	}
 
 	return

@@ -24,16 +24,13 @@ func NewLinear(in, out int) *Linear {
 // Targets parameter is used in learning.
 // Returns logits and loss
 // TODO add guards
-func (l *Linear) Forward(input *Tensor, targets *Tensor) (*Tensor, float64) {
+func (l *Linear) Forward(input *Tensor) (*Tensor, float64) {
 	logits := input.Mul(l.Weight)
 	for i := 0; i < len(logits.Data); i++ {
 		logits.Data[i] += l.Bias.At(i).First()
 	}
 
 	loss := 0.0
-	if targets != nil {
-		loss = CrossEntropyLoss(logits, targets)
-	}
 
 	return logits, loss
 }
