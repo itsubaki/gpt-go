@@ -23,18 +23,18 @@ func TestSoftmax(t *testing.T) {
 	r.InDeltaf(1.0, result.First()+result.At(1).First()+result.At(2).First(), 1e-6, "Softmax values should sum to 1")
 }
 
-//func TestCrossEntropyLoss(t *testing.T) {
-//	r := require.New(t)
-//
-//	logits := T2{
-//		{2.0, 1.0, 0.1},
-//	}.Tensor()
-//	targets := Scalar(0)
-//
-//	loss := CrossEntropyLoss(logits, targets)
-//
-//	// Came from pytorch
-//	expected := 0.4170299470424652
-//
-//	r.InDeltaf(expected, loss, 1e-6, "Cross entropy loss incorrect")
-//}
+func TestCrossEntropyLoss(t *testing.T) {
+	r := require.New(t)
+
+	logits := T2{
+		{2.0, 1.0, 0.1},
+	}.Tensor()
+	targets := Tensor1D(0)
+
+	loss := CrossEntropyLoss(logits, targets)
+
+	// Came from pytorch
+	expected := 0.4170299470424652
+
+	r.InDeltaf(expected, loss, 1e-6, "Cross entropy loss incorrect")
+}
