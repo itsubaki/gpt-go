@@ -4,7 +4,8 @@ type Linear struct {
 	In, Out    int
 	Weight     *Tensor
 	WeightGrad *Tensor
-	Bias       float64
+	Bias       *Tensor
+	BiasGrad   *Tensor
 }
 
 // TODO rename from new Linear to something other?
@@ -14,7 +15,8 @@ func NewLinear(in, out int) *Linear {
 		Out:        out,
 		Weight:     RandN(in, out),
 		WeightGrad: Zeros(in, out),
-		Bias:       0,
+		Bias:       Zeros(out),
+		BiasGrad:   Zeros(out),
 	}
 }
 
@@ -22,9 +24,11 @@ func NewLinear(in, out int) *Linear {
 // Targets parameter is used in learning.
 // Returns logits and loss
 // TODO add guards
-// TODO add bias
 func (l *Linear) Forward(input *Tensor, targets []int) (*Tensor, float64) {
 	logits := input.Mul(l.Weight)
+	for i := 0; i < len(logits.Data); i++ {
+		logits.Data[i] += l.Bias.At(i).First()
+	}
 
 	loss := 0.0
 	if len(targets) != 0 {
@@ -42,13 +46,17 @@ func (l *Linear) Forward(input *Tensor, targets []int) (*Tensor, float64) {
 // Returns the gradient of the loss with respect to the input.
 // We must compute:
 // 1. Gradient of the loss with respect to the weights
-// 2. Gradient of the loss with respect to the input
-// 3. Gradient of the loss with respect to the bias (skip for now)
+// 2. Gradient of the loss with respect to the bias
+// 3. Gradient of the loss with respect to the input
 func (l *Linear) Backward(input *Tensor, gradOutput *Tensor) *Tensor {
 	// TODO function to check shapes?
 
 	// Gradient of the loss with respect to the weights
 	l.WeightGrad = input.T().Mul(gradOutput)
+
+	l.BiasGrad = gradOutput
+
+	// Gradient of the loss with respect to the bias
 
 	// Gradient of the loss with respect to the input
 	inputGrad := gradOutput.Mul(l.Weight.T())
@@ -58,4 +66,5 @@ func (l *Linear) Backward(input *Tensor, gradOutput *Tensor) *Tensor {
 
 func (l *Linear) ZeroGrad() {
 	l.WeightGrad = Zeros(l.Out, l.In)
+	l.BiasGrad = Zeros(l.Out)
 }

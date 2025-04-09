@@ -45,24 +45,25 @@ func main() {
 		// Forward pass
 		logits, loss := layer.Forward(input, targets)
 		fmt.Printf("Epoch %d: Loss: %f\n", i, loss)
-		//layer.WeightGrad.Print()
-		//layer.Weight.Print()
-		//fmt.Printf("Logits: %v\n", Softmax(logits).Data)
 
 		// Backward pass
 		layer.ZeroGrad()
-
-		gradOut1 := logits.At(0).First() - 0
-		gradOut2 := logits.At(1).First() - 1
+		probs := Softmax(logits)
+		gradOut1 := probs.At(0).First() - 0
+		gradOut2 := probs.At(1).First() - 1
 		gradOutput := Tensor1D(gradOut1, gradOut2)
 		layer.Backward(input, gradOutput)
-		//layer.WeightGrad.Print()
 
 		// Update weights
 		for i, _ := range layer.Weight.Data {
-			// Model won't converge because we skipped bias
 			layer.Weight.Data[i] -= learningRate * layer.WeightGrad.Data[i]
+		}
+		// Update bias
+		for i, _ := range layer.Bias.Data {
+			layer.Bias.Data[i] -= learningRate * layer.BiasGrad.Data[i]
 		}
 	}
 
+	layer.WeightGrad.Print()
+	layer.BiasGrad.Print()
 }
