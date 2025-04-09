@@ -217,6 +217,67 @@ func (t *Tensor) Mul(other *Tensor) *Tensor {
 		}
 	}
 
+	// Vector * Matrix (treating vector as a row vector)
+	if len(t.Shape) == 1 && len(other.Shape) == 2 {
+		if t.Shape[0] != other.Shape[0] {
+			panic(fmt.Sprintf("Tensor shapes do not match for multiplication: %v and %v", t.Shape, other.Shape))
+		}
+
+		cols := other.Shape[1]
+		result := make([]float64, cols)
+
+		for j := 0; j < cols; j++ {
+			for k := 0; k < t.Shape[0]; k++ {
+				result[j] += t.Data[k] * other.Data[k*cols+j]
+			}
+		}
+
+		return &Tensor{
+			Shape: []int{cols},
+			Data:  result,
+		}
+	}
+
+	// Column vector * Row vector (outer product)
+	if len(t.Shape) == 2 && len(other.Shape) == 1 && t.Shape[1] == 1 {
+		// Treating t as a column vector and other as a row vector
+		rows := t.Shape[0]
+		cols := other.Shape[0]
+		result := make([]float64, rows*cols)
+
+		for i := 0; i < rows; i++ {
+			for j := 0; j < cols; j++ {
+				result[i*cols+j] = t.Data[i] * other.Data[j]
+			}
+		}
+
+		return &Tensor{
+			Shape: []int{rows, cols},
+			Data:  result,
+		}
+	}
+
+	// Matrix * Vector
+	if len(t.Shape) == 2 && len(other.Shape) == 1 {
+		if t.Shape[1] != other.Shape[0] {
+			panic(fmt.Sprintf("Tensor shapes do not match for multiplication: %v and %v", t.Shape, other.Shape))
+		}
+
+		rows := t.Shape[0]
+		result := make([]float64, rows)
+
+		for i := 0; i < rows; i++ {
+			for k := 0; k < t.Shape[1]; k++ {
+				result[i] += t.Data[i*t.Shape[1]+k] * other.Data[k]
+			}
+		}
+
+		return &Tensor{
+			Shape: []int{rows},
+			Data:  result,
+		}
+	}
+
 	// Matrix multiplication
 	if len(t.Shape) == 2 && len(other.Shape) == 2 {
 		if t.Shape[1] != other.Shape[0] {
@@ -237,28 +298,6 @@ func (t *Tensor) Mul(other *Tensor) *Tensor {
 
 		return &Tensor{
 			Shape: []int{rows, cols},
-			Data:  result,
-		}
-	}
-
-	// Vector * Matrix or Matrix * Vector
-	if len(t.Shape) == 1 && len(other.Shape) == 2 {
-		// Treat vector as 1xN matrix
-		if t.Shape[0] != other.Shape[0] {
-			panic(fmt.Sprintf("Tensor shapes do not match for multiplication: %v and %v", t.Shape, other.Shape))
-		}
-
-		cols := other.Shape[1]
-		result := make([]float64, cols)
-
-		for j := 0; j < cols; j++ {
-			for k := 0; k < t.Shape[0]; k++ {
-				result[j] += t.Data[k] * other.Data[k*cols+j]
-			}
-		}
-
-		return &Tensor{
-			Shape: []int{cols},
 			Data:  result,
 		}
 	}
@@ -284,7 +323,8 @@ func (t *Tensor) Mul(other *Tensor) *Tensor {
 		}
 	}
 
-	panic("unsupported Tensor Shape combination for multiplication")
+	msg := fmt.Sprintf("Tensor multiplication not supported for shapes: %v and %v", t.Shape, other.Shape)
+	panic(msg)
 }
 
 // Print in human-readable form
@@ -339,11 +379,27 @@ func (t *Tensor) T() *Tensor {
 		}
 	}
 
-	// Vector transpose depends on interpretation (could be row/column vector)
-	// Here we'll keep it simple and just return the same vector
+	// Vector transpose: Convert between row and column vector
 	if len(t.Shape) == 1 {
+		// Convert 1D vector (shape [n]) to a column vector (shape [n, 1])
+		return &Tensor{
+			Shape: []int{t.Shape[0], 1},
+			Data:  append([]float64{}, t.Data...),
+		}
+	}
+
+	// Handle special case: Convert column vector to 1D vector
+	if len(t.Shape) == 2 && t.Shape[1] == 1 {
 		return &Tensor{
 			Shape: []int{t.Shape[0]},
+			Data:  append([]float64{}, t.Data...),
+		}
+	}
+
+	// Handle special case: Convert row vector to 1D vector
+	if len(t.Shape) == 2 && t.Shape[0] == 1 {
+		return &Tensor{
+			Shape: []int{t.Shape[1]},
 			Data:  append([]float64{}, t.Data...),
 		}
 	}
@@ -366,6 +422,30 @@ func (t *Tensor) T() *Tensor {
 	}
 
 	panic("Transpose only supported for up to 2D tensors")
+}
+
+func (t *Tensor) Equal(other *Tensor) bool {
+	if len(t.Shape) != len(other.Shape) {
+		return false
+	}
+
+	for i := range t.Shape {
+		if t.Shape[i] != other.Shape[i] {
+			return false
+		}
+	}
+
+	if len(t.Data) != len(other.Data) {
+		return false
+	}
+
+	for i := range t.Data {
+		if t.Data[i] != other.Data[i] {
+			return false
+		}
+	}
+
+	return true
 }
 
 // offset calculates the start and limit offsets in the data array for slicing

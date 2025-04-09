@@ -56,16 +56,37 @@ func TestMulVector(t *testing.T) {
 	r := require.New(t)
 
 	tensorA := Tensor1D(1, 2, 3)
-	tensorB := Tensor2D(
-		[][]float64{
-			{4},
-			{5},
-			{6},
-		})
+	tensorB := T2{
+		{4},
+		{5},
+		{6},
+	}.Tensor()
 	result := tensorA.Mul(tensorB)
 
 	expected := Tensor1D(32)
 	r.Equal(expected.Data, result.Data)
+}
+
+func TestMulVerticalVector(t *testing.T) {
+	r := require.New(t)
+
+	tensorA := T2{
+		{1},
+		{2},
+		{3},
+	}.Tensor()
+
+	tensorB := Tensor1D(4, 5, 6)
+
+	result := tensorA.Mul(tensorB)
+
+	expected := T2{
+		{4, 5, 6},
+		{8, 10, 12},
+		{12, 15, 18},
+	}.Tensor()
+
+	r.True(result.Equal(expected))
 }
 
 func TestMulMatrix(t *testing.T) {
@@ -144,14 +165,15 @@ func TestTransposeVector(t *testing.T) {
 	r := require.New(t)
 
 	tensor := Tensor1D(1, 2, 3)
-	result := tensor.T()
+	transposed := tensor.T()
 
-	expected := Tensor2D([][]float64{
+	expected := T2{
 		{1},
 		{2},
 		{3},
-	})
-	r.Equal(result.Data, expected.Data)
+	}.Tensor()
+	r.Equal(expected.Data, transposed.Data)
+	r.Equal([]int{3, 1}, transposed.Shape)
 
 	tensor2 := Tensor2D([][]float64{
 		{1},
@@ -165,18 +187,35 @@ func TestTransposeVector(t *testing.T) {
 func TestTransposeMatrix(t *testing.T) {
 	r := require.New(t)
 
-	tensor := Tensor2D([][]float64{
+	tensor := T2{
 		{1, 2},
 		{3, 4},
-	})
+	}.Tensor()
 
 	result := tensor.T()
-	expected := Tensor2D([][]float64{
+	expected := T2{
 		{1, 3},
 		{2, 4},
-	})
+	}.Tensor()
 
 	r.Equal(result.Data, expected.Data)
+}
+
+func TestTransposeDeepMatrix(t *testing.T) {
+	r := require.New(t)
+
+	matrix := T2{
+		{2, 3},
+		{2, 2},
+		{4, 1},
+	}.Tensor()
+
+	transposed := T2{
+		{2, 2, 4},
+		{3, 2, 1},
+	}.Tensor()
+
+	r.True(matrix.T().Equal(transposed))
 }
 
 func TestT2Builder(t *testing.T) {

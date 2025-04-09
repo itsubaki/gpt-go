@@ -22,10 +22,15 @@ func NewLinear(in, out int) *Linear {
 // Returns logits and loss
 // TODO add guards
 // TODO add bias
-func (l *Linear) Forward(input *Tensor, targets *Tensor) (*Tensor, float64) {
+func (l *Linear) Forward(input *Tensor, targets []int) (*Tensor, float64) {
 	logits := input.Mul(l.Weight)
 
-	return logits, 0.0
+	loss := 0.0
+	if len(targets) != 0 {
+		loss = CrossEntropyLoss(logits, targets)
+	}
+
+	return logits, loss
 }
 
 // Backward computes the gradient of the loss with respect to the input (backward pass).
