@@ -5,7 +5,7 @@ import (
 )
 
 const (
-	epochs       = 10
+	epochs       = 1000
 	learningRate = 0.01
 	//vocabSize    = 64
 	//embedSize    = 32
@@ -46,6 +46,7 @@ func main() {
 		logits, loss := layer.Forward(input, targets)
 		fmt.Printf("Epoch %d: Loss: %f\n", i, loss)
 		//layer.WeightGrad.Print()
+		//layer.Weight.Print()
 		//fmt.Printf("Logits: %v\n", Softmax(logits).Data)
 
 		// Backward pass
@@ -55,9 +56,11 @@ func main() {
 		gradOut2 := logits.At(1).First() - 1
 		gradOutput := Tensor1D(gradOut1, gradOut2)
 		layer.Backward(input, gradOutput)
+		//layer.WeightGrad.Print()
 
 		// Update weights
 		for i, _ := range layer.Weight.Data {
+			// Model won't converge because we skipped bias
 			layer.Weight.Data[i] -= learningRate * layer.WeightGrad.Data[i]
 		}
 	}
