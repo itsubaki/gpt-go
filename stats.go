@@ -2,7 +2,6 @@
 package main
 
 import (
-	"fmt"
 	"math"
 )
 
@@ -48,12 +47,9 @@ func CrossEntropyLoss(logits *Tensor, targets []int) float64 {
 	rating := 0.0
 	// One rating per every batch
 	for i := 0; i < batchSize; i++ {
-		fmt.Printf("%v\n", logits.At(i).Data)
 		normalizedLogits := Softmax(logits.At(i))
-		fmt.Printf("%v\n", normalizedLogits)
 		// Compute log likelihood
 		rating += math.Log(normalizedLogits[targets[i]])
-		fmt.Printf("%v\n", rating)
 	}
 
 	// The higher rating the better, the loss is opposite :)

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"math"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -14,12 +13,8 @@ func TestSoftmax(t *testing.T) {
 
 	result := Softmax(logits)
 
-	sum := math.Exp(2.0) + math.Exp(1.0) + math.Exp(0.1)
-	expected := []float64{
-		math.Exp(2.0) / sum,
-		math.Exp(1.0) / sum,
-		math.Exp(0.1) / sum,
-	}
+	// Came from pytorch
+	expected := []float64{0.6590011388859679, 0.24243297070471392, 0.09856589040931818}
 
 	r.Len(result, 3)
 	r.InDeltaf(expected[0], result[0], 1e-6, "First softmax value incorrect")
@@ -39,10 +34,8 @@ func TestCrossEntropyLoss(t *testing.T) {
 
 	loss := CrossEntropyLoss(logits, targets)
 
-	sum1 := math.Exp(2.0) + math.Exp(1.0) + math.Exp(0.1)
-	prob := math.Exp(2.0) / sum1
-
-	expected := -(math.Log(prob))
+	// Came from pytorch
+	expected := 0.4170299470424652
 
 	r.InDeltaf(expected, loss, 1e-6, "Cross entropy loss incorrect")
 }
