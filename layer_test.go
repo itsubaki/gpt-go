@@ -17,7 +17,7 @@ func Test3to1Model(t *testing.T) {
 		{4},
 	}.Tensor()
 
-	output, _ := layer.Forward(input)
+	output := layer.Forward(input)
 	r.Equal([]float64{6.0}, output.Data)
 
 	inputGrad := layer.Backward(input, Scalar(1.0))
@@ -37,7 +37,7 @@ func Test3to2Model(t *testing.T) {
 	}.Tensor()
 
 	input := Tensor1D(1, 0, 1)
-	output, _ := layer.Forward(input)
+	output := layer.Forward(input)
 	r.Equal([]float64{6.0, 4.0}, output.Data)
 	//r.Equal(2.1269280110429727, loss)
 
