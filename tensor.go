@@ -50,7 +50,7 @@ func RandN(dims ...int) *Tensor {
 	}
 }
 
-func Tensor1D(data []float64) *Tensor {
+func Tensor1D(data ...float64) *Tensor {
 	return &Tensor{
 		Shape: []int{1, len(data)},
 		Data:  data,
@@ -120,7 +120,7 @@ func (t *Tensor) Mul(other *Tensor) *Tensor {
 		for i := range t.Data {
 			result[i] = t.Data[i] * other.Data[i]
 		}
-		return Tensor1D(result)
+		return Tensor1D(result...)
 	}
 
 	if len(t.Shape) == 2 {
@@ -136,13 +136,13 @@ func (t *Tensor) Mul(other *Tensor) *Tensor {
 				}
 			}
 		}
-		return Tensor1D(result)
+		return Tensor1D(result...)
 	}
 
 	panic("unsupported Tensor Shape")
 }
 
-// Print in human-readable form
+// TODO Print in human-readable form
 func (t *Tensor) Print() {
 	if len(t.Shape) == 1 {
 		for _, v := range t.Data {

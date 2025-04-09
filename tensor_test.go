@@ -9,14 +9,14 @@ import (
 func TestAtScalar(t *testing.T) {
 	r := require.New(t)
 
-	tensor := Tensor1D([]float64{1})
+	tensor := Tensor1D(1)
 	r.Equal(tensor.At(0), 1.0)
 }
 
 func TestAtVector(t *testing.T) {
 	r := require.New(t)
 
-	tensor := Tensor1D([]float64{1, 2, 3})
+	tensor := Tensor1D(1, 2, 3)
 	r.Equal(tensor.At(0), 1.0)
 	r.Equal(tensor.At(1), 2.0)
 	r.Equal(tensor.At(2), 3.0)
@@ -38,7 +38,7 @@ func TestAtMatrix(t *testing.T) {
 func TestMulVector(t *testing.T) {
 	r := require.New(t)
 
-	tensorA := Tensor1D([]float64{1, 2, 3})
+	tensorA := Tensor1D(1, 2, 3)
 	tensorB := Tensor2D(
 		[][]float64{
 			{4},
@@ -47,7 +47,7 @@ func TestMulVector(t *testing.T) {
 		})
 	result := tensorA.Mul(tensorB)
 
-	expected := Tensor1D([]float64{32})
+	expected := Tensor1D(32)
 	r.Equal(expected.Data, result.Data)
 }
 
@@ -89,7 +89,7 @@ func TestOffset(t *testing.T) {
 func TestTransposeVector(t *testing.T) {
 	r := require.New(t)
 
-	tensor := Tensor1D([]float64{1, 2, 3})
+	tensor := Tensor1D(1, 2, 3)
 	result := tensor.T()
 
 	expected := Tensor2D([][]float64{

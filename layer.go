@@ -18,12 +18,14 @@ func NewLinear(in, out int) *Linear {
 }
 
 // Forward computes the output based on the input (forward pass)
+// Targets parameter is used in learning.
+// Returns logits and loss
 // TODO add guards
 // TODO add bias
-func (l *Linear) Forward(input *Tensor) *Tensor {
-	result := input.Mul(l.Weight)
+func (l *Linear) Forward(input *Tensor, targets *Tensor) (*Tensor, float64) {
+	logits := input.Mul(l.Weight)
 
-	return result
+	return logits, 0.0
 }
 
 // Backward computes the gradient of the loss with respect to the input (backward pass).
@@ -38,8 +40,6 @@ func (l *Linear) Backward(input *Tensor, gradOutput *Tensor) *Tensor {
 	//	panic("Gradient output size does not match layer output size")
 	//}
 
-	// Calculate gradient with respect to the weights
-	// WeightGrad is [Out, In]
 	l.WeightGrad = input.T().Mul(gradOutput)
 
 	inputGrad := gradOutput.Mul(l.Weight.T())
