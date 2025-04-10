@@ -4,7 +4,7 @@ import "fmt"
 
 const (
 	epochs       = 100
-	learningRate = 0.00001
+	learningRate = 0.001
 	embedSize    = 32
 	batchSize    = 100
 )
@@ -14,7 +14,7 @@ const (
 func main() {
 	data, vocabSize := Data()
 
-	embeds := RandN(vocabSize, vocabSize)
+	embeds := Zeros(vocabSize, vocabSize)
 	embedsGrad := Zeros(vocabSize, vocabSize)
 	//layer := NewLinear(vocabSize, vocabSize)
 	//_ = layer
