@@ -4,7 +4,7 @@ import "fmt"
 
 const (
 	epochs       = 100
-	learningRate = 0.001
+	learningRate = 0.00001
 	embedSize    = 32
 	batchSize    = 100
 )
@@ -20,8 +20,8 @@ func main() {
 	//_ = layer
 
 	xs, ys := Batch(data.Data, 1, 10000)
-	xs.Print()
-	ys.Print()
+	//xs.Print()
+	//ys.Print()
 
 	// Main training loop
 	averageLost := 0.0
@@ -53,7 +53,7 @@ func main() {
 		averageLost += CrossEntropyLoss(logits, y.First())
 
 		// Check if we've completed a batch
-		if (i%batchSize) == 0 || i == len(ys.Data)-1 {
+		if ((i%batchSize) == 0 && i != 0) || i == len(ys.Data)-1 {
 			// Update weights using accumulated gradients
 			for j := 0; j < len(embeds.Data); j++ {
 				averageGrad := embedsGrad.Data[j] / float64(batchSize)
@@ -61,6 +61,7 @@ func main() {
 			}
 
 			// Print the average loss for this batch
+			// Random loss is 4.174
 			fmt.Printf("Epoch %d, Loss: %f\n", i, averageLost/float64(batchSize))
 
 			embedsGrad = Zeros(vocabSize, vocabSize)
