@@ -74,14 +74,13 @@ func main() {
 	// Generate text
 	context := "A"
 	maxTokens := 500
-	temperature := 0.6 // The higher the temperature, the more random the output
 	token := int(Encode(context).First())
 	fmt.Println("\nGenerated text after training:")
 	for i := 0; i < maxTokens; i++ {
 		embed := embeds.At(token)
 		output := layer.Forward(embed)
 		probs := Softmax(output)
-		token = SampleTemp(probs, temperature)
+		token = Sample(probs)
 		decodedToken := Decode([]int{token})
 		fmt.Printf(decodedToken)
 	}

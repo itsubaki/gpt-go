@@ -82,6 +82,7 @@ func SampleGreedy(probs *Tensor) int {
 	return maxIndex
 }
 
+// The higher the temperature, the more random the output, 0.7 is usually default
 func SampleTemp(probs *Tensor, temperature float64) int {
 	// Make a copy of the probabilities to avoid modifying the original
 	adjustedProbs := make([]float64, len(probs.Data))
