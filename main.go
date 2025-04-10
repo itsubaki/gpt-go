@@ -14,6 +14,7 @@ func main() {
 	data, vocabSize := Data()
 
 	embeds := RandKaiming(vocabSize, embedSize)
+	embedsGrad := Zeros(vocabSize, embedSize)
 	layer := NewLinear(embedSize, vocabSize)
 
 	// It's not really batch, both inputs and targets are vectors.
@@ -46,6 +47,11 @@ func main() {
 		gradOutput := Tensor1D(grads...)
 		layer.Backward(embed, gradOutput)
 
+		// Calculate gradient for embed
+		grad := gradOutput.Mul(layer.Weight.T())
+		embedGrad := embedsGrad.At(int(input))
+		embedGrad.Add(grad)
+
 		// Loss calculation
 		lossSum += CrossEntropyLoss(logits, target)
 
@@ -62,12 +68,18 @@ func main() {
 				layer.Bias.Data[j] -= learningRate * layer.BiasGrad.Data[j]
 			}
 
+			// Update embeds
+			for j := 0; j < len(embeds.Data); j++ {
+				embeds.Data[j] -= learningRate * embedsGrad.Data[j]
+			}
+
 			if (i % (batchSize * 1000)) == 0 {
 				fmt.Printf("Loss: %f\n", lossSum/float64(batchSize))
 			}
 
 			lossSum = 0.0
 			layer.ZeroGrad()
+			embedsGrad = Zeros(vocabSize, embedSize)
 		}
 	}
 

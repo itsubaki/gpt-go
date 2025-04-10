@@ -39,6 +39,10 @@ func (l *Linear) Forward(input *Tensor) *Tensor {
 // 1. Gradient of the loss with respect to the weights
 // 2. Gradient of the loss with respect to the bias
 // 3. Gradient of the loss with respect to the input
+// (x * w + b)
+// dL/dx = (x * w + b)' * dL/dy = w * dL/dy
+// dL/dw = x * dL/dy
+// dL/db = dL/dy (addition just continues gradient, it flows)
 func (l *Linear) Backward(input *Tensor, gradOutput *Tensor) *Tensor {
 	// Calculate the gradients for this example
 	weightsGradForExample := input.T().Mul(gradOutput)

@@ -596,3 +596,67 @@ func (t *Tensor) offset(indexes ...int) (int, int) {
 	// For a specific element, the range is just 1 element
 	return offset, offset + 1
 }
+
+// TODO write tests
+func (t *Tensor) Add(other *Tensor) *Tensor {
+	// Check if shapes are compatible
+	if !t.ShapesCompatible(other) {
+		panic("Cannot add tensors with incompatible shapes")
+	}
+
+	// Create a new tensor to store the result
+	result := &Tensor{
+		Shape: append([]int{}, t.Shape...),
+		Data:  make([]float64, len(t.Data)),
+	}
+
+	// Add element-wise
+	for i := 0; i < len(t.Data); i++ {
+		result.Data[i] = t.Data[i] + other.Data[i]
+	}
+
+	return result
+}
+
+// ShapesCompatible checks if two tensors have compatible shapes for element-wise operations
+// TODO write tests
+func (t *Tensor) ShapesCompatible(other *Tensor) bool {
+	// For identical shapes, always compatible
+	if len(t.Shape) == len(other.Shape) {
+		compatible := true
+		for i := 0; i < len(t.Shape); i++ {
+			if t.Shape[i] != other.Shape[i] {
+				compatible = false
+				break
+			}
+		}
+		if compatible {
+			return true
+		}
+	}
+
+	// Broadcasting rules
+	// 1. If tensors have different number of dimensions, prepend 1's to the shape of the smaller one
+	// 2. Two dimensions are compatible if they are equal or one of them is 1
+
+	// Get shapes with broadcasting in mind
+	tShape := t.Shape
+	oShape := other.Shape
+
+	// Make the shapes the same length
+	for len(tShape) < len(oShape) {
+		tShape = append([]int{1}, tShape...)
+	}
+	for len(oShape) < len(tShape) {
+		oShape = append([]int{1}, oShape...)
+	}
+
+	// Check compatibility
+	for i := 0; i < len(tShape); i++ {
+		if tShape[i] != oShape[i] && tShape[i] != 1 && oShape[i] != 1 {
+			return false
+		}
+	}
+
+	return true
+}
