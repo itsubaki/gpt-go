@@ -25,7 +25,7 @@ func main() {
 
 	// Main training loop
 	lossSum := 0.0
-	for i := 0; i < 10000; i++ {
+	for i := 0; i < len(inputs.Data); i++ {
 		// Forward pass
 		input := inputs.At(i).First()
 		target := targets.At(i).First()
@@ -76,9 +76,9 @@ func main() {
 				embeds.Data[j] -= learningRate * embedsGrad.Data[j]
 			}
 
-			//if (i % (batchSize * 1000)) == 0 {
-			fmt.Printf("Loss: %f\n", lossSum/float64(batchSize))
-			//}
+			if (i % (batchSize * 1000)) == 0 {
+				fmt.Printf("Loss: %f\n", lossSum/float64(batchSize))
+			}
 
 			lossSum = 0.0
 			layer.ZeroGrad()
