@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"math/rand"
 
 	"gonum.org/v1/gonum/stat/distuv"
@@ -85,6 +86,31 @@ func RandN(dims ...int) *Tensor {
 	data := make([]float64, size)
 
 	dist := distuv.Normal{Mu: 0, Sigma: 1, Src: rand.New(rand.NewSource(42))} // TODO remove seed
+	for i := 0; i < size; i++ {
+		data[i] = dist.Rand()
+	}
+
+	return &Tensor{
+		Shape: shape,
+		Data:  data,
+	}
+}
+
+// RandN creates a tensor with normally distributed random values
+func RandKaiming(dims ...int) *Tensor {
+	// TODO remove seed
+
+	shape := make([]int, len(dims))
+	copy(shape, dims)
+
+	size := 1
+	for _, dim := range dims {
+		size *= dim
+	}
+	data := make([]float64, size)
+
+	sigma := math.Sqrt(2.0 / float64(dims[0]))
+	dist := distuv.Normal{Mu: 0, Sigma: sigma}
 	for i := 0; i < size; i++ {
 		data[i] = dist.Rand()
 	}

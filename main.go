@@ -3,10 +3,10 @@ package main
 import "fmt"
 
 const (
-	epochs       = 100
-	learningRate = 0.001
-	embedSize    = 32
+	learningRate = 0.01
 	batchSize    = 100
+	epochs       = 100
+	embedSize    = 32
 )
 
 // Embeddings are basically tensors under the hood
@@ -14,17 +14,17 @@ const (
 func main() {
 	data, vocabSize := Data()
 
-	embeds := Zeros(vocabSize, vocabSize)
+	embeds := RandKaiming(vocabSize, vocabSize)
 	embedsGrad := Zeros(vocabSize, vocabSize)
 	//layer := NewLinear(vocabSize, vocabSize)
 	//_ = layer
 
-	xs, ys := Batch(data.Data, 1, 10000)
+	xs, ys := Batch(data.Data, 1, 1000000)
 	//xs.Print()
 	//ys.Print()
 
 	// Main training loop
-	averageLost := 0.0
+	lostSum := 0.0
 	embedsGrad = Zeros(vocabSize, vocabSize)
 	for i := 0; i < len(ys.Data); i++ {
 
@@ -50,54 +50,22 @@ func main() {
 			embedsGrad.Data[tokenIdx*vocabSize+j] += gradVal
 		}
 
-		averageLost += CrossEntropyLoss(logits, y.First())
+		lostSum += CrossEntropyLoss(logits, y.First())
 
 		// Check if we've completed a batch
 		if ((i%batchSize) == 0 && i != 0) || i == len(ys.Data)-1 {
 			// Update weights using accumulated gradients
 			for j := 0; j < len(embeds.Data); j++ {
-				averageGrad := embedsGrad.Data[j] / float64(batchSize)
-				embeds.Data[j] -= learningRate * averageGrad
+				//averageGrad := embedsGrad.Data[j] / float64(batchSize)
+				embeds.Data[j] -= learningRate * embedsGrad.Data[j]
 			}
 
 			// Print the average loss for this batch
 			// Random loss is 4.174
-			fmt.Printf("Epoch %d, Loss: %f\n", i, averageLost/float64(batchSize))
+			fmt.Printf("Epoch %d, Loss: %f\n", i, lostSum/float64(batchSize))
 
 			embedsGrad = Zeros(vocabSize, vocabSize)
-			averageLost = 0.0
+			lostSum = 0.0
 		}
-
-		//logits := layer.Forward(embed)
-		//
-		//// Backward pass
-		//layer.ZeroGrad()
-		//probs := Softmax(logits)
-		//grads := make([]float64, vocabSize)
-		//for j := 0; j < vocabSize; j++ {
-		//	oneHot := 0.0
-		//	if y.First() == float64(j) {
-		//		oneHot = 1.0
-		//	}
-		//	grads[j] = probs.At(j).First() - oneHot
-		//}
-		//gradOutput := Tensor1D(grads...)
-		//layer.Backward(embed, gradOutput)
-		//
-		//// Update weights
-		//for j := 0; j < len(layer.Weight.Data); j++ {
-		//	layer.Weight.Data[j] -= learningRate * layer.WeightGrad.Data[j]
-		//}
-		//
-		//// Update bias
-		//for j := 0; j < len(layer.Bias.Data); j++ {
-		//	//layer.Bias.Data[j] -= learningRate * layer.BiasGrad.Data[j]
-		//}
-
-		//if (i % 100) == 0 {
-		//loss := CrossEntropyLoss(logits, y.First())
-		//fmt.Printf("Epoch %d, Loss: %f\n", i, loss)
-		//}
 	}
-
 }
