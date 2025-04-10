@@ -40,15 +40,25 @@ func (l *Linear) Forward(input *Tensor) *Tensor {
 // 2. Gradient of the loss with respect to the bias
 // 3. Gradient of the loss with respect to the input
 func (l *Linear) Backward(input *Tensor, gradOutput *Tensor) *Tensor {
-	// TODO function to check shapes?
+	// Calculate the gradients for this example
+	weightsGradForExample := input.T().Mul(gradOutput)
+	biasGradForExample := gradOutput
 
-	// Gradient of the loss with respect to the weights
-	l.WeightGrad = input.T().Mul(gradOutput)
+	// Accumulate gradients instead of overwriting
+	// TODO tensor.add?
+	if l.WeightGrad == nil {
+		l.WeightGrad = weightsGradForExample
+		l.BiasGrad = biasGradForExample
+	} else {
+		for i := 0; i < len(l.WeightGrad.Data); i++ {
+			l.WeightGrad.Data[i] += weightsGradForExample.Data[i]
+		}
 
-	// Gradient of the loss with respect to the bias
-	l.BiasGrad = gradOutput
+		for i := 0; i < len(l.BiasGrad.Data); i++ {
+			l.BiasGrad.Data[i] += biasGradForExample.Data[i]
+		}
+	}
 
-	// Gradient of the loss with respect to the input
 	inputGrad := gradOutput.Mul(l.Weight.T())
 
 	return inputGrad
