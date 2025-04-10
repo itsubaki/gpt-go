@@ -50,7 +50,10 @@ func main() {
 		// Calculate gradient for embed
 		grad := gradOutput.Mul(layer.Weight.T())
 		embedGrad := embedsGrad.At(int(input))
-		embedGrad.Add(grad)
+		grad = embedGrad.Add(grad)
+		for j := 0; j < len(embedGrad.Data); j++ {
+			embedGrad.Data[j] += grad.At(j).First()
+		}
 
 		// Loss calculation
 		lossSum += CrossEntropyLoss(logits, target)
