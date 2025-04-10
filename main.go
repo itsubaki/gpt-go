@@ -19,7 +19,9 @@ func main() {
 	//layer := NewLinear(vocabSize, vocabSize)
 	//_ = layer
 
-	xs, ys := Batch(data.Data, 1, 1000000)
+	xs, ys := Batch(data.Data, 1, 10000)
+	xs.Print()
+	ys.Print()
 
 	// Main training loop
 	averageLost := 0.0
@@ -31,10 +33,10 @@ func main() {
 		x := xs.At(0).At(i)
 		y := ys.At(0).At(i)
 
-		embed := embeds.At(int(x.First()))
+		logits := embeds.At(int(x.First()))
 
 		// Backward pass
-		probs := Softmax(embed)
+		probs := Softmax(logits)
 		for j := 0; j < len(probs.Data); j++ {
 			// Calculate gradient: (probability - one_hot_target)
 			targetValue := 0.0
@@ -48,7 +50,7 @@ func main() {
 			embedsGrad.Data[tokenIdx*vocabSize+j] += gradVal
 		}
 
-		averageLost += CrossEntropyLoss(embed, y.First())
+		averageLost += CrossEntropyLoss(logits, y.First())
 
 		// Check if we've completed a batch
 		if (i%batchSize) == 0 || i == len(ys.Data)-1 {

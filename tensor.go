@@ -377,6 +377,8 @@ func (t *Tensor) Mul(other *Tensor) *Tensor {
 
 // Print in human-readable form
 func (t *Tensor) Print() {
+	fmt.Printf("Shape: %v\n", t.Shape)
+
 	// For scalar
 	if len(t.Shape) == 0 {
 		fmt.Printf("%.3f\n", t.Data[0])
