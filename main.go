@@ -3,9 +3,8 @@ package main
 import "fmt"
 
 const (
-	batchSize    = 32
-	learningRate = 0.1
-	epochs       = 100
+	batchSize    = 16
+	learningRate = 0.01
 	embedSize    = 32
 )
 
@@ -16,12 +15,11 @@ func main() {
 
 	embeds := RandKaiming(vocabSize, embedSize)
 	layer := NewLinear(embedSize, vocabSize)
-	_ = layer
 
 	// It's not really batch, both inputs and targets are vectors.
 	// We don't use batches
 	// Inputs are indexes for embeds table
-	inputs, targets := Batch(data.Data, 1, 1000000)
+	inputs, targets := Batch(data.Data, 1, len(data.Data)-1)
 	inputs, targets = inputs.At(0), targets.At(0)
 
 	// Main training loop
@@ -64,10 +62,27 @@ func main() {
 				layer.Bias.Data[j] -= learningRate * layer.BiasGrad.Data[j]
 			}
 
-			fmt.Printf("Loss: %f\n", lossSum/float64(batchSize))
+			if (i % (batchSize * 1000)) == 0 {
+				fmt.Printf("Loss: %f\n", lossSum/float64(batchSize))
+			}
 
 			lossSum = 0.0
 			layer.ZeroGrad()
 		}
+	}
+
+	// Generate text
+	context := "A"
+	maxTokens := 500
+	temperature := 0.6 // The higher the temperature, the more random the output
+	token := int(Encode(context).First())
+	fmt.Println("\nGenerated text after training:")
+	for i := 0; i < maxTokens; i++ {
+		embed := embeds.At(token)
+		output := layer.Forward(embed)
+		probs := Softmax(output)
+		token = SampleTemp(probs, temperature)
+		decodedToken := Decode([]int{token})
+		fmt.Printf(decodedToken)
 	}
 }

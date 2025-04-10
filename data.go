@@ -25,16 +25,48 @@ func Data() (*Tensor, int) {
 	fmt.Printf("Length of text: %d characters\n", len(text))
 	fmt.Printf("First 100 characters: %s\n", text[:100])
 
-	processor := NewTextProcessor(text)
-	fmt.Printf("Vocabulary size: %d\n", processor.VocabSize())
-	fmt.Printf("Vocabulary: %s\n", string(processor.chars[:min(100, len(processor.chars))]))
+	InitTextProcessor(text)
+	fmt.Printf("Vocabulary size: %d\n", VocabSize())
+	fmt.Printf("Vocabulary: %s\n", string(chars[:min(100, len(chars))]))
 
-	encodedText := processor.Encode(text)
+	encodedText := Encode(text)
 
-	return encodedText, processor.VocabSize()
+	return encodedText, VocabSize()
 }
 
-// batch creates training batches from encoded Data
+func Encode(s string) *Tensor {
+	result := make([]float64, 0, len(s))
+	for _, ch := range s {
+		if idx, ok := stoi[ch]; ok {
+			result = append(result, float64(idx))
+		}
+	}
+
+	return Tensor1D(result...)
+}
+
+func Decode(indices []int) string {
+	result := make([]rune, 0, len(indices))
+	for _, idx := range indices {
+		if ch, ok := itos[idx]; ok {
+			result = append(result, ch)
+		}
+	}
+	return string(result)
+}
+
+// Static text processor variables at module level
+var (
+	chars []rune
+	stoi  map[rune]int
+	itos  map[int]rune
+)
+
+func VocabSize() int {
+	return len(chars)
+}
+
+// Batch creates training batches from encoded Data
 // Returns inputs and targets
 func Batch(data []float64, batchSize, blockSize int) (*Tensor, *Tensor) {
 	// Create random indices
@@ -64,44 +96,14 @@ func Batch(data []float64, batchSize, blockSize int) (*Tensor, *Tensor) {
 	return Tensor2D(xb), Tensor2D(yb)
 }
 
-type TextProcessor struct {
-	chars []rune
-	stoi  map[rune]int
-	itos  map[int]rune
-}
-
-func (tp *TextProcessor) Encode(s string) *Tensor {
-	result := make([]float64, 0, len(s))
-	for _, ch := range s {
-		if idx, ok := tp.stoi[ch]; ok {
-			result = append(result, float64(idx))
-		}
-	}
-
-	return Tensor1D(result...)
-}
-
-func (tp *TextProcessor) Decode(indices []int) string {
-	result := make([]rune, 0, len(indices))
-	for _, idx := range indices {
-		if ch, ok := tp.itos[idx]; ok {
-			result = append(result, ch)
-		}
-	}
-	return string(result)
-}
-
-func (tp *TextProcessor) VocabSize() int {
-	return len(tp.chars)
-}
-
-func NewTextProcessor(text string) *TextProcessor {
+// InitTextProcessor initializes the static text processor with the given text
+func InitTextProcessor(text string) {
 	charMap := make(map[rune]bool)
 	for _, ch := range text {
 		charMap[ch] = true
 	}
 
-	chars := make([]rune, 0, len(charMap))
+	chars = make([]rune, 0, len(charMap))
 	for ch := range charMap {
 		chars = append(chars, ch)
 	}
@@ -109,16 +111,10 @@ func NewTextProcessor(text string) *TextProcessor {
 		return chars[i] < chars[j]
 	})
 
-	stoi := make(map[rune]int)
-	itos := make(map[int]rune)
+	stoi = make(map[rune]int)
+	itos = make(map[int]rune)
 	for i, ch := range chars {
 		stoi[ch] = i
 		itos[i] = ch
-	}
-
-	return &TextProcessor{
-		chars: chars,
-		stoi:  stoi,
-		itos:  itos,
 	}
 }

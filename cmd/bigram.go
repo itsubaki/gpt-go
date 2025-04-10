@@ -654,14 +654,14 @@ func main() {
 	TrainModel(model, encodedText, batchSize, blockSize, iterations, learningRate)
 
 	//// Generate text after training
-	//context := make([][]int, 1)
-	//context[0] = []int{encodedText[0]} // Start with first token
-	//
-	//generatedIndices := model.Generate(context, 500)
-	//generatedText := processor.Decode(generatedIndices[0])
-	//
-	//fmt.Println("\nGenerated text after training:")
-	//fmt.Println(generatedText)
+	context := make([][]int, 1)
+	context[0] = []int{encodedText[0]} // Start with first token
+
+	generatedIndices := model.Generate(context, 500)
+	generatedText := processor.Decode(generatedIndices[0])
+
+	fmt.Println("\nGenerated text after training:")
+	fmt.Println(generatedText)
 }
 
 func min(a, b int) int {
