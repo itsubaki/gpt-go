@@ -11,8 +11,8 @@ func Softmax(tensor *Tensor) *Tensor {
 	vec := tensor.Data
 	result := make([]float64, len(vec))
 
-	var sum float64 = 0
-	var maxVal float64 = vec[0]
+	var sum = 0.0
+	var maxVal = vec[0]
 
 	// Find max for numerical stability
 	// TODO replace with generic

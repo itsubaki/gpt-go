@@ -26,9 +26,7 @@ func NewLinear(in, out int) *Linear {
 // TODO add guards
 func (l *Linear) Forward(input *Tensor) *Tensor {
 	logits := input.Mul(l.Weight)
-	for i := 0; i < len(logits.Data); i++ {
-		logits.Data[i] += l.Bias.At(i).First()
-	}
+	logits.Add(l.Bias)
 
 	return logits
 }
