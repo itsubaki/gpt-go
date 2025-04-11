@@ -39,11 +39,10 @@ func Softmax(tensor *Tensor) *Tensor {
 
 // CrossEntropyLoss computes the cross-entropy loss between logits and targets.
 func CrossEntropyLoss(logits *Tensor, target float64) float64 {
-	rating := 0.0
 	normalizedLogits := Softmax(logits)
 	// Compute log likelihood
 	logitIndex := int(target)
-	rating += math.Log(normalizedLogits.At(logitIndex).First())
+	rating := math.Log(normalizedLogits.At(logitIndex).First())
 
 	// The higher rating the better, the loss is opposite :)
 	loss := -rating

@@ -1,20 +1,23 @@
+// Add embeddings
 package main
 
 type Linear struct {
 	In, Out    int
 	Weight     *Tensor
 	WeightGrad *Tensor
+	Biased     bool
 	Bias       *Tensor
 	BiasGrad   *Tensor
 }
 
 // TODO rename from new Linear to something other?
-func NewLinear(in, out int) *Linear {
+func NewLinear(in, out int, biased bool) *Linear {
 	return &Linear{
 		In:         in,
 		Out:        out,
 		Weight:     RandN(in, out),
 		WeightGrad: Zeros(in, out),
+		Biased:     biased,
 		Bias:       Zeros(out),
 		BiasGrad:   Zeros(out),
 	}

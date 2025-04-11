@@ -15,7 +15,7 @@ func main() {
 
 	embeds := RandKaiming(vocabSize, embedSize)
 	embedsGrad := Zeros(vocabSize, embedSize)
-	layer := NewLinear(embedSize, vocabSize)
+	layer := NewLinear(embedSize, vocabSize, true)
 
 	// It's not really batch, both inputs and targets are vectors.
 	// We don't use batches

@@ -10,7 +10,7 @@ func Test3to1Model(t *testing.T) {
 	r := require.New(t)
 
 	input := Tensor1D(1, 0, 1)
-	layer := NewLinear(3, 1)
+	layer := NewLinear(3, 1, true)
 	layer.Weight = T2{
 		{2},
 		{2},
@@ -29,7 +29,7 @@ func Test3to1Model(t *testing.T) {
 func Test3to2Model(t *testing.T) {
 	r := require.New(t)
 
-	layer := NewLinear(3, 2)
+	layer := NewLinear(3, 2, true)
 	layer.Weight = T2{
 		{2, 3},
 		{2, 2},
