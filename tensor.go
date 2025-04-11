@@ -669,7 +669,8 @@ func Tril(t *Tensor) *Tensor {
 func (t *Tensor) MaskedFill(mask *Tensor, value float64, fillValue float64) *Tensor {
 	// Ensure tensors have the same shape
 	if !shapesEqual(t.Shape, mask.Shape) {
-		panic("Tensor and mask must have the same shape")
+		msg := fmt.Sprintf("Tensor and mask shapes do not match: %v and %v", t.Shape, mask.Shape)
+		panic(msg)
 	}
 
 	result := &Tensor{
