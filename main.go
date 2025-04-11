@@ -17,11 +17,14 @@ func main() {
 	embeds := RandKaiming(vocabSize, embedSize)
 	embedsGrad := Zeros(vocabSize, embedSize)
 
+	lmHead := NewLinear(embedSize, vocabSize)
+
 	key := NewLinear(embedSize, headSize, NoBias())
 	_ = key
 	query := NewLinear(embedSize, headSize, NoBias())
 	_ = query
-	lmHead := NewLinear(embedSize, vocabSize)
+	value := NewLinear(embedSize, headSize, NoBias())
+	_ = value
 
 	// It's not really batch, both inputs and targets are vectors.
 	// We don't use batches

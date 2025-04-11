@@ -46,7 +46,10 @@ func NoBias() LinearOption {
 // TODO add guards
 func (l *Linear) Forward(input *Tensor) *Tensor {
 	logits := input.Mul(l.Weight)
-	logits.Add(l.Bias)
+
+	if l.Biased {
+		logits.Add(l.Bias)
+	}
 
 	return logits
 }
@@ -63,6 +66,8 @@ func (l *Linear) Forward(input *Tensor) *Tensor {
 // dL/db = dL/dy (addition just continues gradient, it flows)
 func (l *Linear) Backward(input *Tensor, gradOutput *Tensor) *Tensor {
 	// Calculate the gradients for this example
+	// TODO simplify this
+	// TODO don't calc bias for non-biased layers
 	weightsGradForExample := input.T().Mul(gradOutput)
 	biasGradForExample := gradOutput
 

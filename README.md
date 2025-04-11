@@ -1,4 +1,5 @@
 ### TODO
+- options-like pattern tensor building? T2, T1 etc
 - replace initialization with Kaiming distribution (currently normal which may cause issues, Building makemore Part 3: Activations & Gradients, BatchNorm)
 - calc grad for forward
 - implement more advanced optimizer

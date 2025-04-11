@@ -600,7 +600,7 @@ func (t *Tensor) offset(indexes ...int) (int, int) {
 // TODO write tests
 func (t *Tensor) Add(other *Tensor) *Tensor {
 	// Check if shapes are compatible
-	if !t.ShapesCompatible(other) {
+	if !t.shapesCompatible(other) {
 		panic("Cannot add tensors with incompatible shapes")
 	}
 
@@ -618,9 +618,59 @@ func (t *Tensor) Add(other *Tensor) *Tensor {
 	return result
 }
 
-// ShapesCompatible checks if two tensors have compatible shapes for element-wise operations
+// Ones creates a tensor filled with ones
+func Ones(dims ...int) *Tensor {
+	shape := make([]int, len(dims))
+	copy(shape, dims)
+
+	size := 1
+	for _, dim := range dims {
+		size *= dim
+	}
+	data := make([]float64, size)
+
+	// Fill with ones
+	for i := range data {
+		data[i] = 1.0
+	}
+
+	return &Tensor{
+		Shape: shape,
+		Data:  data,
+	}
+}
+
+// Tril creates a lower triangular matrix from a tensor
+// If k = 0, it includes the diagonal
+// If k > 0, it includes k diagonals above the main diagonal
+// If k < 0, it excludes -k diagonals below the main diagonal
+func Tril(t *Tensor, k int) *Tensor {
+	// Only works with 2D tensors
+	if len(t.Shape) != 2 {
+		panic("Tril only works with 2D tensors")
+	}
+
+	rows, cols := t.Shape[0], t.Shape[1]
+	result := &Tensor{
+		Shape: []int{rows, cols},
+		Data:  make([]float64, rows*cols),
+	}
+
+	// Copy values below or on the diagonal + k
+	for i := 0; i < rows; i++ {
+		for j := 0; j < cols; j++ {
+			if j <= i+k {
+				result.Data[i*cols+j] = t.Data[i*cols+j]
+			}
+		}
+	}
+
+	return result
+}
+
+// shapesCompatible checks if two tensors have compatible shapes for element-wise operations
 // TODO write tests
-func (t *Tensor) ShapesCompatible(other *Tensor) bool {
+func (t *Tensor) shapesCompatible(other *Tensor) bool {
 	// For identical shapes, always compatible
 	if len(t.Shape) == len(other.Shape) {
 		compatible := true

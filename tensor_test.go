@@ -286,3 +286,59 @@ func TestT2Builder(t *testing.T) {
 
 	r.Equal(tensor.Data, expected.Data)
 }
+
+func TestOnes(t *testing.T) {
+	r := require.New(t)
+
+	// Test 2D tensor
+	ones2D := Ones(2, 3)
+	expected2D := &Tensor{
+		Shape: []int{2, 3},
+		Data:  []float64{1, 1, 1, 1, 1, 1},
+	}
+	r.Equal(expected2D.Shape, ones2D.Shape)
+	r.Equal(expected2D.Data, ones2D.Data)
+
+	// Test 3D tensor
+	ones3D := Ones(2, 2, 2)
+	expected3D := &Tensor{
+		Shape: []int{2, 2, 2},
+		Data:  []float64{1, 1, 1, 1, 1, 1, 1, 1},
+	}
+	r.Equal(expected3D.Shape, ones3D.Shape)
+	r.Equal(expected3D.Data, ones3D.Data)
+}
+
+func TestTril(t *testing.T) {
+	r := require.New(t)
+
+	// Create a 3x3 tensor of ones
+	input := Ones(3, 3)
+
+	// Test with k = 0 (main diagonal and below)
+	tril0 := Tril(input, 0)
+	expected0 := &Tensor{
+		Shape: []int{3, 3},
+		Data:  []float64{1, 0, 0, 1, 1, 0, 1, 1, 1},
+	}
+	r.Equal(expected0.Shape, tril0.Shape)
+	r.Equal(expected0.Data, tril0.Data)
+
+	// Test with k = 1 (main diagonal, one above, and below)
+	tril1 := Tril(input, 1)
+	expected1 := &Tensor{
+		Shape: []int{3, 3},
+		Data:  []float64{1, 1, 0, 1, 1, 1, 1, 1, 1},
+	}
+	r.Equal(expected1.Shape, tril1.Shape)
+	r.Equal(expected1.Data, tril1.Data)
+
+	// Test with k = -1 (one below diagonal)
+	tril_minus1 := Tril(input, -1)
+	expected_minus1 := &Tensor{
+		Shape: []int{3, 3},
+		Data:  []float64{0, 0, 0, 1, 0, 0, 1, 1, 0},
+	}
+	r.Equal(expected_minus1.Shape, tril_minus1.Shape)
+	r.Equal(expected_minus1.Data, tril_minus1.Data)
+}
