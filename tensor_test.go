@@ -1,6 +1,7 @@
 package main
 
 import (
+	"math"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -290,7 +291,6 @@ func TestT2Builder(t *testing.T) {
 func TestOnes(t *testing.T) {
 	r := require.New(t)
 
-	// Test 2D tensor
 	ones2D := Ones(2, 3)
 	expected2D := &Tensor{
 		Shape: []int{2, 3},
@@ -299,7 +299,6 @@ func TestOnes(t *testing.T) {
 	r.Equal(expected2D.Shape, ones2D.Shape)
 	r.Equal(expected2D.Data, ones2D.Data)
 
-	// Test 3D tensor
 	ones3D := Ones(2, 2, 2)
 	expected3D := &Tensor{
 		Shape: []int{2, 2, 2},
@@ -312,33 +311,80 @@ func TestOnes(t *testing.T) {
 func TestTril(t *testing.T) {
 	r := require.New(t)
 
-	// Create a 3x3 tensor of ones
 	input := Ones(3, 3)
 
-	// Test with k = 0 (main diagonal and below)
-	tril0 := Tril(input, 0)
+	tril0 := Tril(input)
 	expected0 := &Tensor{
 		Shape: []int{3, 3},
 		Data:  []float64{1, 0, 0, 1, 1, 0, 1, 1, 1},
 	}
 	r.Equal(expected0.Shape, tril0.Shape)
 	r.Equal(expected0.Data, tril0.Data)
+}
 
-	// Test with k = 1 (main diagonal, one above, and below)
-	tril1 := Tril(input, 1)
-	expected1 := &Tensor{
-		Shape: []int{3, 3},
-		Data:  []float64{1, 1, 0, 1, 1, 1, 1, 1, 1},
-	}
-	r.Equal(expected1.Shape, tril1.Shape)
-	r.Equal(expected1.Data, tril1.Data)
+func TestMaskedFill(t *testing.T) {
+	r := require.New(t)
 
-	// Test with k = -1 (one below diagonal)
-	tril_minus1 := Tril(input, -1)
-	expected_minus1 := &Tensor{
+	tensor := &Tensor{
 		Shape: []int{3, 3},
-		Data:  []float64{0, 0, 0, 1, 0, 0, 1, 1, 0},
+		Data:  []float64{1, 2, 3, 4, 5, 6, 7, 8, 9},
 	}
-	r.Equal(expected_minus1.Shape, tril_minus1.Shape)
-	r.Equal(expected_minus1.Data, tril_minus1.Data)
+
+	mask := Tril(Ones(3, 3))
+
+	negInf := math.Inf(-1)
+	filled := tensor.MaskedFill(mask, 0, negInf)
+
+	expected := &Tensor{
+		Shape: []int{3, 3},
+		Data:  []float64{1, negInf, negInf, 4, 5, negInf, 7, 8, 9},
+	}
+
+	r.Equal(expected.Shape, filled.Shape)
+	r.Equal(expected.Data, filled.Data)
+
+	filledOnes := tensor.MaskedFill(mask, 1, 0)
+
+	expectedOnes := &Tensor{
+		Shape: []int{3, 3},
+		Data:  []float64{0, 2, 3, 0, 0, 6, 0, 0, 0},
+	}
+
+	r.Equal(expectedOnes.Shape, filledOnes.Shape)
+	r.Equal(expectedOnes.Data, filledOnes.Data)
+
+	rectTensor := &Tensor{
+		Shape: []int{2, 3},
+		Data:  []float64{1, 2, 3, 4, 5, 6},
+	}
+
+	rectMask := Tril(Ones(2, 3))
+
+	filledRect := rectTensor.MaskedFill(rectMask, 0, negInf)
+
+	expectedRect := &Tensor{
+		Shape: []int{2, 3},
+		Data:  []float64{1, negInf, negInf, 4, 5, negInf},
+	}
+
+	r.Equal(expectedRect.Shape, filledRect.Shape)
+	r.Equal(expectedRect.Data, filledRect.Data)
+
+	trill := Tril(Ones(4, 4))
+	weights := Ones(4, 4)
+
+	maskedWeights := weights.MaskedFill(trill, 0, negInf)
+
+	expectedMaskedWeights := &Tensor{
+		Shape: []int{4, 4},
+		Data: []float64{
+			1, negInf, negInf, negInf,
+			1, 1, negInf, negInf,
+			1, 1, 1, negInf,
+			1, 1, 1, 1,
+		},
+	}
+
+	r.Equal(expectedMaskedWeights.Shape, maskedWeights.Shape)
+	r.Equal(expectedMaskedWeights.Data, maskedWeights.Data)
 }

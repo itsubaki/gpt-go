@@ -641,10 +641,7 @@ func Ones(dims ...int) *Tensor {
 }
 
 // Tril creates a lower triangular matrix from a tensor
-// If k = 0, it includes the diagonal
-// If k > 0, it includes k diagonals above the main diagonal
-// If k < 0, it excludes -k diagonals below the main diagonal
-func Tril(t *Tensor, k int) *Tensor {
+func Tril(t *Tensor) *Tensor {
 	// Only works with 2D tensors
 	if len(t.Shape) != 2 {
 		panic("Tril only works with 2D tensors")
@@ -656,12 +653,36 @@ func Tril(t *Tensor, k int) *Tensor {
 		Data:  make([]float64, rows*cols),
 	}
 
-	// Copy values below or on the diagonal + k
 	for i := 0; i < rows; i++ {
 		for j := 0; j < cols; j++ {
-			if j <= i+k {
+			if j <= i {
 				result.Data[i*cols+j] = t.Data[i*cols+j]
 			}
+		}
+	}
+
+	return result
+}
+
+// MaskedFill replaces elements in tensor where mask == value with fillValue
+// Example: tensor.MaskedFill(mask, 0, -math.Inf) fills all positions where mask == 0 with negative infinity
+func (t *Tensor) MaskedFill(mask *Tensor, value float64, fillValue float64) *Tensor {
+	// Ensure tensors have the same shape
+	if !shapesEqual(t.Shape, mask.Shape) {
+		panic("Tensor and mask must have the same shape")
+	}
+
+	result := &Tensor{
+		Shape: make([]int, len(t.Shape)),
+		Data:  make([]float64, len(t.Data)),
+	}
+	copy(result.Shape, t.Shape)
+
+	for i := range t.Data {
+		if mask.Data[i] == value {
+			result.Data[i] = fillValue
+		} else {
+			result.Data[i] = t.Data[i]
 		}
 	}
 
@@ -708,5 +729,17 @@ func (t *Tensor) shapesCompatible(other *Tensor) bool {
 		}
 	}
 
+	return true
+}
+
+func shapesEqual(a, b []int) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i := range a {
+		if a[i] != b[i] {
+			return false
+		}
+	}
 	return true
 }
