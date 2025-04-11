@@ -31,7 +31,7 @@ func NewLinear(in, out int, opts ...LinearOption) *Linear {
 	return l
 }
 
-func WithoutBias() LinearOption {
+func NoBias() LinearOption {
 	return func(l *Linear) {
 		l.Biased = false
 		// Set bias tensors to nil or zero-sized tensors

@@ -6,6 +6,7 @@ const (
 	batchSize    = 16
 	learningRate = 0.01
 	embedSize    = 32
+	headSize     = 16
 )
 
 // Embeddings are basically tensors under the hood
@@ -15,7 +16,12 @@ func main() {
 
 	embeds := RandKaiming(vocabSize, embedSize)
 	embedsGrad := Zeros(vocabSize, embedSize)
-	layer := NewLinear(embedSize, vocabSize)
+
+	key := NewLinear(embedSize, headSize, NoBias())
+	_ = key
+	query := NewLinear(embedSize, headSize, NoBias())
+	_ = query
+	lmHead := NewLinear(embedSize, vocabSize)
 
 	// It's not really batch, both inputs and targets are vectors.
 	// We don't use batches
@@ -31,10 +37,10 @@ func main() {
 		target := targets.At(i).First()
 
 		embed := embeds.At(int(input))
-		logits := layer.Forward(embed)
+		logits := lmHead.Forward(embed)
 
 		// Backward pass
-		layer.ZeroGrad()
+		lmHead.ZeroGrad()
 		probs := Softmax(logits)
 		grads := make([]float64, vocabSize)
 		for j := 0; j < vocabSize; j++ {
@@ -45,10 +51,10 @@ func main() {
 			grads[j] = probs.At(j).First() - oneHot
 		}
 		gradOutput := Tensor1D(grads...)
-		layer.Backward(embed, gradOutput)
+		lmHead.Backward(embed, gradOutput)
 
 		// Calculate gradient for embed
-		grad := gradOutput.Mul(layer.Weight.T())
+		grad := gradOutput.Mul(lmHead.Weight.T())
 		embedGrad := embedsGrad.At(int(input))
 		grad = embedGrad.Add(grad)
 		for j := 0; j < len(embedGrad.Data); j++ {
@@ -62,13 +68,13 @@ func main() {
 		// Kinda "emulating" batches
 		if (i % batchSize) == 0 {
 			// Update weights
-			for j := 0; j < len(layer.Weight.Data); j++ {
-				layer.Weight.Data[j] -= learningRate * layer.WeightGrad.Data[j]
+			for j := 0; j < len(lmHead.Weight.Data); j++ {
+				lmHead.Weight.Data[j] -= learningRate * lmHead.WeightGrad.Data[j]
 			}
 
 			// Update bias
-			for j := 0; j < len(layer.Bias.Data); j++ {
-				layer.Bias.Data[j] -= learningRate * layer.BiasGrad.Data[j]
+			for j := 0; j < len(lmHead.Bias.Data); j++ {
+				lmHead.Bias.Data[j] -= learningRate * lmHead.BiasGrad.Data[j]
 			}
 
 			// Update embeds
@@ -81,7 +87,7 @@ func main() {
 			}
 
 			lossSum = 0.0
-			layer.ZeroGrad()
+			lmHead.ZeroGrad()
 			embedsGrad = Zeros(vocabSize, embedSize)
 		}
 	}
@@ -93,7 +99,7 @@ func main() {
 	fmt.Println("\nGenerated text after training:")
 	for i := 0; i < maxTokens; i++ {
 		embed := embeds.At(token)
-		output := layer.Forward(embed)
+		output := lmHead.Forward(embed)
 		probs := Softmax(output)
 		token = Sample(probs)
 		decodedToken := Decode([]int{token})
