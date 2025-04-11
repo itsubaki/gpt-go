@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"math"
+)
 
 const (
 	batchSize    = 16
@@ -12,6 +15,13 @@ const (
 // Embeddings are basically tensors under the hood
 // What if we code-generate files for different tensors/linear layers
 func main() {
+	t := Tril(Ones(3, 3))
+	t = t.MaskedFill(t, 0, math.Inf(-1))
+	t = Softmax(t)
+
+	t.Print()
+
+	return
 	data, vocabSize := Data()
 
 	embeds := RandKaiming(vocabSize, embedSize)

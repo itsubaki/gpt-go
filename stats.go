@@ -6,35 +6,76 @@ import (
 	"math/rand"
 )
 
-// TODO only supports 1D tensors
+// Softmax applies the softmax function to a tensor
+// For 1D tensors, it applies softmax to the entire vector
+// For 2D tensors, it applies softmax to each row (dim=-1 in PyTorch)
 func Softmax(tensor *Tensor) *Tensor {
-	vec := tensor.Data
-	result := make([]float64, len(vec))
+	// Check dimensions
+	dims := len(tensor.Shape)
+	if dims != 1 && dims != 2 {
+		panic("Softmax only supports 1D and 2D tensors")
+	}
 
-	var sum = 0.0
-	var maxVal = vec[0]
+	result := &Tensor{
+		Shape: make([]int, len(tensor.Shape)),
+		Data:  make([]float64, len(tensor.Data)),
+	}
+	copy(result.Shape, tensor.Shape)
 
-	// Find max for numerical stability
-	// TODO replace with generic
-	for _, v := range vec {
-		if v > maxVal {
-			maxVal = v
+	if dims == 1 {
+		// Apply softmax to 1D tensor
+		vec := tensor.Data
+		var sum = 0.0
+		var maxVal = vec[0]
+
+		// Find max for numerical stability
+		for _, v := range vec {
+			if v > maxVal {
+				maxVal = v
+			}
+		}
+
+		// Compute exp and sum
+		for i, v := range vec {
+			expVal := math.Exp(v - maxVal)
+			result.Data[i] = expVal
+			sum += expVal
+		}
+
+		// Normalize
+		for i := range result.Data {
+			result.Data[i] /= sum
+		}
+	} else { // dims == 2
+		// Apply softmax to each row of 2D tensor
+		rows, cols := tensor.Shape[0], tensor.Shape[1]
+
+		for i := 0; i < rows; i++ {
+			// Find max in this row for numerical stability
+			rowStart := i * cols
+			maxVal := tensor.Data[rowStart]
+			for j := 0; j < cols; j++ {
+				if tensor.Data[rowStart+j] > maxVal {
+					maxVal = tensor.Data[rowStart+j]
+				}
+			}
+
+			// Compute exp and sum for this row
+			sum := 0.0
+			for j := 0; j < cols; j++ {
+				expVal := math.Exp(tensor.Data[rowStart+j] - maxVal)
+				result.Data[rowStart+j] = expVal
+				sum += expVal
+			}
+
+			// Normalize this row
+			for j := 0; j < cols; j++ {
+				result.Data[rowStart+j] /= sum
+			}
 		}
 	}
 
-	// Compute exp and sum
-	for i, v := range vec {
-		expVal := math.Exp(v - maxVal)
-		result[i] = expVal
-		sum += expVal
-	}
-
-	// Normalize
-	for i := range result {
-		result[i] /= sum
-	}
-
-	return Tensor1D(result...)
+	return result
 }
 
 // CrossEntropyLoss computes the cross-entropy loss between logits and targets.
@@ -116,3 +157,80 @@ func SampleTemp(probs *Tensor, temperature float64) int {
 
 	return len(adjustedProbs) - 1
 }
+
+//// SoftmaxWithDim applies softmax along the specified dimension
+//// dim=0 applies softmax to each column, dim=1 (or -1) applies softmax to each row
+//func SoftmaxWithDim(tensor *Tensor, dim int) *Tensor {
+//	// Check dimensions
+//	if len(tensor.Shape) != 2 {
+//		panic("SoftmaxWithDim only supports 2D tensors")
+//	}
+//
+//	// Handle negative dimensions
+//	if dim < 0 {
+//		dim = len(tensor.Shape) + dim
+//	}
+//
+//	// Validate dimension
+//	if dim != 0 && dim != 1 {
+//		panic("Dimension must be 0 or 1 for 2D tensors")
+//	}
+//
+//	rows, cols := tensor.Shape[0], tensor.Shape[1]
+//	result := &Tensor{
+//		Shape: []int{rows, cols},
+//		Data:  make([]float64, rows*cols),
+//	}
+//
+//	if dim == 1 { // Apply softmax to each row (equivalent to Softmax for 2D)
+//		for i := 0; i < rows; i++ {
+//			// Find max in this row for numerical stability
+//			rowStart := i * cols
+//			maxVal := tensor.Data[rowStart]
+//			for j := 0; j < cols; j++ {
+//				if tensor.Data[rowStart+j] > maxVal {
+//					maxVal = tensor.Data[rowStart+j]
+//				}
+//			}
+//
+//			// Compute exp and sum for this row
+//			sum := 0.0
+//			for j := 0; j < cols; j++ {
+//				expVal := math.Exp(tensor.Data[rowStart+j] - maxVal)
+//				result.Data[rowStart+j] = expVal
+//				sum += expVal
+//			}
+//
+//			// Normalize this row
+//			for j := 0; j < cols; j++ {
+//				result.Data[rowStart+j] /= sum
+//			}
+//		}
+//	} else { // dim == 0, apply softmax to each column
+//		for j := 0; j < cols; j++ {
+//			// Find max in this column for numerical stability
+//			maxVal := tensor.Data[j]
+//			for i := 0; i < rows; i++ {
+//				if tensor.Data[i*cols+j] > maxVal {
+//					maxVal = tensor.Data[i*cols+j]
+//				}
+//			}
+//
+//			// Compute exp and sum for this column
+//			sum := 0.0
+//			expVals := make([]float64, rows) // Temporary storage for exp values
+//			for i := 0; i < rows; i++ {
+//				expVal := math.Exp(tensor.Data[i*cols+j] - maxVal)
+//				expVals[i] = expVal
+//				sum += expVal
+//			}
+//
+//			// Normalize this column
+//			for i := 0; i < rows; i++ {
+//				result.Data[i*cols+j] = expVals[i] / sum
+//			}
+//		}
+//	}
+//
+//	return result
+//}

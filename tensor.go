@@ -427,7 +427,7 @@ func (t *Tensor) Print() {
 		for i := 0; i < rows; i++ {
 			fmt.Print("[ ")
 			for j := 0; j < cols; j++ {
-				fmt.Printf("%.10f ", t.Data[i*cols+j])
+				fmt.Printf("%.3f ", t.Data[i*cols+j])
 			}
 			fmt.Println("]")
 		}
