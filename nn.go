@@ -10,16 +10,33 @@ type Linear struct {
 	BiasGrad   *Tensor
 }
 
+type LinearOption func(*Linear)
+
 // TODO rename from new Linear to something other?
-func NewLinear(in, out int, biased bool) *Linear {
-	return &Linear{
+func NewLinear(in, out int, opts ...LinearOption) *Linear {
+	l := &Linear{
 		In:         in,
 		Out:        out,
 		Weight:     RandN(in, out),
 		WeightGrad: Zeros(in, out),
-		Biased:     biased,
+		Biased:     true,
 		Bias:       Zeros(out),
 		BiasGrad:   Zeros(out),
+	}
+
+	for _, opt := range opts {
+		opt(l)
+	}
+
+	return l
+}
+
+func WithoutBias() LinearOption {
+	return func(l *Linear) {
+		l.Biased = false
+		// Set bias tensors to nil or zero-sized tensors
+		l.Bias = nil
+		l.BiasGrad = nil
 	}
 }
 
