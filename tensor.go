@@ -9,11 +9,15 @@ import (
 )
 
 // Maybe do this for more compact way?
+// Maybe M? Like matrix
+// And V for vector instead of 1D
 type T2 [][]float64
 
 type Tensor struct {
-	Shape []int
-	Data  []float64
+	Shape   []int
+	Data    []float64
+	Grad    *Tensor
+	Creator Op
 }
 
 // scalar, d1, d2, d3 would implement data
@@ -96,7 +100,7 @@ func RandN(dims ...int) *Tensor {
 	}
 }
 
-// RandN creates a tensor with normally distributed random values
+// RandKainming creates a tensor with normally distributed random values
 func RandKaiming(dims ...int) *Tensor {
 	// TODO remove seed
 
@@ -210,7 +214,10 @@ func (t *Tensor) Mul(other *Tensor) *Tensor {
 	if len(t.Shape) == 0 || len(other.Shape) == 0 {
 		if len(t.Shape) == 0 && len(other.Shape) == 0 {
 			// Scalar * Scalar
-			return Scalar(t.Data[0] * other.Data[0])
+			mulGrad := MulGrad{t, other}
+			result := Scalar(t.Data[0] * other.Data[0])
+			result.Creator = &mulGrad
+			return result
 		} else if len(t.Shape) == 0 {
 			// Scalar * Tensor
 			scalar := t.Data[0]
