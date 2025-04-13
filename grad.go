@@ -9,7 +9,9 @@ func (t *Tensor) Backward() {
 		t.Grad = Ones(t.Shape...)
 	}
 
-	t.Creator.Backward(t.Grad)
+	t.backward()
+
+	//t.Creator.Backward(t.Grad)
 }
 
 type MulGrad struct {

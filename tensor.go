@@ -14,10 +14,11 @@ import (
 type T2 [][]float64
 
 type Tensor struct {
-	Shape   []int
-	Data    []float64
-	Grad    *Tensor
-	Creator Op
+	Shape    []int
+	Data     []float64
+	Grad     *Tensor
+	Creator  Op
+	backward func()
 }
 
 // scalar, d1, d2, d3 would implement data
@@ -214,9 +215,16 @@ func (t *Tensor) Mul(other *Tensor) *Tensor {
 	if len(t.Shape) == 0 || len(other.Shape) == 0 {
 		if len(t.Shape) == 0 && len(other.Shape) == 0 {
 			// Scalar * Scalar
-			mulGrad := MulGrad{t, other}
 			result := Scalar(t.Data[0] * other.Data[0])
-			result.Creator = &mulGrad
+
+			// Propogate our local gradient times output gradient
+			grad := func() {
+				// Will it also create computation graph?
+				t.Grad = Scalar(other.First()).Mul(result.Grad)
+				other.Grad = Scalar(t.First()).Mul(result.Grad)
+			}
+			result.backward = grad
+
 			return result
 		} else if len(t.Shape) == 0 {
 			// Scalar * Tensor

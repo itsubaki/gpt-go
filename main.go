@@ -45,10 +45,8 @@ var (
 func main() {
 	a := variable.New(3)
 	b := variable.New(5)
-	c := Mul(a, b)
+	c := Add(a, b)
 	c.Backward()
-
-	//fmt.Printf("%v\n", b.Grad)
 
 	s1 := Scalar(3)
 	s2 := Scalar(5)
