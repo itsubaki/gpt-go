@@ -17,7 +17,7 @@ type Tensor struct {
 	Shape    []int
 	Data     []float64
 	Grad     *Tensor
-	Creator  Op
+	parents  []*Tensor
 	backward func()
 }
 
@@ -60,6 +60,14 @@ func (t2 T2) Tensor() *Tensor {
 	}
 }
 
+func NewTensor(shape []int, data []float64) *Tensor {
+	return &Tensor{
+		Shape:    shape,
+		Data:     data,
+		backward: func() {},
+	}
+}
+
 // Zeros creates zero-filled tensor
 func Zeros(dims ...int) *Tensor {
 	shape := make([]int, len(dims))
@@ -71,10 +79,7 @@ func Zeros(dims ...int) *Tensor {
 	}
 	data := make([]float64, size)
 
-	return &Tensor{
-		Shape: shape,
-		Data:  data,
-	}
+	return NewTensor(shape, data)
 }
 
 // RandN creates a tensor with normally distributed random values
@@ -95,10 +100,7 @@ func RandN(dims ...int) *Tensor {
 		data[i] = dist.Rand()
 	}
 
-	return &Tensor{
-		Shape: shape,
-		Data:  data,
-	}
+	return NewTensor(shape, data)
 }
 
 // RandKainming creates a tensor with normally distributed random values
@@ -120,17 +122,14 @@ func RandKaiming(dims ...int) *Tensor {
 		data[i] = dist.Rand()
 	}
 
-	return &Tensor{
-		Shape: shape,
-		Data:  data,
-	}
+	return NewTensor(shape, data)
 }
 
 func Tensor1D(data ...float64) *Tensor {
-	return &Tensor{
-		Shape: []int{len(data)}, // Vector: just number of columns
-		Data:  data,
-	}
+	return NewTensor(
+		[]int{len(data)}, // Vector: just number of columns
+		data,
+	)
 }
 
 func Tensor2D(data [][]float64) *Tensor {
@@ -144,10 +143,10 @@ func Tensor2D(data [][]float64) *Tensor {
 		}
 	}
 
-	return &Tensor{
-		Shape: []int{rows, cols}, // Matrix: rows and columns
-		Data:  flatData,
-	}
+	return NewTensor(
+		[]int{rows, cols}, // Matrix: rows and columns
+		flatData,
+	)
 }
 
 func Tensor3D(data [][][]float64) *Tensor {
@@ -164,17 +163,17 @@ func Tensor3D(data [][][]float64) *Tensor {
 		}
 	}
 
-	return &Tensor{
-		Shape: []int{rows, cols, depth}, // Keep 3D as is
-		Data:  flatData,
-	}
+	return NewTensor(
+		[]int{rows, cols, depth}, // Keep 3D as is
+		flatData,
+	)
 }
 
 func Scalar(val float64) *Tensor {
-	return &Tensor{
-		Shape: []int{}, // Empty shape for scalar
-		Data:  []float64{val},
-	}
+	return NewTensor(
+		[]int{}, // Empty shape for scalar
+		[]float64{val},
+	)
 }
 
 func (t *Tensor) First() float64 {
@@ -198,10 +197,10 @@ func (t *Tensor) At(indexes ...int) *Tensor {
 	}
 
 	// Otherwise return a vector
-	return &Tensor{
-		Shape: []int{y - x},
-		Data:  t.Data[x:y],
-	}
+	return NewTensor(
+		[]int{y - x},
+		t.Data[x:y],
+	)
 }
 
 // Work only for individual elements
@@ -216,6 +215,7 @@ func (t *Tensor) Mul(other *Tensor) *Tensor {
 		if len(t.Shape) == 0 && len(other.Shape) == 0 {
 			// Scalar * Scalar
 			result := Scalar(t.Data[0] * other.Data[0])
+			result.parents = []*Tensor{t, other}
 
 			// Propogate our local gradient times output gradient
 			grad := func() {

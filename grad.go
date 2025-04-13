@@ -9,22 +9,39 @@ func (t *Tensor) Backward() {
 		t.Grad = Ones(t.Shape...)
 	}
 
-	t.backward()
+	list := make([]*Tensor, 0)
+	visited := make(map[*Tensor]bool)
+	// Build topological order
+	var topo func(node *Tensor)
+	topo = func(node *Tensor) {
+		if visited[node] {
+			return
+		}
+		visited[node] = true
 
-	//t.Creator.Backward(t.Grad)
+		for _, parent := range node.parents {
+			topo(parent)
+		}
+		list = append(list, node)
+	}
+	topo(t)
+
+	for _, node := range list {
+		node.backward()
+	}
 }
 
 type MulGrad struct {
 	x0, x1 *Tensor
 }
 
-func (m *MulGrad) Backward(outputGrad *Tensor) {
-	m.x0.Grad = outputGrad.Mul(m.x1)
-	if m.x0.Creator != nil {
-		m.x0.Creator.Backward(m.x0.Grad)
-	}
-	m.x1.Grad = outputGrad.Mul(m.x0)
-	if m.x1.Creator != nil {
-		m.x1.Creator.Backward(m.x1.Grad)
-	}
-}
+//func (m *MulGrad) Backward(outputGrad *Tensor) {
+//	m.x0.Grad = outputGrad.Mul(m.x1)
+//	if m.x0.Creator != nil {
+//		m.x0.Creator.Backward(m.x0.Grad)
+//	}
+//	m.x1.Grad = outputGrad.Mul(m.x0)
+//	if m.x1.Creator != nil {
+//		m.x1.Creator.Backward(m.x1.Grad)
+//	}
+//}
