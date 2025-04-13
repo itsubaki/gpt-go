@@ -1,9 +1,8 @@
 package main
 
 func (t *Tensor) Backward() {
-	if t.Grad == nil {
-		t.Grad = Ones(t.Shape...)
-	}
+	// Do we need other than Ones-filled initial grad?
+	t.Grad = Ones(t.Shape...)
 
 	list := make([]*Tensor, 0)
 	visited := make(map[*Tensor]bool)

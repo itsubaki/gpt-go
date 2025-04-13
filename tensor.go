@@ -81,8 +81,32 @@ func Zeros(dims ...int) *Tensor {
 	data := make([]float64, size)
 
 	return &Tensor{
-		Shape: shape,
-		Data:  data,
+		Shape:    shape,
+		Data:     data,
+		backward: func() {},
+	}
+}
+
+// Ones creates a tensor filled with ones
+func Ones(dims ...int) *Tensor {
+	shape := make([]int, len(dims))
+	copy(shape, dims)
+
+	size := 1
+	for _, dim := range dims {
+		size *= dim
+	}
+	data := make([]float64, size)
+
+	// Fill with ones
+	for i := range data {
+		data[i] = 1.0
+	}
+
+	return &Tensor{
+		Shape:    shape,
+		Data:     data,
+		backward: func() {},
 	}
 }
 
@@ -224,8 +248,8 @@ func (t *Tensor) Mul(other *Tensor) *Tensor {
 			// Propogate our local gradient times output gradient
 			grad := func() {
 				// Will it also create computation graph?
-				t.Grad.Add(Scalar(other.First()).Mul(result.Grad))
-				other.Grad.Add(Scalar(t.First()).Mul(result.Grad))
+				t.Grad = t.Grad.Add(Scalar(other.First()).Mul(result.Grad))
+				other.Grad = other.Grad.Add(Scalar(t.First()).Mul(result.Grad))
 			}
 			result.backward = grad
 
@@ -625,7 +649,7 @@ func (t *Tensor) Add(other *Tensor) *Tensor {
 
 	// Create a new tensor to store the result
 	result := NewTensor(
-		append([]int{}, t.Shape...),
+		append([]int{}, t.Shape...), // copying
 		make([]float64, len(t.Data)),
 	)
 
@@ -636,33 +660,11 @@ func (t *Tensor) Add(other *Tensor) *Tensor {
 
 	// + node just propogates gradients
 	result.backward = func() {
-		t.Grad.Add(result.Grad)
-		other.Grad.Add(result.Grad)
+		t.Grad = t.Grad.Add(result.Grad)
+		other.Grad = other.Grad.Add(result.Grad)
 	}
 
 	return result
-}
-
-// Ones creates a tensor filled with ones
-func Ones(dims ...int) *Tensor {
-	shape := make([]int, len(dims))
-	copy(shape, dims)
-
-	size := 1
-	for _, dim := range dims {
-		size *= dim
-	}
-	data := make([]float64, size)
-
-	// Fill with ones
-	for i := range data {
-		data[i] = 1.0
-	}
-
-	return &Tensor{
-		Shape: shape,
-		Data:  data,
-	}
 }
 
 // Tril creates a lower triangular matrix from a tensor

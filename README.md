@@ -15,6 +15,8 @@ for j := 0; j < len(embedGrad.Data); j++ {
     embedGrad.Data[j] += grad.At(j).First()
 }
 
+// Same for shape. Don't forget that currently slices refer to same data
+append([]int{}, t.Shape...), // copying
 
 ### ADR
 - I decided to go without batches. I have Apple M3, not much profit using batches in terms of CPU speed. I'll give up complexity of batches for the sake of better understanding. Transformer's architecture allows me to do so, layer norm works fine without batches.
