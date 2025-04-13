@@ -630,6 +630,12 @@ func (t *Tensor) Add(other *Tensor) *Tensor {
 		result.Data[i] = t.Data[i] + other.Data[i]
 	}
 
+	// + node just propogates gradients
+	result.backward = func() {
+		t.Grad = result.Grad
+		other.Grad = result.Grad
+	}
+
 	return result
 }
 

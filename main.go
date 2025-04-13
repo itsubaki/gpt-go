@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/itsubaki/autograd/variable"
 )
 
@@ -48,9 +50,11 @@ func main() {
 	c := Add(a, b)
 	c.Backward()
 
+	fmt.Printf("%v\n", a.Grad)
+
 	s1 := Scalar(3)
 	s2 := Scalar(5)
-	s3 := s1.Mul(s2)
+	s3 := s1.Add(s2)
 	s3.Backward()
 
 	s1.Grad.Print()
