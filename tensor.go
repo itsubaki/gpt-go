@@ -64,6 +64,7 @@ func NewTensor(shape []int, data []float64) *Tensor {
 	return &Tensor{
 		Shape:    shape,
 		Data:     data,
+		Grad:     Zeros(shape...),
 		backward: func() {},
 	}
 }
@@ -79,7 +80,10 @@ func Zeros(dims ...int) *Tensor {
 	}
 	data := make([]float64, size)
 
-	return NewTensor(shape, data)
+	return &Tensor{
+		Shape: shape,
+		Data:  data,
+	}
 }
 
 // RandN creates a tensor with normally distributed random values
@@ -220,8 +224,8 @@ func (t *Tensor) Mul(other *Tensor) *Tensor {
 			// Propogate our local gradient times output gradient
 			grad := func() {
 				// Will it also create computation graph?
-				t.Grad = Scalar(other.First()).Mul(result.Grad)
-				other.Grad = Scalar(t.First()).Mul(result.Grad)
+				t.Grad.Add(Scalar(other.First()).Mul(result.Grad))
+				other.Grad.Add(Scalar(t.First()).Mul(result.Grad))
 			}
 			result.backward = grad
 
@@ -620,10 +624,10 @@ func (t *Tensor) Add(other *Tensor) *Tensor {
 	}
 
 	// Create a new tensor to store the result
-	result := &Tensor{
-		Shape: append([]int{}, t.Shape...),
-		Data:  make([]float64, len(t.Data)),
-	}
+	result := NewTensor(
+		append([]int{}, t.Shape...),
+		make([]float64, len(t.Data)),
+	)
 
 	// Add element-wise
 	for i := 0; i < len(t.Data); i++ {
@@ -632,8 +636,8 @@ func (t *Tensor) Add(other *Tensor) *Tensor {
 
 	// + node just propogates gradients
 	result.backward = func() {
-		t.Grad = result.Grad
-		other.Grad = result.Grad
+		t.Grad.Add(result.Grad)
+		other.Grad.Add(result.Grad)
 	}
 
 	return result
