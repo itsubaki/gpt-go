@@ -64,62 +64,35 @@ func main() {
 	inputs, targets := GetSequence(data.Data, len(data.Data)-1)
 
 	// Main training loop
-	//lossSum := 0.0
+	lossSum := 0.0
 	for i := 0; i < len(inputs.Data[0]); i++ {
 		// Forward pass
 		input := inputs.Data[0][i]
 		target := targets.Data[0][i]
 
-		logits := lmHead.Forward(embeds[int(input)])
+		embed := embeds[int(input)]
+		logits := lmHead.Forward(embed)
 
 		// Backward pass
 		loss := CrossEntropy(logits, variable.New(target))
 		lmHead.ZeroGrad()
 		loss.Backward()
-		fmt.Println(loss)
+		lossSum += loss.Data[0][0]
 
-		// Update weights
-		lmHead.Weight = variable.NewOf(matrix.F2(lmHead.Weight.Data, lmHead.WeightGrad.Data, sgd)...)
+		if (i%batchSize) == 0 && i != 0 {
+			// Update weights
+			lmHead.Weight = variable.NewOf(matrix.F2(lmHead.Weight.Data, lmHead.WeightGrad.Data, sgd)...)
+			lmHead.Bias = variable.NewOf(matrix.F2(lmHead.Bias.Data, lmHead.BiasGrad.Data, sgd)...)
+			embeds[int(input)] = variable.NewOf(matrix.F2(embed.Data, embed.Grad.Data, sgd)...)
+
+			if (i % (batchSize * 1000)) == 0 {
+				fmt.Printf("Loss: %f\n", lossSum/float64(batchSize))
+			}
+
+			lossSum = 0.0
+			lmHead.ZeroGrad()
+		}
 	}
-
-	//
-	//	// Calculate gradient for embed
-	//	grad := gradOutput.Mul(lmHead.Weight.T())
-	//	embedGrad := embedsGrad.At(int(input))
-	//	grad = embedGrad.Add(grad)
-	//	for j := 0; j < len(embedGrad.Data); j++ {
-	//		embedGrad.Data[j] += grad.At(j).First()
-	//	}
-	//
-	//	// Loss calculation
-	//	lossSum += CrossEntropyLoss(logits, target)
-	//
-	//	// We only update weights once in a while.
-	//	// Kinda "emulating" batches
-	//	if (i % batchSize) == 0 {
-	//		// Update weights
-	//		for j := 0; j < len(lmHead.Weight.Data); j++ {
-	//			lmHead.Weight.Data[j] -= learningRate * lmHead.WeightGrad.Data[j]
-	//		}
-	//
-	//		// Update bias
-	//		for j := 0; j < len(lmHead.Bias.Data); j++ {
-	//			lmHead.Bias.Data[j] -= learningRate * lmHead.BiasGrad.Data[j]
-	//		}
-	//
-	//		// Update embeds
-	//		for j := 0; j < len(embeds.Data); j++ {
-	//			embeds.Data[j] -= learningRate * embedsGrad.Data[j]
-	//		}
-	//
-	//		if (i % (batchSize * 1000)) == 0 {
-	//			fmt.Printf("Loss: %f\n", lossSum/float64(batchSize))
-	//		}
-	//
-	//		lossSum = 0.0
-	//		lmHead.ZeroGrad()
-	//		embedsGrad = Zeros(vocabSize, embedSize)
-	//	}
 	//}
 	//
 	//// Generate text

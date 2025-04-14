@@ -79,6 +79,7 @@ func Softmax(tensor *Tensor) *Tensor {
 }
 
 // CrossEntropyLoss computes the cross-entropy loss between logits and targets.
+// THIS is wrong and numerically non-stable implementation
 func CrossEntropyLoss(logits *Tensor, target float64) float64 {
 	normalizedLogits := Softmax(logits)
 	// Compute log likelihood
