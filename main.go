@@ -90,6 +90,7 @@ func main() {
 
 			lossSum = 0.0
 			lmHead.ZeroGrad()
+			embeds[int(input)].Cleargrad()
 		}
 	}
 	//}
