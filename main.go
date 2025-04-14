@@ -11,7 +11,7 @@ import (
 const (
 	blockSize    = 8
 	batchSize    = 16
-	learningRate = 0.01
+	learningRate = 0.005
 	embedSize    = 32
 	epochs       = 1000000
 	headSize     = 16
@@ -44,22 +44,18 @@ var (
 	Min          = variable.Min
 	Clip         = variable.Clip
 	GetItem      = variable.GetItem
+	RandN        = variable.Randn
 	CrossEntropy = function.SoftmaxCrossEntropy
 )
 
 // Embeddings are basically tensors under the hood
 // What if we code-generate files for different tensors/linear layers
 func main() {
-	// Training loop
-	sgd := func(a, b float64) float64 { return a - learningRate*(b) }
+	sgd := func(a, b float64) float64 { return a - (learningRate*(b))/batchSize }
 
 	data, vocabSize := Data()
 
-	embeds := make([]*variable.Variable, vocabSize)
-	for i := range embeds {
-		embeds[i] = variable.Zero(1, embedSize)
-	}
-
+	embeds := RandN(vocabSize, embedSize)
 	lmHead := NewLinear(embedSize, vocabSize)
 
 	// Main training loop
@@ -68,42 +64,38 @@ func main() {
 		// Inputs are indexes for embeds table
 		inputs, targets := GetSequence(data.Data, blockSize)
 
-		for z := 0; z < len(inputs.Data[0]); z++ {
-			// Forward pass
-			input := inputs.Data[0][z]
-			target := targets.Data[0][z]
+		// Forward pass
+		inputEmbeds := variable.Zero(len(inputs.Data[0]), embedSize)
+		for j := range inputEmbeds.Data {
+			inputEmbeds.Data[j] = embeds.Data[int(inputs.Data[0][j])]
+		}
 
-			embed := embeds[int(input)]
-			logits := lmHead.Forward(embed)
+		logits := lmHead.Forward(inputEmbeds)
 
-			// Backward pass
-			loss := CrossEntropy(logits, variable.New(target))
-			loss.Backward()
-			lossSum += loss.Data[0][0]
+		// Backward pass
+		loss := CrossEntropy(logits, targets)
+		loss.Backward()
+		fmt.Println(loss)
+		lossSum += loss.Data[0][0]
 
-			fmt.Println(lmHead.WeightGrad.Data)
+		if (i*len(inputs.Data[0])%batchSize) == 0 && i != 0 {
+			// Update weights
+			lmHead.Weight = variable.NewOf(matrix.F2(lmHead.Weight.Data, lmHead.Weight.Grad.Data, sgd)...)
+			lmHead.Bias = variable.NewOf(matrix.F2(lmHead.Bias.Data, lmHead.Bias.Grad.Data, sgd)...)
+			//for j := range embeds {
+			//	if embeds[j].Grad != nil {
+			//		embeds[j].Grad.Data = matrix.Clip(embeds[j].Grad.Data, -0.5, 0.5)
+			//		embeds[j] = variable.NewOf(matrix.F2(embeds[j].Data, embeds[j].Grad.Data, sgd)...)
+			//		embeds[j].Cleargrad()
+			//	}
+			//}
 
-			if ((i*len(inputs.Data[0])+z)%batchSize) == 0 && i != 0 {
-				// Update weights
-				lmHead.WeightGrad.Data = matrix.Clip(lmHead.WeightGrad.Data, -0.5, 0.5)
-				//lmHead.Bias.Data = matrix.Clip(lmHead.BiasGrad.Data, -0.5, 0.5)
-				lmHead.Weight = variable.NewOf(matrix.F2(lmHead.Weight.Data, lmHead.WeightGrad.Data, sgd)...)
-				//lmHead.Bias = variable.NewOf(matrix.F2(lmHead.Bias.Data, lmHead.BiasGrad.Data, sgd)...)
-				//for j := range embeds {
-				//	if embeds[j].Grad != nil {
-				//		embeds[j].Grad.Data = matrix.Clip(embeds[j].Grad.Data, -0.5, 0.5)
-				//		embeds[j] = variable.NewOf(matrix.F2(embeds[j].Data, embeds[j].Grad.Data, sgd)...)
-				//		embeds[j].Cleargrad()
-				//	}
-				//}
-
-				if ((i*len(inputs.Data[0]) + z) % (1000)) == 0 {
-					fmt.Printf("Loss: %f\n", lossSum/float64(batchSize))
-				}
-
-				lossSum = 0.0
-				lmHead.ZeroGrad()
+			if (i * len(inputs.Data[0]) % (1000)) == 0 {
+				fmt.Printf("Loss: %f\n", lossSum/float64(batchSize))
 			}
+
+			lossSum = 0.0
+			lmHead.ZeroGrad()
 		}
 	}
 	//}

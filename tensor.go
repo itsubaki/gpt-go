@@ -116,7 +116,7 @@ func Ones(dims ...int) *Tensor {
 }
 
 // RandN creates a tensor with normally distributed random values
-func RandN(dims ...int) *Tensor {
+func RandNOld(dims ...int) *Tensor {
 	// TODO remove seed
 
 	shape := make([]int, len(dims))

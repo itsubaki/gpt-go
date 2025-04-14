@@ -6,12 +6,11 @@ import (
 )
 
 type Linear struct {
-	In, Out    int
-	Weight     *variable.Variable
-	WeightGrad *variable.Variable
-	Biased     bool
-	Bias       *variable.Variable
-	BiasGrad   *variable.Variable
+	In, Out  int
+	Weight   *variable.Variable
+	Biased   bool
+	Bias     *variable.Variable
+	BiasGrad *variable.Variable
 }
 
 type LinearOption func(*Linear)
@@ -19,13 +18,11 @@ type LinearOption func(*Linear)
 // TODO rename from new Linear to something other?
 func NewLinear(in, out int, opts ...LinearOption) *Linear {
 	l := &Linear{
-		In:         in,
-		Out:        out,
-		Weight:     variable.Randn(in, out),
-		WeightGrad: variable.Zero(in, out),
-		Biased:     true,
-		Bias:       variable.Zero(1, out),
-		BiasGrad:   variable.Zero(1, out),
+		In:     in,
+		Out:    out,
+		Weight: variable.Randn(in, out),
+		Biased: true,
+		Bias:   variable.Zero(1, out),
 	}
 
 	for _, opt := range opts {
