@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/itsubaki/autograd/function"
+	"github.com/itsubaki/autograd/matrix"
 	"github.com/itsubaki/autograd/variable"
 )
 
@@ -60,6 +61,8 @@ func main() {
 	// Training loop
 	input := variable.New(1, 0, 1)
 	targets := variable.New(1) // Our sum is less than 5, so the output should be 1
+
+	sgd := func(a, b float64) float64 { return a - learningRate*b }
 	for epoch := 0; epoch < 100000; epoch++ {
 		// Forward pass
 		logits := layer.Forward(input)
@@ -69,29 +72,9 @@ func main() {
 		// Backward pass
 		layer.ZeroGrad()
 		loss.Backward()
-		//probs := Softmax(logits)
-		//gradOut1 := probs.At(0).First() - 0
-		//gradOut2 := probs.At(1).First() - 1
-		//gradOutput := Tensor1D(gradOut1, gradOut2)
-		//layer.Backward(input, gradOutput)
-		//
-		// Update weights
 
-		for i := 0; i < len(layer.Weight.Data); i++ {
-			for j := 0; j < len(layer.Weight.Data[i]); j++ {
-				layer.Weight.Data[i][j] -= learningRate * layer.Weight.Grad.Data[i][j]
-			}
-		}
+		layer.Weight.Data = matrix.F2(layer.Weight.Data, layer.Weight.Grad.Data, sgd)
 		fmt.Println(loss.String())
-
-		//for i, _ := range layer.Weight.Data {
-		//	layer.Weight.Data[i] -= learningRate * layer.WeightGrad.Data[i]
-		//}
-
-		//// Update bias
-		//for i, _ := range layer.Bias.Data {
-		//	layer.Bias.Data[i] -= learningRate * layer.BiasGrad.Data[i]
-		//}
 	}
 
 	//s1 := Scalar(3)
