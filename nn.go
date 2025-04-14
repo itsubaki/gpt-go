@@ -21,7 +21,7 @@ func NewLinear(in, out int, opts ...LinearOption) *Linear {
 	l := &Linear{
 		In:         in,
 		Out:        out,
-		Weight:     variable.Rand(in, out),
+		Weight:     variable.Randn(in, out),
 		WeightGrad: variable.Zero(in, out),
 		Biased:     true,
 		Bias:       variable.Zero(1, out),
