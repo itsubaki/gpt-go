@@ -1,6 +1,9 @@
 package main
 
 import (
+	"fmt"
+
+	"github.com/itsubaki/autograd/function"
 	"github.com/itsubaki/autograd/variable"
 )
 
@@ -12,37 +15,85 @@ const (
 )
 
 var (
-	AddC        = variable.AddC
-	Add         = variable.Add
-	SubC        = variable.SubC
-	Sub         = variable.Sub
-	MulC        = variable.MulC
-	Mul         = variable.Mul
-	DivC        = variable.DivC
-	Div         = variable.Div
-	Sin         = variable.Sin
-	Cos         = variable.Cos
-	Tanh        = variable.Tanh
-	Exp         = variable.Exp
-	Log         = variable.Log
-	Pow         = variable.Pow
-	Square      = variable.Square
-	Neg         = variable.Neg
-	Sum         = variable.Sum
-	SumTo       = variable.SumTo
-	BroadcastTo = variable.BroadcastTo
-	Reshape     = variable.Reshape
-	Transpose   = variable.Transpose
-	MatMul      = variable.MatMul
-	Max         = variable.Max
-	Min         = variable.Min
-	Clip        = variable.Clip
-	GetItem     = variable.GetItem
+	AddC         = variable.AddC
+	Add          = variable.Add
+	SubC         = variable.SubC
+	Sub          = variable.Sub
+	MulC         = variable.MulC
+	Mul          = variable.Mul
+	DivC         = variable.DivC
+	Div          = variable.Div
+	Sin          = variable.Sin
+	Cos          = variable.Cos
+	Tanh         = variable.Tanh
+	Exp          = variable.Exp
+	Log          = variable.Log
+	Pow          = variable.Pow
+	Square       = variable.Square
+	Neg          = variable.Neg
+	Sum          = variable.Sum
+	SumTo        = variable.SumTo
+	BroadcastTo  = variable.BroadcastTo
+	Reshape      = variable.Reshape
+	Transpose    = variable.Transpose
+	MatMul       = variable.MatMul
+	Max          = variable.Max
+	Min          = variable.Min
+	Clip         = variable.Clip
+	GetItem      = variable.GetItem
+	CrossEntropy = function.SoftmaxCrossEntropy
 )
 
 // Embeddings are basically tensors under the hood
 // What if we code-generate files for different tensors/linear layers
 func main() {
+	// I want my nn to capture two outcomes:
+	// 1. Sum of numbers is >= 5
+	// 2. Sum of numbers is < 5
+	layer := NewLinear(3, 2)
+	layer.Weight = T2{
+		{2, 3},
+		{2, 2},
+		{4, 1},
+	}.Var()
+
+	// Training loop
+	input := variable.New(1, 0, 1)
+	targets := variable.New(1) // Our sum is less than 5, so the output should be 1
+	for epoch := 0; epoch < 100000; epoch++ {
+		// Forward pass
+		logits := layer.Forward(input)
+
+		loss := CrossEntropy(logits, targets)
+
+		// Backward pass
+		layer.ZeroGrad()
+		loss.Backward()
+		//probs := Softmax(logits)
+		//gradOut1 := probs.At(0).First() - 0
+		//gradOut2 := probs.At(1).First() - 1
+		//gradOutput := Tensor1D(gradOut1, gradOut2)
+		//layer.Backward(input, gradOutput)
+		//
+		// Update weights
+
+		for i := 0; i < len(layer.Weight.Data); i++ {
+			for j := 0; j < len(layer.Weight.Data[i]); j++ {
+				layer.Weight.Data[i][j] -= learningRate * layer.Weight.Grad.Data[i][j]
+			}
+		}
+		fmt.Println(loss.String())
+
+		//for i, _ := range layer.Weight.Data {
+		//	layer.Weight.Data[i] -= learningRate * layer.WeightGrad.Data[i]
+		//}
+
+		//// Update bias
+		//for i, _ := range layer.Bias.Data {
+		//	layer.Bias.Data[i] -= learningRate * layer.BiasGrad.Data[i]
+		//}
+	}
+
 	//s1 := Scalar(3)
 	//s2 := Scalar(5)
 	//s3 := s1.Add(s2)
@@ -50,8 +101,8 @@ func main() {
 
 	//s1.Grad.Print()
 
-	data, vocabSize := Data()
-	_ = data
+	//data, vocabSize := Data()
+	//_ = data
 
 	//embeds := RandKaiming(vocabSize, embedSize)
 	//embeds := matrix.Randn(vocabSize, embedSize)

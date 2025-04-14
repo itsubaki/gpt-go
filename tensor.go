@@ -5,6 +5,7 @@ import (
 	"math"
 	"math/rand"
 
+	"github.com/itsubaki/autograd/variable"
 	"gonum.org/v1/gonum/stat/distuv"
 )
 
@@ -58,6 +59,10 @@ func (t2 T2) Tensor() *Tensor {
 		Shape: shape,
 		Data:  data,
 	}
+}
+
+func (t2 T2) Var() *variable.Variable {
+	return variable.NewOf(t2...)
 }
 
 func NewTensor(shape []int, data []float64) *Tensor {

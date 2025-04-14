@@ -49,7 +49,7 @@ func NoBias() LinearOption {
 // Returns logits and loss
 // TODO add guards
 func (l *Linear) Forward(input *variable.Variable) *variable.Variable {
-	logits := Mul(input, l.Weight)
+	logits := MatMul(input, l.Weight)
 
 	if l.Biased {
 		logits = Add(logits, l.Bias)
@@ -97,6 +97,6 @@ func (l *Linear) Backward(input *Tensor, gradOutput *Tensor) *Tensor {
 }
 
 func (l *Linear) ZeroGrad() {
-	l.WeightGrad = variable.ZeroLike(l.Weight)
-	l.BiasGrad = variable.ZeroLike(l.BiasGrad)
+	l.Weight.Cleargrad()
+	l.Bias.Cleargrad()
 }
