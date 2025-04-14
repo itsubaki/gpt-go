@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/itsubaki/autograd/variable"
 )
 
@@ -45,27 +43,22 @@ var (
 // Embeddings are basically tensors under the hood
 // What if we code-generate files for different tensors/linear layers
 func main() {
-	a := variable.New(3)
-	b := variable.New(5)
-	c := Add(a, b)
-	c.Backward()
+	//s1 := Scalar(3)
+	//s2 := Scalar(5)
+	//s3 := s1.Add(s2)
+	//s3.Backward()
 
-	fmt.Printf("%v\n", a.Grad)
+	//s1.Grad.Print()
 
-	s1 := Scalar(3)
-	s2 := Scalar(5)
-	s3 := s1.Add(s2)
-	s3.Backward()
+	data, vocabSize := Data()
+	_ = data
 
-	s1.Grad.Print()
-
-	//data, vocabSize := Data()
-	//
 	//embeds := RandKaiming(vocabSize, embedSize)
+	//embeds := matrix.Randn(vocabSize, embedSize)
 	//embedsGrad := Zeros(vocabSize, embedSize)
-	//
+
 	//lmHead := NewLinear(embedSize, vocabSize)
-	//
+
 	//// It's not really batch, both inputs and targets are vectors.
 	//// We don't use batches
 	//// Inputs are indexes for embeds table

@@ -1,13 +1,17 @@
 // Add embeddings
 package main
 
+import (
+	"github.com/itsubaki/autograd/variable"
+)
+
 type Linear struct {
 	In, Out    int
-	Weight     *Tensor
-	WeightGrad *Tensor
+	Weight     *variable.Variable
+	WeightGrad *variable.Variable
 	Biased     bool
-	Bias       *Tensor
-	BiasGrad   *Tensor
+	Bias       *variable.Variable
+	BiasGrad   *variable.Variable
 }
 
 type LinearOption func(*Linear)
@@ -17,11 +21,11 @@ func NewLinear(in, out int, opts ...LinearOption) *Linear {
 	l := &Linear{
 		In:         in,
 		Out:        out,
-		Weight:     RandN(in, out),
-		WeightGrad: Zeros(in, out),
+		Weight:     variable.Rand(in, out),
+		WeightGrad: variable.Zero(in, out),
 		Biased:     true,
-		Bias:       Zeros(out),
-		BiasGrad:   Zeros(out),
+		Bias:       variable.Zero(1, out),
+		BiasGrad:   variable.Zero(1, out),
 	}
 
 	for _, opt := range opts {
@@ -44,11 +48,11 @@ func NoBias() LinearOption {
 // Targets parameter is used in learning.
 // Returns logits and loss
 // TODO add guards
-func (l *Linear) Forward(input *Tensor) *Tensor {
-	logits := input.Mul(l.Weight)
+func (l *Linear) Forward(input *variable.Variable) *variable.Variable {
+	logits := Mul(input, l.Weight)
 
 	if l.Biased {
-		logits.Add(l.Bias)
+		logits = Add(logits, l.Bias)
 	}
 
 	return logits
@@ -65,33 +69,34 @@ func (l *Linear) Forward(input *Tensor) *Tensor {
 // dL/dw = x * dL/dy
 // dL/db = dL/dy (addition just continues gradient, it flows)
 func (l *Linear) Backward(input *Tensor, gradOutput *Tensor) *Tensor {
-	// Calculate the gradients for this example
-	// TODO simplify this
-	// TODO don't calc bias for non-biased layers
-	weightsGradForExample := input.T().Mul(gradOutput)
-	biasGradForExample := gradOutput
-
-	// Accumulate gradients instead of overwriting
-	// TODO tensor.add?
-	if l.WeightGrad == nil {
-		l.WeightGrad = weightsGradForExample
-		l.BiasGrad = biasGradForExample
-	} else {
-		for i := 0; i < len(l.WeightGrad.Data); i++ {
-			l.WeightGrad.Data[i] += weightsGradForExample.Data[i]
-		}
-
-		for i := 0; i < len(l.BiasGrad.Data); i++ {
-			l.BiasGrad.Data[i] += biasGradForExample.Data[i]
-		}
-	}
-
-	inputGrad := gradOutput.Mul(l.Weight.T())
-
-	return inputGrad
+	return nil
+	//// Calculate the gradients for this example
+	//// TODO simplify this
+	//// TODO don't calc bias for non-biased layers
+	//weightsGradForExample := input.T().Mul(gradOutput)
+	//biasGradForExample := gradOutput
+	//
+	//// Accumulate gradients instead of overwriting
+	//// TODO tensor.add?
+	//if l.WeightGrad == nil {
+	//	l.WeightGrad = weightsGradForExample
+	//	l.BiasGrad = biasGradForExample
+	//} else {
+	//	for i := 0; i < len(l.WeightGrad.Data); i++ {
+	//		l.WeightGrad.Data[i] += weightsGradForExample.Data[i]
+	//	}
+	//
+	//	for i := 0; i < len(l.BiasGrad.Data); i++ {
+	//		l.BiasGrad.Data[i] += biasGradForExample.Data[i]
+	//	}
+	//}
+	//
+	//inputGrad := gradOutput.Mul(l.Weight.T())
+	//
+	//return inputGrad
 }
 
 func (l *Linear) ZeroGrad() {
-	l.WeightGrad = Zeros(l.Out, l.In)
-	l.BiasGrad = Zeros(l.Out)
+	l.WeightGrad = variable.ZeroLike(l.Weight)
+	l.BiasGrad = variable.ZeroLike(l.BiasGrad)
 }
