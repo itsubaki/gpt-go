@@ -75,7 +75,6 @@ func main() {
 
 		// Backward pass
 		loss := CrossEntropy(logits, variable.New(target))
-		lmHead.ZeroGrad()
 		loss.Backward()
 		lossSum += loss.Data[0][0]
 
