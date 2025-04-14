@@ -5,6 +5,8 @@ import (
 	"math/rand"
 	"os"
 	"sort"
+
+	"github.com/itsubaki/autograd/variable"
 )
 
 func Data() (*Tensor, int) {
@@ -68,32 +70,27 @@ func VocabSize() int {
 
 // Batch creates training batches from encoded Data
 // Returns inputs and targets
-func Batch(data []float64, batchSize, blockSize int) (*Tensor, *Tensor) {
-	// Create random indices
+func GetSequence(data []float64, blockSize int) (*variable.Variable, *variable.Variable) {
+	// Check if we have enough data
 	dataLen := len(data) - blockSize
 	if dataLen <= 0 {
 		panic("Not enough Data for the given block size")
 	}
 
-	// Create xb and yb arrays
-	xb := make([][]float64, batchSize)
-	yb := make([][]float64, batchSize)
+	// Pick a random starting point
+	idx := rand.Intn(dataLen)
 
-	for i := 0; i < batchSize; i++ {
-		// Pick a random starting point
-		idx := rand.Intn(dataLen)
+	// Create x and y arrays (single sequences, no batch dimension)
+	x := make([]float64, blockSize)
+	y := make([]float64, blockSize)
 
-		// Extract block
-		xb[i] = make([]float64, blockSize)
-		yb[i] = make([]float64, blockSize)
-
-		for j := 0; j < blockSize; j++ {
-			xb[i][j] = data[idx+j]
-			yb[i][j] = data[idx+j+1] // target is the next character
-		}
+	for j := 0; j < blockSize; j++ {
+		x[j] = data[idx+j]
+		y[j] = data[idx+j+1] // target is the next character
 	}
 
-	return Tensor2D(xb), Tensor2D(yb)
+	// Convert to tensors (note: using Vector instead of Tensor2D)
+	return variable.New(x...), variable.New(y...)
 }
 
 // InitTextProcessor initializes the static text processor with the given text

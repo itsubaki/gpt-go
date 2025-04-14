@@ -48,80 +48,40 @@ var (
 // Embeddings are basically tensors under the hood
 // What if we code-generate files for different tensors/linear layers
 func main() {
-	// I want my nn to capture two outcomes:
-	// 1. Sum of numbers is >= 5
-	// 2. Sum of numbers is < 5
-	layer := NewLinear(3, 2)
-	layer.Weight = T2{
-		{2, 3},
-		{2, 2},
-		{4, 1},
-	}.Var()
-
 	// Training loop
-	input := variable.New(1, 0, 1)
-	targets := variable.New(1) // Our sum is less than 5, so the output should be 1
-
 	sgd := func(a, b float64) float64 { return a - learningRate*b }
-	for epoch := 0; epoch < 100000; epoch++ {
-		// Forward pass
-		logits := layer.Forward(input)
 
-		loss := CrossEntropy(logits, targets)
+	data, vocabSize := Data()
 
-		// Backward pass
-		layer.ZeroGrad()
-		loss.Backward()
-
-		layer.Weight.Data = matrix.F2(layer.Weight.Data, layer.Weight.Grad.Data, sgd)
-		fmt.Println(loss.String())
+	embeds := make([]*variable.Variable, vocabSize)
+	for i := range embeds {
+		embeds[i] = variable.Randn(1, embedSize)
 	}
 
-	//s1 := Scalar(3)
-	//s2 := Scalar(5)
-	//s3 := s1.Add(s2)
-	//s3.Backward()
+	lmHead := NewLinear(embedSize, vocabSize)
 
-	//s1.Grad.Print()
+	// Inputs are indexes for embeds table
+	inputs, targets := GetSequence(data.Data, len(data.Data)-1)
 
-	//data, vocabSize := Data()
-	//_ = data
-
-	//embeds := RandKaiming(vocabSize, embedSize)
-	//embeds := matrix.Randn(vocabSize, embedSize)
-	//embedsGrad := Zeros(vocabSize, embedSize)
-
-	//lmHead := NewLinear(embedSize, vocabSize)
-
-	//// It's not really batch, both inputs and targets are vectors.
-	//// We don't use batches
-	//// Inputs are indexes for embeds table
-	//inputs, targets := Batch(data.Data, 1, len(data.Data)-1)
-	//inputs, targets = inputs.At(0), targets.At(0)
-	//
-	//// Main training loop
+	// Main training loop
 	//lossSum := 0.0
-	//for i := 0; i < len(inputs.Data); i++ {
-	//	// Forward pass
-	//	input := inputs.At(i).First()
-	//	target := targets.At(i).First()
-	//
-	//	embed := embeds.At(int(input))
-	//	logits := lmHead.Forward(embed)
-	//
-	//	// Backward pass
-	//	lmHead.ZeroGrad()
-	//	probs := Softmax(logits)
-	//	grads := make([]float64, vocabSize)
-	//	for j := 0; j < vocabSize; j++ {
-	//		oneHot := 0.0
-	//		if target == float64(j) {
-	//			oneHot = 1.0
-	//		}
-	//		grads[j] = probs.At(j).First() - oneHot
-	//	}
-	//	gradOutput := Tensor1D(grads...)
-	//	lmHead.Backward(embed, gradOutput)
+	for i := 0; i < len(inputs.Data[0]); i++ {
+		// Forward pass
+		input := inputs.Data[0][i]
+		target := targets.Data[0][i]
+
+		logits := lmHead.Forward(embeds[int(input)])
+
+		// Backward pass
+		loss := CrossEntropy(logits, variable.New(target))
+		lmHead.ZeroGrad()
+		loss.Backward()
+		fmt.Println(loss)
+
+		// Update weights
+		lmHead.Weight = variable.NewOf(matrix.F2(lmHead.Weight.Data, lmHead.WeightGrad.Data, sgd)...)
+	}
+
 	//
 	//	// Calculate gradient for embed
 	//	grad := gradOutput.Mul(lmHead.Weight.T())

@@ -45,9 +45,6 @@ func NoBias() LinearOption {
 }
 
 // Forward computes the output based on the input (forward pass)
-// Targets parameter is used in learning.
-// Returns logits and loss
-// TODO add guards
 func (l *Linear) Forward(input *variable.Variable) *variable.Variable {
 	logits := MatMul(input, l.Weight)
 
