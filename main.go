@@ -13,9 +13,9 @@ import (
 const (
 	blockSize    = 64 // We don't have batches, so we increase blockSize for convergence
 	learningRate = 0.001
-	embedSize    = 64
+	embedSize    = 32
 	numHeads     = 4
-	epochs       = 80000
+	epochs       = 100000
 )
 
 var (
@@ -82,11 +82,11 @@ func main() {
 		// Compute loss
 		loss := CrossEntropy(logits, targets)
 
-		loss.Backward()
-	
 		// Scale the loss to maintain proper gradient magnitudes
-		//scaledLoss := variable.MulC(1.0/float64(accumSteps), loss)
-		//scaledLoss.Backward()
+		scaledLoss := variable.MulC(1.0/float64(accumSteps), loss)
+
+		// Backward pass with scaled loss
+		scaledLoss.Backward()
 
 		// Print original loss (not scaled) for monitoring
 		if (i % 100) == 0 {
