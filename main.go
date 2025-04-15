@@ -11,11 +11,11 @@ import (
 )
 
 const (
-	blockSize    = 8 * 32 // We don't have batches, so we increase blockSize for convergence
+	blockSize    = 64 // We don't have batches, so we increase blockSize for convergence
 	learningRate = 0.001
-	embedSize    = 32
+	embedSize    = 64
 	numHeads     = 4
-	epochs       = 10000
+	epochs       = 80000
 )
 
 var (
@@ -56,33 +56,61 @@ func main() {
 		Beta2: 0.999,
 	}
 
+	// Parameters for gradient accumulation
+	virtualBatchSize := 32 // Target batch size to emulate
+	actualBatchSize := 1   // Current batch size (single sample)
+	accumSteps := virtualBatchSize / actualBatchSize
+	accumCount := 0
+
 	// Main training loop
 	for i := 0; i < epochs; i++ {
+		// Zero gradients only at the start of a virtual batch
+		if accumCount == 0 {
+			params.Cleargrads()
+		}
+
 		// Inputs are indexes for embeds table
 		inputs, targets := GetSequence(data.Data[0], blockSize)
 
 		// Forward pass
 		inputEmbeds := Rows(embeds, inputs.Data[0]...)
-		inputPosEmbeds := Rows(posEmbeds, Arange(blockSize)...)
-		x := Add(inputEmbeds, inputPosEmbeds)
+		input := Add(inputEmbeds, posEmbeds)
 
-		features := mulHead.Forward(x)
+		features := mulHead.Forward(input)
 		logits := lmHead.Forward(features)
 
-		// Backward pass
+		// Compute loss
 		loss := CrossEntropy(logits, targets)
-		loss.Backward()
+
+		// Scale the loss to maintain proper gradient magnitudes
+		scaledLoss := variable.MulC(1.0/float64(accumSteps), loss)
+
+		// Backward pass with scaled loss
+		scaledLoss.Backward()
+
+		// Print original loss (not scaled) for monitoring
 		if (i % 100) == 0 {
 			fmt.Println(loss.Data[0][0])
 		}
 
-		// Update weights
-		optimize.Update(Model{params})
-		params.Cleargrads()
+		// Update accumulation counter
+		accumCount++
+
+		// Only update weights after accumulating gradients from accumSteps samples
+		if accumCount == accumSteps {
+			// Update weights using accumulated gradients
+			optimize.Update(Model{params})
+			// Reset counter
+			accumCount = 0
+		}
 	}
 
+	// Handle case where epochs doesn't divide evenly by accumSteps
+	if accumCount > 0 {
+		optimize.Update(Model{params})
+	}
 	// Generate text
-	context := "Ali"
+	context := "Alibab i"
 	maxTokens := 500
 	contextTokens := Encode(context).Data[0]
 	fmt.Println("\nGenerated text after training:")
@@ -94,8 +122,9 @@ func main() {
 
 		// Get embeddings for all tokens in context
 		inputEmbeds := Rows(embeds, contextTokens...)
+		input := Add(inputEmbeds, posEmbeds)
 
-		features := mulHead.Forward(inputEmbeds)
+		features := mulHead.Forward(input)
 		output := lmHead.Forward(features)
 
 		// We only care about the prediction for the next token, which is the last position
