@@ -58,16 +58,13 @@ func TestCatGradient(t *testing.T) {
 
 	result := Cat(a, b)
 
-	// Create gradient for a 2x4 matrix (result of concatenating a and b along columns)
 	result.Grad = variable.NewOf([]float64{0.1, 0.2, 0.3, 0.4}, []float64{0.5, 0.6, 0.7, 0.8})
 	result.Backward()
 
 	r.NotNil(a.Grad, "Gradient for a should not be nil")
 	r.NotNil(b.Grad, "Gradient for b should not be nil")
 
-	// The gradient for a should be the first 2 columns of the result gradient
 	expectedGradA := [][]float64{{0.1, 0.2}, {0.5, 0.6}}
-	// The gradient for b should be the last 2 columns of the result gradient
 	expectedGradB := [][]float64{{0.3, 0.4}, {0.7, 0.8}}
 
 	r.Equal(expectedGradA, a.Grad.Data, "Incorrect gradient for a")
@@ -112,36 +109,25 @@ func TestCatWithThreeDifferentMatrices(t *testing.T) {
 func TestMatrixMultiplicationWithCat(t *testing.T) {
 	r := require.New(t)
 
-	// Create matrices
 	a := variable.NewOf([]float64{1, 2}, []float64{3, 4})
 	b := variable.NewOf([]float64{5, 6}, []float64{7, 8})
-
-	// Concatenate
 	c := Cat(a, b) // This will be a 2x4 matrix
-
-	// Create a 4x1 matrix to multiply with c
 	d := variable.NewOf([]float64{0.1}, []float64{0.2}, []float64{0.3}, []float64{0.4})
 
-	// Compute c @ d (matrix multiplication)
 	result := variable.MatMul(c, d)
 
-	// The result should be 2x1
 	expected := [][]float64{
-		{4.4}, // First row
-		{6.4}, // Second row
+		{4.4},
+		{6.4},
 	}
 	r.Equal(expected, result.Data, "Matrix multiplication failed")
 
-	// Backpropagate
 	result.Backward()
 
-	// Check gradients
-	// a's gradient should be based on the first two elements of d
 	expectedGradA := [][]float64{
 		{0.1, 0.2},
 		{0.1, 0.2},
 	}
-	// b's gradient should be based on the last two elements of d
 	expectedGradB := [][]float64{
 		{0.3, 0.4},
 		{0.3, 0.4},
