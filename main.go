@@ -18,6 +18,7 @@ const (
 	batchSize    = 32
 	learningRate = 0.001
 	embedSize    = 32
+	headSize     = 16
 	epochs       = 10000
 )
 
@@ -70,6 +71,18 @@ func Tril(m *variable.Variable) *variable.Variable {
 	return result
 }
 
+func MaskedFill(m, mask *variable.Variable, from, to float64) *variable.Variable {
+	data := matrix.F2(m.Data, mask.Data, func(v, mask float64) float64 {
+		if mask == from {
+			return to
+		}
+
+		return from
+	})
+
+	return variable.NewOf(data...)
+}
+
 // Embeddings are basically tensors under the hood
 // What if we code-generate files for different tensors/linear layers
 func main() {
@@ -78,9 +91,17 @@ func main() {
 	T, C := 8, 32
 	x := RandN(T, C)
 	_ = x
-	tril := Tril(OneLike(Zeros(T, T)))
-	fmt.Println(tril)
+
+	key := NewLinear(C, headSize, NoBias())
+	query := NewLinear(C, headSize, NoBias())
+
+	wei := MatMul(key.Forward(x), variable.Transpose(query.Forward(x)))
+	fmt.Println(wei)
 	return
+
+	tril := Tril(OneLike(Zeros(T, T)))
+	wei = MaskedFill(wei, tril, 0, math.Inf(-1))
+	wei = function.Softmax(wei)
 
 	data, vocabSize := Data()
 
