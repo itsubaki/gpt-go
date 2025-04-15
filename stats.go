@@ -4,6 +4,8 @@ package main
 import (
 	"math"
 	"math/rand"
+
+	"github.com/itsubaki/autograd/variable"
 )
 
 // Softmax applies the softmax function to a tensor
@@ -92,14 +94,14 @@ func CrossEntropyLoss(logits *Tensor, target float64) float64 {
 	return loss
 }
 
-func Sample(probs *Tensor) int {
+func Sample(probs *variable.Variable) int {
 	// Get probabilities as slice
 	// Generate random number in [0,1)
 	r := rand.Float64()
 
 	// Find the first index where cumulative probability exceeds r
 	cumulativeProb := 0.0
-	for i, p := range probs.Data {
+	for i, p := range probs.Data[0] {
 		cumulativeProb += p
 		if r < cumulativeProb {
 			return i

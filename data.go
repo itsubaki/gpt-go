@@ -9,7 +9,7 @@ import (
 	"github.com/itsubaki/autograd/variable"
 )
 
-func Data() (*Tensor, int) {
+func Data() (*variable.Variable, int) {
 	rand.Seed(42) // TODO remove
 
 	filePath := "input.txt"
@@ -36,7 +36,7 @@ func Data() (*Tensor, int) {
 	return encodedText, VocabSize()
 }
 
-func Encode(s string) *Tensor {
+func Encode(s string) *variable.Variable {
 	result := make([]float64, 0, len(s))
 	for _, ch := range s {
 		if idx, ok := stoi[ch]; ok {
@@ -44,7 +44,7 @@ func Encode(s string) *Tensor {
 		}
 	}
 
-	return Tensor1D(result...)
+	return variable.New(result...)
 }
 
 func Decode(indices []int) string {

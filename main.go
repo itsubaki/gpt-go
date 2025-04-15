@@ -74,7 +74,7 @@ func main() {
 	// Main training loop
 	for i := 0; i < epochs; i++ {
 		// Inputs are indexes for embeds table
-		inputs, targets := GetSequence(data.Data, blockSize)
+		inputs, targets := GetSequence(data.Data[0], blockSize)
 
 		// Forward pass
 		var indexes []int
@@ -99,19 +99,18 @@ func main() {
 		embeds.Cleargrad()
 		lmHead.ZeroGrad()
 	}
-	//}
-	//
-	//// Generate text
-	//context := "A"
-	//maxTokens := 500
-	//token := int(Encode(context).First())
-	//fmt.Println("\nGenerated text after training:")
-	//for i := 0; i < maxTokens; i++ {
-	//	embed := embeds.At(token)
-	//	output := lmHead.Forward(embed)
-	//	probs := Softmax(output)
-	//	token = Sample(probs)
-	//	decodedToken := Decode([]int{token})
-	//	fmt.Printf(decodedToken)
-	//}
+
+	// Generate text
+	context := "A"
+	maxTokens := 500
+	token := int(Encode(context).Data[0][0])
+	fmt.Println("\nGenerated text after training:")
+	for i := 0; i < maxTokens; i++ {
+		embed := GetItem([]int{token})(embeds)
+		output := lmHead.Forward(embed)
+		probs := function.Softmax(output)
+		token = Sample(probs)
+		decodedToken := Decode([]int{token})
+		fmt.Printf(decodedToken)
+	}
 }
