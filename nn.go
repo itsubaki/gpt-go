@@ -23,7 +23,7 @@ func NewLinear(in, out int, opts ...LinearOption) *Linear {
 	l := &Linear{
 		In:     in,
 		Out:    out,
-		Weight: initw(in, out),
+		Weight: xavier(in, out),
 		Biased: true,
 		Bias:   variable.Zero(1, out),
 	}
@@ -55,7 +55,7 @@ func (l *Linear) Forward(input *variable.Variable) *variable.Variable {
 	return logits
 }
 
-func initw(inSize, outSize int) *variable.Variable {
+func xavier(inSize, outSize int) *variable.Variable {
 	w := matrix.Randn(inSize, outSize)
 	xavier := 1.0 / math.Sqrt(float64(inSize))
 	return variable.NewOf(matrix.MulC(xavier, w)...)

@@ -27,6 +27,7 @@ var (
 	MatMul       = variable.MatMul
 	RandN        = variable.Randn
 	Zeros        = variable.Zero
+	ZeroLike     = variable.ZeroLike
 	OneLike      = variable.OneLike
 	CrossEntropy = function.SoftmaxCrossEntropy
 )
@@ -71,16 +72,18 @@ func Tril(m *variable.Variable) *variable.Variable {
 	return result
 }
 
-func MaskedFill(m, mask *variable.Variable, from, to float64) *variable.Variable {
-	data := matrix.F2(m.Data, mask.Data, func(v, mask float64) float64 {
-		if mask == from {
-			return to
+// The result would be added to computation graph and tied to m
+func MaskedInfFill(m, mask *variable.Variable) *variable.Variable {
+	negInfMaskedData := matrix.F2(m.Data, mask.Data, func(a, b float64) float64 {
+		if b == 0 {
+			return math.Inf(-1)
 		}
 
-		return from
+		return a
 	})
+	mMasked := Add(variable.Mul(m, mask), variable.NewOf(negInfMaskedData...))
 
-	return variable.NewOf(data...)
+	return mMasked
 }
 
 // Embeddings are basically tensors under the hood
@@ -89,19 +92,19 @@ func main() {
 	rand.Seed(42)
 
 	T, C := 8, 32
-	x := RandN(T, C)
+	x := RandKaiming(T, C)
 	_ = x
 
 	key := NewLinear(C, headSize, NoBias())
 	query := NewLinear(C, headSize, NoBias())
 
 	wei := MatMul(key.Forward(x), variable.Transpose(query.Forward(x)))
-	fmt.Println(wei)
-	return
 
 	tril := Tril(OneLike(Zeros(T, T)))
-	wei = MaskedFill(wei, tril, 0, math.Inf(-1))
+	wei = MaskedInfFill(wei, tril)
 	wei = function.Softmax(wei)
+	fmt.Println(wei)
+	return
 
 	data, vocabSize := Data()
 
