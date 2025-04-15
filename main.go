@@ -14,11 +14,12 @@ import (
 )
 
 const (
-	blockSize    = 8 * batchSize
+	blockSize    = 64
 	batchSize    = 32
 	learningRate = 0.001
 	embedSize    = 32
 	headSize     = 32
+	numHeads     = 4
 	epochs       = 10000
 )
 
