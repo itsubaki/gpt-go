@@ -112,24 +112,24 @@ func Sample(probs *variable.Variable) float64 {
 	return float64(len(probs.Data)) - 1
 }
 
-func SampleGreedy(probs *Tensor) int {
+func SampleGreedy(probs *variable.Variable) float64 {
 	// Get the index of the maximum probability
 	maxIndex := 0
-	maxValue := probs.Data[0]
-	for i, p := range probs.Data {
+	maxValue := probs.Data[0][0]
+	for i, p := range probs.Data[0] {
 		if p > maxValue {
 			maxValue = p
 			maxIndex = i
 		}
 	}
-	return maxIndex
+	return float64(maxIndex)
 }
 
 // The higher the temperature, the more random the output, 0.7 is usually default
-func SampleTemp(probs *Tensor, temperature float64) int {
+func SampleTemp(probs *variable.Variable, temperature float64) float64 {
 	// Make a copy of the probabilities to avoid modifying the original
 	adjustedProbs := make([]float64, len(probs.Data))
-	copy(adjustedProbs, probs.Data)
+	copy(adjustedProbs, probs.Data[0])
 
 	// Apply temperature scaling
 	if temperature != 1.0 {
@@ -154,9 +154,9 @@ func SampleTemp(probs *Tensor, temperature float64) int {
 	for i, p := range adjustedProbs {
 		cumulativeProb += p
 		if r < cumulativeProb {
-			return i
+			return float64(i)
 		}
 	}
 
-	return len(adjustedProbs) - 1
+	return float64(len(adjustedProbs) - 1)
 }
