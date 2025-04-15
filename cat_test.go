@@ -16,13 +16,11 @@ func TestCatBasic(t *testing.T) {
 	result := Cat(a, b)
 
 	expected := [][]float64{
-		{1, 2},
-		{3, 4},
-		{5, 6},
-		{7, 8},
+		{1, 2, 5, 6},
+		{3, 4, 7, 8},
 	}
 
-	r.Equal(expected, result.Data, "Cat failed to concatenate correctly")
+	r.Equal(expected, result.Data, "Cat failed to concatenate columns correctly")
 }
 
 func TestCatSingleInput(t *testing.T) {
@@ -38,121 +36,117 @@ func TestCatSingleInput(t *testing.T) {
 func TestCatThreeTensors(t *testing.T) {
 	r := require.New(t)
 
-	a := variable.NewOf([]float64{1, 2})
-	b := variable.NewOf([]float64{3, 4})
-	c := variable.NewOf([]float64{5, 6})
+	a := variable.NewOf([]float64{1, 2}, []float64{3, 4})
+	b := variable.NewOf([]float64{5, 6}, []float64{7, 8})
+	c := variable.NewOf([]float64{9, 10}, []float64{11, 12})
 
 	result := Cat(a, b, c)
 
 	expected := [][]float64{
-		{1, 2},
-		{3, 4},
-		{5, 6},
+		{1, 2, 5, 6, 9, 10},
+		{3, 4, 7, 8, 11, 12},
 	}
 
 	r.Equal(expected, result.Data, "Cat failed to concatenate three tensors")
 }
 
-func TestCatDifferentRowCounts(t *testing.T) {
-	r := require.New(t)
-
-	a := variable.NewOf([]float64{1, 2})                  // 1 row
-	b := variable.NewOf([]float64{3, 4}, []float64{5, 6}) // 2 rows
-
-	result := Cat(a, b)
-
-	expected := [][]float64{
-		{1, 2},
-		{3, 4},
-		{5, 6},
-	}
-
-	r.Equal(expected, result.Data, "Cat failed with different row counts")
-}
-
 func TestCatGradient(t *testing.T) {
 	r := require.New(t)
 
-	a := variable.NewOf([]float64{1, 2})
-	b := variable.NewOf([]float64{3, 4})
+	a := variable.NewOf([]float64{1, 2}, []float64{3, 4})
+	b := variable.NewOf([]float64{5, 6}, []float64{7, 8})
 
 	result := Cat(a, b)
 
-	result.Grad = variable.NewOf([]float64{0.1, 0.2}, []float64{0.3, 0.4})
+	// Create gradient for a 2x4 matrix (result of concatenating a and b along columns)
+	result.Grad = variable.NewOf([]float64{0.1, 0.2, 0.3, 0.4}, []float64{0.5, 0.6, 0.7, 0.8})
 	result.Backward()
 
 	r.NotNil(a.Grad, "Gradient for a should not be nil")
 	r.NotNil(b.Grad, "Gradient for b should not be nil")
 
-	expectedGradA := [][]float64{{0.1, 0.2}}
-	expectedGradB := [][]float64{{0.3, 0.4}}
+	// The gradient for a should be the first 2 columns of the result gradient
+	expectedGradA := [][]float64{{0.1, 0.2}, {0.5, 0.6}}
+	// The gradient for b should be the last 2 columns of the result gradient
+	expectedGradB := [][]float64{{0.3, 0.4}, {0.7, 0.8}}
 
 	r.Equal(expectedGradA, a.Grad.Data, "Incorrect gradient for a")
 	r.Equal(expectedGradB, b.Grad.Data, "Incorrect gradient for b")
 }
 
-func TestCatGradientDifferentRowCounts(t *testing.T) {
+func TestCatWithThreeDifferentMatrices(t *testing.T) {
 	r := require.New(t)
 
-	a := variable.NewOf([]float64{1, 2})                  // 1 row
-	b := variable.NewOf([]float64{3, 4}, []float64{5, 6}) // 2 rows
+	a := variable.NewOf([]float64{1, 2}, []float64{3, 4})
+	b := variable.NewOf([]float64{5, 6}, []float64{7, 8})
+	c := variable.NewOf([]float64{9, 10}, []float64{11, 12})
 
-	result := Cat(a, b)
+	result := Cat(a, b, c)
 
-	result.Grad = variable.NewOf([]float64{0.1, 0.2}, []float64{0.3, 0.4}, []float64{0.5, 0.6})
+	// Set gradient for the 2x6 result
+	result.Grad = variable.NewOf(
+		[]float64{0.1, 0.2, 0.3, 0.4, 0.5, 0.6},
+		[]float64{0.7, 0.8, 0.9, 1.0, 1.1, 1.2},
+	)
 	result.Backward()
 
-	expectedGradA := [][]float64{{0.1, 0.2}}
-	expectedGradB := [][]float64{{0.3, 0.4}, {0.5, 0.6}}
+	// Check gradients
+	expectedGradA := [][]float64{
+		{0.1, 0.2},
+		{0.7, 0.8},
+	}
+	expectedGradB := [][]float64{
+		{0.3, 0.4},
+		{0.9, 1.0},
+	}
+	expectedGradC := [][]float64{
+		{0.5, 0.6},
+		{1.1, 1.2},
+	}
 
 	r.Equal(expectedGradA, a.Grad.Data, "Incorrect gradient for a")
 	r.Equal(expectedGradB, b.Grad.Data, "Incorrect gradient for b")
+	r.Equal(expectedGradC, c.Grad.Data, "Incorrect gradient for c")
 }
 
-func TestCatCyclicComputationalGraph(t *testing.T) {
+func TestMatrixMultiplicationWithCat(t *testing.T) {
 	r := require.New(t)
 
-	// Create input variables
-	a := variable.NewOf([]float64{1, 2})
-	b := variable.NewOf([]float64{3, 4})
+	// Create matrices
+	a := variable.NewOf([]float64{1, 2}, []float64{3, 4})
+	b := variable.NewOf([]float64{5, 6}, []float64{7, 8})
 
-	// Create computation: y = a + cat(a, b)
-	c := Cat(a, b)
-	y := variable.Add(a, c)
+	// Concatenate
+	c := Cat(a, b) // This will be a 2x4 matrix
 
-	// Set gradient
-	y.Backward()
+	// Create a 4x1 matrix to multiply with c
+	d := variable.NewOf([]float64{0.1}, []float64{0.2}, []float64{0.3}, []float64{0.4})
 
-	// a should receive gradient from two paths: directly from a, and through concatenation
-	expectedGradA := [][]float64{{3, 3}}
-	r.Equal(expectedGradA, a.Grad.Data, "Gradient for a should be the sum from both paths")
+	// Compute c @ d (matrix multiplication)
+	result := variable.MatMul(c, d)
 
-	// b should receive gradient only through concatenation
-	expectedGradB := [][]float64{{1, 1}}
-	r.Equal(expectedGradB, b.Grad.Data, "Gradient for b should come only from cat path")
-}
+	// The result should be 2x1
+	expected := [][]float64{
+		{4.4}, // First row
+		{6.4}, // Second row
+	}
+	r.Equal(expected, result.Data, "Matrix multiplication failed")
 
-func TestCatCyclicComputationalGraphWithMul(t *testing.T) {
-	r := require.New(t)
+	// Backpropagate
+	result.Backward()
 
-	// Create input variables
-	a := variable.NewOf([]float64{1, 2})
-	b := variable.NewOf([]float64{3, 4})
+	// Check gradients
+	// a's gradient should be based on the first two elements of d
+	expectedGradA := [][]float64{
+		{0.1, 0.2},
+		{0.1, 0.2},
+	}
+	// b's gradient should be based on the last two elements of d
+	expectedGradB := [][]float64{
+		{0.3, 0.4},
+		{0.3, 0.4},
+	}
 
-	// Create computation: y = a * cat(a, b)
-	c := Cat(a, b)
-	y := MatMul(a, c)
-
-	// Set gradient
-	y.Backward()
-
-	// a should receive gradient from two paths:
-	// 1. Through direct multiplication (gradient = c)
-	// 2. Through being part of cat(a,b) (gradient = a)
-	expectedGradA := [][]float64{{4, 8}} // a gets c as grad (which is [[1,2],[3,4]]) and its first row gets multiplied by a ([1,2])
-	r.Equal(expectedGradA, a.Grad.Data, "Gradient for a should include contributions from both paths")
-
-	// b should receive gradient from being multiplied by a
-	expectedGradB := [][]float64{{2, 2}} // b's rows each get multiplied by a ([1,2])
-	r.Equal(expectedGradB, b.Grad.Data, "Gradient for b should come from multiplication with a")
+	r.Equal(expectedGradA, a.Grad.Data, "Incorrect gradient for a")
+	r.Equal(expectedGradB, b.Grad.Data, "Incorrect gradient for b")
 }

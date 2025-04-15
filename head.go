@@ -7,6 +7,42 @@ import (
 	"github.com/itsubaki/autograd/variable"
 )
 
+type MultiHeadAttention struct {
+	Heads     []*Head
+	numHeads  int
+	embedSize int
+	headSize  int
+}
+
+func NewMultiHeadAttention(numHeads, embedSize, headSize int) *MultiHeadAttention {
+	heads := make([]*Head, numHeads)
+	for i := range heads {
+		heads[i] = NewHead(embedSize, headSize)
+	}
+
+	return &MultiHeadAttention{
+		Heads:     heads,
+		numHeads:  numHeads,
+		embedSize: embedSize,
+		headSize:  headSize,
+	}
+}
+
+func (mh *MultiHeadAttention) Forward(input *variable.Variable) *variable.Variable {
+	var features []*variable.Variable
+	for _, head := range mh.Heads {
+		features = append(features, head.Forward(input))
+	}
+
+	return Cat(features...)
+}
+
+func (mh *MultiHeadAttention) ZeroGrad() {
+	for _, head := range mh.Heads {
+		head.ZeroGrad()
+	}
+}
+
 type Head struct {
 	embedSize int
 	headSize  int

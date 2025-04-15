@@ -71,8 +71,8 @@ func main() {
 		inputPosEmbeds := Rows(posEmbeds, Arange(blockSize)...)
 		x := Add(inputEmbeds, inputPosEmbeds)
 
-		logits := saHead.Forward(x)
-		logits = lmHead.Forward(logits)
+		features := saHead.Forward(x)
+		logits := lmHead.Forward(features)
 
 		// Backward pass
 		loss := CrossEntropy(logits, targets)
