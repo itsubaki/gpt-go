@@ -11,11 +11,11 @@ import (
 )
 
 const (
-	blockSize    = 128 // We don't have batches, so increase blockSize instead for better convergence
+	blockSize    = 8 * 32 // We don't have batches, so we increase blockSize for convergence
 	learningRate = 0.001
-	embedSize    = 64
+	embedSize    = 32
 	numHeads     = 4
-	epochs       = 500
+	epochs       = 10000
 )
 
 var (
@@ -86,6 +86,7 @@ func main() {
 	maxTokens := 500
 	contextTokens := Encode(context).Data[0]
 	fmt.Println("\nGenerated text after training:")
+	fmt.Printf(context)
 	for i := 0; i < maxTokens; i++ {
 		if len(contextTokens) > blockSize {
 			contextTokens = contextTokens[len(contextTokens)-blockSize:]
