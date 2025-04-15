@@ -97,13 +97,17 @@ func main() {
 
 	key := NewLinear(C, headSize, NoBias())
 	query := NewLinear(C, headSize, NoBias())
+	value := NewLinear(C, headSize, NoBias())
 
 	wei := MatMul(key.Forward(x), variable.Transpose(query.Forward(x)))
 
 	tril := Tril(OneLike(Zeros(T, T)))
 	wei = MaskedInfFill(wei, tril)
 	wei = function.Softmax(wei)
-	fmt.Println(wei)
+
+	v := value.Forward(x)
+	out := MatMul(wei, v)
+	fmt.Println(out)
 	return
 
 	data, vocabSize := Data()
