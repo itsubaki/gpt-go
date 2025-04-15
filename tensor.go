@@ -137,7 +137,7 @@ func RandNOld(dims ...int) *Tensor {
 }
 
 // RandKainming creates a tensor with normally distributed random values
-func RandKaiming(dims ...int) *Tensor {
+func RandKaimingOld(dims ...int) *Tensor {
 	// TODO remove seed
 
 	shape := make([]int, len(dims))

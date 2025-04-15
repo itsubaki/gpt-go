@@ -2,19 +2,21 @@ package main
 
 import (
 	"fmt"
+	"math"
+	"math/rand"
 
 	"github.com/itsubaki/autograd/function"
 	"github.com/itsubaki/autograd/matrix"
 	"github.com/itsubaki/autograd/variable"
+	"gonum.org/v1/gonum/stat/distuv"
 )
 
 const (
-	blockSize    = 8
+	blockSize    = 8 * batchSize
 	batchSize    = 16
-	learningRate = 0.005
+	learningRate = 0.02
 	embedSize    = 32
-	epochs       = 1000000
-	headSize     = 16
+	epochs       = 10000
 )
 
 var (
@@ -48,55 +50,54 @@ var (
 	CrossEntropy = function.SoftmaxCrossEntropy
 )
 
+// Add tests
+func RandKaiming(dims ...int) *variable.Variable {
+	sigma := math.Sqrt(2.0 / float64(dims[1]))
+	dist := distuv.Normal{Mu: 0, Sigma: sigma}
+	result := matrix.F(matrix.Zero(dims[0], dims[1]), func(_ float64) float64 { return dist.Rand() })
+
+	return variable.NewOf(result...)
+}
+
 // Embeddings are basically tensors under the hood
 // What if we code-generate files for different tensors/linear layers
 func main() {
-	sgd := func(a, b float64) float64 { return a - (learningRate*(b))/batchSize }
+	rand.Seed(42)
+
+	sgd := func(a, b float64) float64 { return a - (learningRate * (b)) }
 
 	data, vocabSize := Data()
 
-	embeds := RandN(vocabSize, embedSize)
+	embeds := RandKaiming(vocabSize, embedSize)
 	lmHead := NewLinear(embedSize, vocabSize)
 
 	// Main training loop
-	lossSum := 0.0
 	for i := 0; i < epochs; i++ {
 		// Inputs are indexes for embeds table
 		inputs, targets := GetSequence(data.Data, blockSize)
 
 		// Forward pass
-		inputEmbeds := variable.Zero(len(inputs.Data[0]), embedSize)
-		for j := range inputEmbeds.Data {
-			inputEmbeds.Data[j] = embeds.Data[int(inputs.Data[0][j])]
+		var indexes []int
+		for _, index := range inputs.Data[0] {
+			indexes = append(indexes, int(index))
 		}
+		inputEmbeds := GetItem(indexes)(embeds)
 
 		logits := lmHead.Forward(inputEmbeds)
 
 		// Backward pass
 		loss := CrossEntropy(logits, targets)
 		loss.Backward()
-		fmt.Println(loss)
-		lossSum += loss.Data[0][0]
-
-		if (i*len(inputs.Data[0])%batchSize) == 0 && i != 0 {
-			// Update weights
-			lmHead.Weight = variable.NewOf(matrix.F2(lmHead.Weight.Data, lmHead.Weight.Grad.Data, sgd)...)
-			lmHead.Bias = variable.NewOf(matrix.F2(lmHead.Bias.Data, lmHead.Bias.Grad.Data, sgd)...)
-			//for j := range embeds {
-			//	if embeds[j].Grad != nil {
-			//		embeds[j].Grad.Data = matrix.Clip(embeds[j].Grad.Data, -0.5, 0.5)
-			//		embeds[j] = variable.NewOf(matrix.F2(embeds[j].Data, embeds[j].Grad.Data, sgd)...)
-			//		embeds[j].Cleargrad()
-			//	}
-			//}
-
-			if (i * len(inputs.Data[0]) % (1000)) == 0 {
-				fmt.Printf("Loss: %f\n", lossSum/float64(batchSize))
-			}
-
-			lossSum = 0.0
-			lmHead.ZeroGrad()
+		if (i % 100) == 0 {
+			fmt.Println(loss.Data[0][0])
 		}
+
+		// Update weights
+		lmHead.Weight = variable.NewOf(matrix.F2(lmHead.Weight.Data, lmHead.Weight.Grad.Data, sgd)...)
+		lmHead.Bias = variable.NewOf(matrix.F2(lmHead.Bias.Data, lmHead.Bias.Grad.Data, sgd)...)
+		embeds = variable.NewOf(matrix.F2(embeds.Data, embeds.Grad.Data, sgd)...)
+		embeds.Cleargrad()
+		lmHead.ZeroGrad()
 	}
 	//}
 	//

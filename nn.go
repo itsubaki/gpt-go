@@ -2,6 +2,9 @@
 package main
 
 import (
+	"math"
+
+	"github.com/itsubaki/autograd/matrix"
 	"github.com/itsubaki/autograd/variable"
 )
 
@@ -20,7 +23,7 @@ func NewLinear(in, out int, opts ...LinearOption) *Linear {
 	l := &Linear{
 		In:     in,
 		Out:    out,
-		Weight: variable.Randn(in, out),
+		Weight: initw(in, out),
 		Biased: true,
 		Bias:   variable.Zero(1, out),
 	}
@@ -50,6 +53,12 @@ func (l *Linear) Forward(input *variable.Variable) *variable.Variable {
 	}
 
 	return logits
+}
+
+func initw(inSize, outSize int) *variable.Variable {
+	w := matrix.Randn(inSize, outSize)
+	xavier := 1.0 / math.Sqrt(float64(inSize))
+	return variable.NewOf(matrix.MulC(xavier, w)...)
 }
 
 // Backward computes the gradient of the loss with respect to the input (backward pass).
