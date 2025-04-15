@@ -13,8 +13,8 @@ import (
 
 const (
 	blockSize    = 8 * batchSize
-	batchSize    = 16
-	learningRate = 0.02
+	batchSize    = 32
+	learningRate = 0.5
 	embedSize    = 32
 	epochs       = 10000
 )
