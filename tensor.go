@@ -696,7 +696,7 @@ func TrilOld(t *Tensor) *Tensor {
 	return result
 }
 
-// MaskedInfFill replaces elements in tensor where mask == value with fillValue
+// MaskedInfFill replaces elements in tensor where mask == Value with fillValue
 // Example: tensor.MaskedFill(mask, 0, -math.Inf) fills all positions where mask == 0 with negative infinity
 func (t *Tensor) MaskedFill(mask *Tensor, value float64, fillValue float64) *Tensor {
 	// Ensure tensors have the same shape

@@ -10,9 +10,9 @@ import (
 type Head struct {
 	embedSize int
 	headSize  int
-	key       *Linear
-	query     *Linear
-	value     *Linear
+	Key       *Linear
+	Query     *Linear
+	Value     *Linear
 }
 
 // Number of embeds
@@ -26,13 +26,13 @@ func NewHead(embedSize, headSize int) *Head {
 
 func (h *Head) Forward(input *variable.Variable) *variable.Variable {
 	T := len(input.Data)
-	wei := MatMul(h.key.Forward(input), variable.Transpose(h.query.Forward(input)))
+	wei := MatMul(h.Key.Forward(input), variable.Transpose(h.Query.Forward(input)))
 
 	tril := Tril(OneLike(Zeros(T, T)))
 	wei = MaskedInfFill(wei, tril)
 	wei = function.Softmax(wei)
 
-	v := h.value.Forward(input)
+	v := h.Value.Forward(input)
 
 	weightedSum := MatMul(wei, v)
 	normalizedSum := function.MulC(math.Pow(float64(h.embedSize), -0.5), weightedSum)
@@ -41,7 +41,7 @@ func (h *Head) Forward(input *variable.Variable) *variable.Variable {
 }
 
 func (h *Head) ZeroGrad() {
-	h.key.ZeroGrad()
-	h.query.ZeroGrad()
-	h.value.ZeroGrad()
+	h.Key.ZeroGrad()
+	h.Query.ZeroGrad()
+	h.Value.ZeroGrad()
 }

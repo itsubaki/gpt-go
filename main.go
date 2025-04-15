@@ -38,25 +38,21 @@ var (
 func main() {
 	rand.Seed(42)
 
-	T, C := 8, 3
-	x := RandKaiming(T, C)
-
-	head := NewHead(3, 3)
-	logits := head.Forward(x)
-	fmt.Println(logits)
-	fmt.Println(Softmax(logits))
-
-	return
-
 	data, vocabSize := Data()
 
 	embeds := RandKaiming(vocabSize, embedSize)
+	posEmbeds := RandKaiming(blockSize, embedSize)
+	saHead := NewHead(embedSize, embedSize)
 	lmHead := NewLinear(embedSize, vocabSize)
 
 	params := make(layer.Parameters)
+	params.Add("saQuery", saHead.Query.Weight)
+	params.Add("saKey", saHead.Key.Weight)
+	params.Add("saValue", saHead.Value.Weight)
 	params.Add("weights", lmHead.Weight)
 	params.Add("bias", lmHead.Bias)
 	params.Add("embeds", embeds)
+	params.Add("posEmbeds", posEmbeds)
 
 	optimize := optimizer.Adam{
 		Alpha: learningRate,
@@ -71,7 +67,11 @@ func main() {
 
 		// Forward pass
 		inputEmbeds := Rows(embeds, inputs.Data[0]...)
-		logits := lmHead.Forward(inputEmbeds)
+		inputPosEmbeds := Rows(posEmbeds, Arange(blockSize)...)
+		x := Add(inputEmbeds, inputPosEmbeds)
+
+		logits := saHead.Forward(x)
+		logits = lmHead.Forward(logits)
 
 		// Backward pass
 		loss := CrossEntropy(logits, targets)
@@ -88,15 +88,30 @@ func main() {
 	// Generate text
 	context := "A"
 	maxTokens := 500
-	token := Encode(context).Data[0][0]
+	contextTokens := Encode(context).Data[0]
 	fmt.Println("\nGenerated text after training:")
+
 	for i := 0; i < maxTokens; i++ {
-		embed := Rows(embeds, token)
-		output := lmHead.Forward(embed)
-		probs := function.Softmax(output)
-		token = Sample(probs)
-		decodedToken := Decode(token)
+		if len(contextTokens) > blockSize {
+			contextTokens = contextTokens[len(contextTokens)-blockSize:]
+		}
+
+		// Get embeddings for all tokens in context
+		inputEmbeds := Rows(embeds, contextTokens...)
+
+		output := saHead.Forward(inputEmbeds)
+		output = lmHead.Forward(output)
+
+		// We only care about the prediction for the next token, which is the last position
+		lastTokenOutput := variable.GetItem([]int{len(contextTokens) - 1})(output)
+
+		probs := function.Softmax(lastTokenOutput)
+		nextToken := Sample(probs)
+
+		decodedToken := Decode(nextToken)
 		fmt.Printf(decodedToken)
+
+		contextTokens = append(contextTokens, float64(nextToken))
 	}
 }
 
@@ -152,4 +167,23 @@ func MaskedInfFill(m, mask *variable.Variable) *variable.Variable {
 	mMasked := Add(variable.Mul(m, mask), variable.NewOf(negInfMaskedData...))
 
 	return mMasked
+}
+
+// Arange creates a new slice containing a sequence of values from start to end (exclusive) with the given step.
+// If step is not provided, it defaults to 1.
+func Arange(end int) []float64 {
+	step := 1.0
+
+	// Calculate the number of elements
+	n := int(math.Ceil((float64(end)) / step))
+	if n <= 0 {
+		return []float64{}
+	}
+
+	result := make([]float64, n)
+	for i := 0; i < n; i++ {
+		result[i] = float64(i) * step
+	}
+
+	return result
 }
