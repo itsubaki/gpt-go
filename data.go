@@ -68,8 +68,6 @@ func VocabSize() int {
 	return len(chars)
 }
 
-// Batch creates training batches from encoded Data
-// Returns inputs and targets
 func GetSequence(data []float64, blockSize int) (*variable.Variable, *variable.Variable) {
 	// Check if we have enough data
 	dataLen := len(data) - blockSize

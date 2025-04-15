@@ -6,7 +6,9 @@ import (
 	"math/rand"
 
 	"github.com/itsubaki/autograd/function"
+	"github.com/itsubaki/autograd/layer"
 	"github.com/itsubaki/autograd/matrix"
+	"github.com/itsubaki/autograd/optimizer"
 	"github.com/itsubaki/autograd/variable"
 	"gonum.org/v1/gonum/stat/distuv"
 )
@@ -14,7 +16,7 @@ import (
 const (
 	blockSize    = 8 * batchSize
 	batchSize    = 32
-	learningRate = 0.5
+	learningRate = 0.001
 	embedSize    = 32
 	epochs       = 10000
 )
@@ -24,6 +26,14 @@ var (
 	MatMul       = variable.MatMul
 	CrossEntropy = function.SoftmaxCrossEntropy
 )
+
+type Model struct {
+	params layer.Parameters
+}
+
+func (m Model) Params() layer.Parameters {
+	return m.params
+}
 
 func Rows(x *variable.Variable, indexes ...float64) *variable.Variable {
 	var intIndexes []int
@@ -48,12 +58,21 @@ func RandKaiming(dims ...int) *variable.Variable {
 func main() {
 	rand.Seed(42)
 
-	sgd := func(a, b float64) float64 { return a - (learningRate * (b)) }
-
 	data, vocabSize := Data()
 
 	embeds := RandKaiming(vocabSize, embedSize)
 	lmHead := NewLinear(embedSize, vocabSize)
+
+	params := make(layer.Parameters)
+	params.Add("weights", lmHead.Weight)
+	params.Add("bias", lmHead.Bias)
+	params.Add("embeds", embeds)
+
+	optimize := optimizer.Adam{
+		Alpha: learningRate,
+		Beta1: 0.9,
+		Beta2: 0.999,
+	}
 
 	// Main training loop
 	for i := 0; i < epochs; i++ {
@@ -72,11 +91,8 @@ func main() {
 		}
 
 		// Update weights
-		lmHead.Weight = variable.NewOf(matrix.F2(lmHead.Weight.Data, lmHead.Weight.Grad.Data, sgd)...)
-		lmHead.Bias = variable.NewOf(matrix.F2(lmHead.Bias.Data, lmHead.Bias.Grad.Data, sgd)...)
-		embeds = variable.NewOf(matrix.F2(embeds.Data, embeds.Grad.Data, sgd)...)
-		embeds.Cleargrad()
-		lmHead.ZeroGrad()
+		optimize.Update(Model{params})
+		params.Cleargrads()
 	}
 
 	// Generate text
