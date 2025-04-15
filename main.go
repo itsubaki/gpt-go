@@ -82,11 +82,11 @@ func main() {
 		// Compute loss
 		loss := CrossEntropy(logits, targets)
 
+		loss.Backward()
+	
 		// Scale the loss to maintain proper gradient magnitudes
-		scaledLoss := variable.MulC(1.0/float64(accumSteps), loss)
-
-		// Backward pass with scaled loss
-		scaledLoss.Backward()
+		//scaledLoss := variable.MulC(1.0/float64(accumSteps), loss)
+		//scaledLoss.Backward()
 
 		// Print original loss (not scaled) for monitoring
 		if (i % 100) == 0 {
