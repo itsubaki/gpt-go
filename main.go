@@ -22,9 +22,17 @@ const (
 var (
 	Add          = variable.Add
 	MatMul       = variable.MatMul
-	GetItem      = variable.GetItem
 	CrossEntropy = function.SoftmaxCrossEntropy
 )
+
+func Rows(x *variable.Variable, indexes ...float64) *variable.Variable {
+	var intIndexes []int
+	for _, index := range indexes {
+		intIndexes = append(intIndexes, int(index))
+	}
+
+	return (&variable.Function{Forwarder: &variable.GetItemT{Slices: intIndexes}}).First(x)
+}
 
 // Add tests
 func RandKaiming(dims ...int) *variable.Variable {
@@ -53,12 +61,7 @@ func main() {
 		inputs, targets := GetSequence(data.Data[0], blockSize)
 
 		// Forward pass
-		var indexes []int
-		for _, index := range inputs.Data[0] {
-			indexes = append(indexes, int(index))
-		}
-		inputEmbeds := GetItem(indexes)(embeds)
-
+		inputEmbeds := Rows(embeds, inputs.Data[0]...)
 		logits := lmHead.Forward(inputEmbeds)
 
 		// Backward pass
@@ -79,14 +82,14 @@ func main() {
 	// Generate text
 	context := "A"
 	maxTokens := 500
-	token := int(Encode(context).Data[0][0])
+	token := Encode(context).Data[0][0]
 	fmt.Println("\nGenerated text after training:")
 	for i := 0; i < maxTokens; i++ {
-		embed := GetItem([]int{token})(embeds)
+		embed := Rows(embeds, token)
 		output := lmHead.Forward(embed)
 		probs := function.Softmax(output)
 		token = Sample(probs)
-		decodedToken := Decode([]int{token})
+		decodedToken := Decode(token)
 		fmt.Printf(decodedToken)
 	}
 }

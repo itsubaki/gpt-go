@@ -47,10 +47,10 @@ func Encode(s string) *variable.Variable {
 	return variable.New(result...)
 }
 
-func Decode(indices []int) string {
+func Decode(indices ...float64) string {
 	result := make([]rune, 0, len(indices))
 	for _, idx := range indices {
-		if ch, ok := itos[idx]; ok {
+		if ch, ok := itos[int(idx)]; ok {
 			result = append(result, ch)
 		}
 	}

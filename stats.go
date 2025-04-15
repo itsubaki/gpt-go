@@ -94,7 +94,7 @@ func CrossEntropyLoss(logits *Tensor, target float64) float64 {
 	return loss
 }
 
-func Sample(probs *variable.Variable) int {
+func Sample(probs *variable.Variable) float64 {
 	// Get probabilities as slice
 	// Generate random number in [0,1)
 	r := rand.Float64()
@@ -104,12 +104,12 @@ func Sample(probs *variable.Variable) int {
 	for i, p := range probs.Data[0] {
 		cumulativeProb += p
 		if r < cumulativeProb {
-			return i
+			return float64(i)
 		}
 	}
 
 	// Fallback (should rarely happen due to floating point precision)
-	return len(probs.Data) - 1
+	return float64(len(probs.Data)) - 1
 }
 
 func SampleGreedy(probs *Tensor) int {
