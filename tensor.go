@@ -69,13 +69,13 @@ func NewTensor(shape []int, data []float64) *Tensor {
 	return &Tensor{
 		Shape:    shape,
 		Data:     data,
-		Grad:     Zeros(shape...),
+		Grad:     ZerosOld(shape...),
 		backward: func() {},
 	}
 }
 
 // Zeros creates zero-filled tensor
-func Zeros(dims ...int) *Tensor {
+func ZerosOld(dims ...int) *Tensor {
 	shape := make([]int, len(dims))
 	copy(shape, dims)
 
@@ -673,7 +673,7 @@ func (t *Tensor) Add(other *Tensor) *Tensor {
 }
 
 // Tril creates a lower triangular matrix from a tensor
-func Tril(t *Tensor) *Tensor {
+func TrilOld(t *Tensor) *Tensor {
 	// Only works with 2D tensors
 	if len(t.Shape) != 2 {
 		panic("Tril only works with 2D tensors")

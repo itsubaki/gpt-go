@@ -24,6 +24,9 @@ const (
 var (
 	Add          = variable.Add
 	MatMul       = variable.MatMul
+	RandN        = variable.Randn
+	Zeros        = variable.Zero
+	OneLike      = variable.OneLike
 	CrossEntropy = function.SoftmaxCrossEntropy
 )
 
@@ -53,10 +56,31 @@ func RandKaiming(dims ...int) *variable.Variable {
 	return variable.NewOf(result...)
 }
 
+// Only works with 2D tensors
+func Tril(m *variable.Variable) *variable.Variable {
+	result := variable.ZeroLike(m)
+	for i := 0; i < len(m.Data); i++ {
+		for j := 0; j < len(m.Data[i]); j++ {
+			if j <= i {
+				result.Data[i][j] = m.Data[i][j]
+			}
+		}
+	}
+
+	return result
+}
+
 // Embeddings are basically tensors under the hood
 // What if we code-generate files for different tensors/linear layers
 func main() {
 	rand.Seed(42)
+
+	T, C := 8, 32
+	x := RandN(T, C)
+	_ = x
+	tril := Tril(OneLike(Zeros(T, T)))
+	fmt.Println(tril)
+	return
 
 	data, vocabSize := Data()
 
