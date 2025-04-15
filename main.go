@@ -18,7 +18,7 @@ const (
 	batchSize    = 32
 	learningRate = 0.001
 	embedSize    = 32
-	headSize     = 16
+	headSize     = 32
 	epochs       = 10000
 )
 
@@ -29,8 +29,76 @@ var (
 	Zeros        = variable.Zero
 	ZeroLike     = variable.ZeroLike
 	OneLike      = variable.OneLike
+	Softmax      = function.Softmax
 	CrossEntropy = function.SoftmaxCrossEntropy
 )
+
+// Embeddings are basically tensors under the hood
+// What if we code-generate files for different tensors/linear layers
+func main() {
+	rand.Seed(42)
+
+	T, C := 8, 3
+	x := RandKaiming(T, C)
+
+	head := NewHead(3, 3)
+	logits := head.Forward(x)
+	fmt.Println(logits)
+	fmt.Println(Softmax(logits))
+
+	return
+
+	data, vocabSize := Data()
+
+	embeds := RandKaiming(vocabSize, embedSize)
+	lmHead := NewLinear(embedSize, vocabSize)
+
+	params := make(layer.Parameters)
+	params.Add("weights", lmHead.Weight)
+	params.Add("bias", lmHead.Bias)
+	params.Add("embeds", embeds)
+
+	optimize := optimizer.Adam{
+		Alpha: learningRate,
+		Beta1: 0.9,
+		Beta2: 0.999,
+	}
+
+	// Main training loop
+	for i := 0; i < epochs; i++ {
+		// Inputs are indexes for embeds table
+		inputs, targets := GetSequence(data.Data[0], blockSize)
+
+		// Forward pass
+		inputEmbeds := Rows(embeds, inputs.Data[0]...)
+		logits := lmHead.Forward(inputEmbeds)
+
+		// Backward pass
+		loss := CrossEntropy(logits, targets)
+		loss.Backward()
+		if (i % 100) == 0 {
+			fmt.Println(loss.Data[0][0])
+		}
+
+		// Update weights
+		optimize.Update(Model{params})
+		params.Cleargrads()
+	}
+
+	// Generate text
+	context := "A"
+	maxTokens := 500
+	token := Encode(context).Data[0][0]
+	fmt.Println("\nGenerated text after training:")
+	for i := 0; i < maxTokens; i++ {
+		embed := Rows(embeds, token)
+		output := lmHead.Forward(embed)
+		probs := function.Softmax(output)
+		token = Sample(probs)
+		decodedToken := Decode(token)
+		fmt.Printf(decodedToken)
+	}
+}
 
 type Model struct {
 	params layer.Parameters
@@ -84,80 +152,4 @@ func MaskedInfFill(m, mask *variable.Variable) *variable.Variable {
 	mMasked := Add(variable.Mul(m, mask), variable.NewOf(negInfMaskedData...))
 
 	return mMasked
-}
-
-// Embeddings are basically tensors under the hood
-// What if we code-generate files for different tensors/linear layers
-func main() {
-	rand.Seed(42)
-
-	T, C := 8, 32
-	x := RandKaiming(T, C)
-	_ = x
-
-	key := NewLinear(C, headSize, NoBias())
-	query := NewLinear(C, headSize, NoBias())
-	value := NewLinear(C, headSize, NoBias())
-
-	wei := MatMul(key.Forward(x), variable.Transpose(query.Forward(x)))
-
-	tril := Tril(OneLike(Zeros(T, T)))
-	wei = MaskedInfFill(wei, tril)
-	wei = function.Softmax(wei)
-
-	v := value.Forward(x)
-	out := MatMul(wei, v)
-	fmt.Println(out)
-	return
-
-	data, vocabSize := Data()
-
-	embeds := RandKaiming(vocabSize, embedSize)
-	lmHead := NewLinear(embedSize, vocabSize)
-
-	params := make(layer.Parameters)
-	params.Add("weights", lmHead.Weight)
-	params.Add("bias", lmHead.Bias)
-	params.Add("embeds", embeds)
-
-	optimize := optimizer.Adam{
-		Alpha: learningRate,
-		Beta1: 0.9,
-		Beta2: 0.999,
-	}
-
-	// Main training loop
-	for i := 0; i < epochs; i++ {
-		// Inputs are indexes for embeds table
-		inputs, targets := GetSequence(data.Data[0], blockSize)
-
-		// Forward pass
-		inputEmbeds := Rows(embeds, inputs.Data[0]...)
-		logits := lmHead.Forward(inputEmbeds)
-
-		// Backward pass
-		loss := CrossEntropy(logits, targets)
-		loss.Backward()
-		if (i % 100) == 0 {
-			fmt.Println(loss.Data[0][0])
-		}
-
-		// Update weights
-		optimize.Update(Model{params})
-		params.Cleargrads()
-	}
-
-	// Generate text
-	context := "A"
-	maxTokens := 500
-	token := Encode(context).Data[0][0]
-	fmt.Println("\nGenerated text after training:")
-	for i := 0; i < maxTokens; i++ {
-		embed := Rows(embeds, token)
-		output := lmHead.Forward(embed)
-		probs := function.Softmax(output)
-		token = Sample(probs)
-		decodedToken := Decode(token)
-		fmt.Printf(decodedToken)
-	}
 }

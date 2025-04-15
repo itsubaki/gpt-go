@@ -11,7 +11,7 @@ import (
 // Softmax applies the softmax function to a tensor
 // For 1D tensors, it applies softmax to the entire vector
 // For 2D tensors, it applies softmax to each row (dim=-1 in PyTorch)
-func Softmax(tensor *Tensor) *Tensor {
+func SoftmaxOld(tensor *Tensor) *Tensor {
 	// Check dimensions
 	dims := len(tensor.Shape)
 	if dims != 1 && dims != 2 {
@@ -83,7 +83,7 @@ func Softmax(tensor *Tensor) *Tensor {
 // CrossEntropyLoss computes the cross-entropy loss between logits and targets.
 // THIS is wrong and numerically non-stable implementation
 func CrossEntropyLoss(logits *Tensor, target float64) float64 {
-	normalizedLogits := Softmax(logits)
+	normalizedLogits := SoftmaxOld(logits)
 	// Compute log likelihood
 	logitIndex := int(target)
 	rating := math.Log(normalizedLogits.At(logitIndex).First())
