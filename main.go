@@ -14,11 +14,10 @@ import (
 )
 
 const (
-	blockSize    = 64
-	batchSize    = 32
+	blockSize    = 64 // We don't have batches, so increase blockSize instead for better convergence
 	learningRate = 0.001
 	embedSize    = 32
-	headSize     = 32
+	headSize     = 8
 	numHeads     = 4
 	epochs       = 10000
 )
@@ -43,17 +42,17 @@ func main() {
 
 	embeds := RandKaiming(vocabSize, embedSize)
 	posEmbeds := RandKaiming(blockSize, embedSize)
-	saHead := NewHead(embedSize, embedSize)
+	mulHead := NewMultiHeadAttention(numHeads, embedSize, headSize)
 	lmHead := NewLinear(embedSize, vocabSize)
 
 	params := make(layer.Parameters)
-	params.Add("saQuery", saHead.Query.Weight)
-	params.Add("saKey", saHead.Key.Weight)
-	params.Add("saValue", saHead.Value.Weight)
 	params.Add("weights", lmHead.Weight)
 	params.Add("bias", lmHead.Bias)
 	params.Add("embeds", embeds)
 	params.Add("posEmbeds", posEmbeds)
+	for i, param := range mulHead.Params() {
+		params.Add(fmt.Sprintf("%d#mulHead", i), param)
+	}
 
 	optimize := optimizer.Adam{
 		Alpha: learningRate,
@@ -71,7 +70,7 @@ func main() {
 		inputPosEmbeds := Rows(posEmbeds, Arange(blockSize)...)
 		x := Add(inputEmbeds, inputPosEmbeds)
 
-		features := saHead.Forward(x)
+		features := mulHead.Forward(x)
 		logits := lmHead.Forward(features)
 
 		// Backward pass
@@ -91,7 +90,6 @@ func main() {
 	maxTokens := 500
 	contextTokens := Encode(context).Data[0]
 	fmt.Println("\nGenerated text after training:")
-
 	for i := 0; i < maxTokens; i++ {
 		if len(contextTokens) > blockSize {
 			contextTokens = contextTokens[len(contextTokens)-blockSize:]
@@ -100,8 +98,8 @@ func main() {
 		// Get embeddings for all tokens in context
 		inputEmbeds := Rows(embeds, contextTokens...)
 
-		output := saHead.Forward(inputEmbeds)
-		output = lmHead.Forward(output)
+		features := mulHead.Forward(inputEmbeds)
+		output := lmHead.Forward(features)
 
 		// We only care about the prediction for the next token, which is the last position
 		lastTokenOutput := variable.GetItem([]int{len(contextTokens) - 1})(output)
@@ -187,4 +185,8 @@ func Arange(end int) []float64 {
 	}
 
 	return result
+}
+
+func PrintShape(v *variable.Variable) {
+	fmt.Printf("(%d, %d)\n", len(v.Data), len(v.Data[0]))
 }

@@ -4,6 +4,7 @@ import (
 	"math"
 
 	"github.com/itsubaki/autograd/function"
+	"github.com/itsubaki/autograd/layer"
 	"github.com/itsubaki/autograd/variable"
 )
 
@@ -37,6 +38,15 @@ func (mh *MultiHeadAttention) Forward(input *variable.Variable) *variable.Variab
 	return Cat(features...)
 }
 
+func (mh *MultiHeadAttention) Params() []layer.Parameter {
+	var params []layer.Parameter
+	for _, head := range mh.Heads {
+		params = append(params, head.Query.Weight, head.Key.Weight, head.Value.Weight)
+	}
+
+	return params
+}
+
 func (mh *MultiHeadAttention) ZeroGrad() {
 	for _, head := range mh.Heads {
 		head.ZeroGrad()
@@ -53,9 +63,9 @@ type Head struct {
 
 // Number of embeds
 func NewHead(embedSize, headSize int) *Head {
-	key := NewLinear(headSize, headSize, NoBias())
-	query := NewLinear(headSize, headSize, NoBias())
-	value := NewLinear(headSize, headSize, NoBias())
+	key := NewLinear(embedSize, headSize, NoBias())
+	query := NewLinear(embedSize, headSize, NoBias())
+	value := NewLinear(embedSize, headSize, NoBias())
 
 	return &Head{embedSize, headSize, key, query, value}
 }
