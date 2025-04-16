@@ -48,6 +48,7 @@ func (mh *MultiHeadAttention) Params() []layer.Parameter {
 	for _, head := range mh.Heads {
 		params = append(params, head.Query.Weight, head.Key.Weight, head.Value.Weight)
 	}
+	params = append(params, mh.proj.Weight, mh.proj.Bias)
 
 	return params
 }

@@ -10,6 +10,7 @@ type Block struct {
 	headCount int
 	saHead    *MultiHeadAttention
 	ffwd      *Linear
+	ffwdProj  *Linear
 }
 
 func NewBlock(embedSize, numHeads int) *Block {
@@ -18,6 +19,7 @@ func NewBlock(embedSize, numHeads int) *Block {
 		headCount: numHeads,
 		saHead:    NewMultiHeadAttention(embedSize, numHeads),
 		ffwd:      NewLinear(embedSize, embedSize),
+		ffwdProj:  NewLinear(embedSize, embedSize),
 	}
 }
 
@@ -26,7 +28,7 @@ func (b *Block) Forward(input *variable.Variable) *variable.Variable {
 	input = Add(input, b.saHead.Forward(input))         // Encode relationships between positions, (blockSize, embedSize)
 	features := Add(input, ReLU(b.ffwd.Forward(input))) // Learn more complex patterns, which linear projections can't
 
-	return features
+	return b.ffwdProj.Forward(features)
 }
 
 func (b *Block) Params() []layer.Parameter {
@@ -34,8 +36,8 @@ func (b *Block) Params() []layer.Parameter {
 	for _, param := range b.saHead.Params() {
 		params = append(params, param)
 	}
-	params = append(params, b.ffwd.Weight)
-	params = append(params, b.ffwd.Bias)
+	params = append(params, b.ffwd.Weight, b.ffwd.Bias)
+	params = append(params, b.ffwdProj.Weight, b.ffwdProj.Bias)
 
 	return params
 }
