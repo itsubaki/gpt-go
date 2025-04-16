@@ -51,7 +51,7 @@ func main() {
 	params.Add("posEmbeds", posEmbeds)
 	for i, block := range blocks {
 		for j, param := range block.Params() {
-			params.Add(fmt.Sprintf("%d-%j#block", i, j), param)
+			params.Add(fmt.Sprintf("%d-%d#block", i, j), param)
 		}
 	}
 
