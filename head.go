@@ -53,12 +53,6 @@ func (mh *MultiHeadAttention) Params() []layer.Parameter {
 	return params
 }
 
-func (mh *MultiHeadAttention) ZeroGrad() {
-	for _, head := range mh.Heads {
-		head.ZeroGrad()
-	}
-}
-
 type Head struct {
 	embedSize int
 	headSize  int

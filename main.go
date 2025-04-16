@@ -15,7 +15,7 @@ const (
 	embedSize    = 32
 	numHeads     = 4
 	epochs       = 40000
-	learningRate = 0.005
+	learningRate = 0.001
 )
 
 var (
@@ -54,6 +54,11 @@ func main() {
 			params.Add(fmt.Sprintf("%d-%d#block", i, j), param)
 		}
 	}
+	numParams := 0
+	for _, param := range params {
+		numParams += len(param.Data) * len(param.Data[0])
+	}
+	fmt.Printf("%.3fM parameters\n", float64(numParams)/1e6)
 
 	optimize := optimizer.Adam{
 		Alpha: learningRate,
@@ -108,12 +113,14 @@ func main() {
 
 		// Get embeddings for all tokens in context
 		inputEmbeds := Rows(embeds, contextTokens...)
-		input := Add(inputEmbeds, posEmbeds)
-		features := blocks[0].Forward(input)
-		output := lmHead.Forward(features)
+		input := Add(inputEmbeds, posEmbeds) // Add positional embedding, (blockSize, embedSize)
+		for _, block := range blocks {
+			input = block.Forward(input)
+		}
+		logits := lmHead.Forward(input) // Get a list of final logits for the next token
 
 		// We only care about the prediction for the next token, which is the last position
-		lastTokenOutput := variable.GetItem([]int{len(contextTokens) - 1})(output)
+		lastTokenOutput := variable.GetItem([]int{len(contextTokens) - 1})(logits)
 
 		probs := Softmax(lastTokenOutput)
 		nextToken := Sample(probs)
