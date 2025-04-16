@@ -84,6 +84,7 @@ func main() {
 		for _, block := range blocks {
 			input = block.Forward(input)
 		}
+		input = norm.Forward(input)     // Normalize inputs
 		logits := lmHead.Forward(input) // Get a list of final logits for the next token
 
 		// Loss calculation
@@ -116,10 +117,11 @@ func main() {
 
 		// Get embeddings for all tokens in context
 		inputEmbeds := Rows(embeds, contextTokens...)
-		input := Add(inputEmbeds, posEmbeds) // Add positional embedding, (blockSize, embedSize)
+		input := Add(inputEmbeds, posEmbeds)
 		for _, block := range blocks {
 			input = block.Forward(input)
 		}
+		input = norm.Forward(input)
 		logits := lmHead.Forward(input) // Get a list of final logits for the next token
 
 		// We only care about the prediction for the next token, which is the last position
