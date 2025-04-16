@@ -22,10 +22,11 @@ func NewBlock(embedSize, numHeads int) *Block {
 }
 
 func (b *Block) Forward(input *variable.Variable) *variable.Variable {
-	features := b.saHead.Forward(input)           // Encode relationships between positions, (blockSize, embedSize)
-	processedFeatures := b.ffwd.Forward(features) // Learn more complex patterns, which linear projections can't
+	// Skip (Residual) connections. Input is our highway, we allow the gradient to flow back unimpeded
+	input = Add(input, b.saHead.Forward(input))         // Encode relationships between positions, (blockSize, embedSize)
+	features := Add(input, ReLU(b.ffwd.Forward(input))) // Learn more complex patterns, which linear projections can't
 
-	return ReLU(processedFeatures)
+	return features
 }
 
 func (b *Block) Params() []layer.Parameter {

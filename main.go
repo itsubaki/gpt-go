@@ -21,9 +21,7 @@ const (
 var (
 	Add          = variable.Add
 	MatMul       = variable.MatMul
-	RandN        = variable.Randn
 	Zeros        = variable.Zero
-	ZeroLike     = variable.ZeroLike
 	OneLike      = variable.OneLike
 	Softmax      = function.Softmax
 	CrossEntropy = function.SoftmaxCrossEntropy
@@ -40,6 +38,8 @@ func main() {
 	embeds := RandKaiming(vocabSize, embedSize)
 	posEmbeds := RandKaiming(blockSize, embedSize)
 	blocks := []*Block{
+		NewBlock(embedSize, numHeads),
+		NewBlock(embedSize, numHeads),
 		NewBlock(embedSize, numHeads),
 	}
 	lmHead := NewLinear(embedSize, vocabSize)
@@ -73,8 +73,10 @@ func main() {
 		// Forward pass
 		inputEmbeds := Rows(embeds, inputs.Data[0]...) // Get embed for every input token
 		input := Add(inputEmbeds, posEmbeds)           // Add positional embedding, (blockSize, embedSize)
-		features := blocks[0].Forward(input)
-		logits := lmHead.Forward(features) // Get a list of final probabilities for the next token
+		for _, block := range blocks {
+			input = block.Forward(input)
+		}
+		logits := lmHead.Forward(input) // Get a list of final logits for the next token
 
 		// Loss calculation
 		loss := CrossEntropy(logits, targets)
@@ -113,7 +115,7 @@ func main() {
 		// We only care about the prediction for the next token, which is the last position
 		lastTokenOutput := variable.GetItem([]int{len(contextTokens) - 1})(output)
 
-		probs := function.Softmax(lastTokenOutput)
+		probs := Softmax(lastTokenOutput)
 		nextToken := Sample(probs)
 
 		decodedToken := Decode(nextToken)

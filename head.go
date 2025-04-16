@@ -9,10 +9,11 @@ import (
 )
 
 type MultiHeadAttention struct {
-	Heads     []*Head
 	numHeads  int
 	embedSize int
 	headSize  int
+	Heads     []*Head
+	proj      *Linear
 }
 
 func NewMultiHeadAttention(embedSize, numHeads int) *MultiHeadAttention {
@@ -27,6 +28,7 @@ func NewMultiHeadAttention(embedSize, numHeads int) *MultiHeadAttention {
 		numHeads:  numHeads,
 		embedSize: embedSize,
 		headSize:  headSize,
+		proj:      NewLinear(embedSize, embedSize),
 	}
 }
 
@@ -36,7 +38,9 @@ func (mh *MultiHeadAttention) Forward(input *variable.Variable) *variable.Variab
 		features = append(features, head.Forward(input))
 	}
 
-	return Cat(features...)
+	out := Cat(features...)
+
+	return mh.proj.Forward(out) // Project back to (embedSize, embedSize)
 }
 
 func (mh *MultiHeadAttention) Params() []layer.Parameter {
