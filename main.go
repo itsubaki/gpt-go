@@ -11,14 +11,15 @@ import (
 )
 
 const (
-	blockSize    = 64 // We don't have batches, so we increase blockSize for convergence
+	blockSize    = 32 // We don't have batches, so we increase blockSize for convergence
+	batchSize    = 32 // Emulated batch
 	embedSize    = 64
 	numHeads     = 4
 	numLayers    = 4
-	epochs       = 5000
-	learningRate = 0.001
+	epochs       = 22000
+	learningRate = 0.0003
 	evalIters    = 100
-	dropout      = 0.2
+	dropout      = 0.0
 )
 
 var (
@@ -72,10 +73,6 @@ func main() {
 		Beta2: 0.999,
 	}
 
-	// Parameters for gradient accumulation
-	virtualBatchSize := 32 // Target batch size to emulate
-	accumCount := 0
-
 	// Main training loop
 	for i := 0; i < epochs; i++ {
 		// Inputs are indexes for embeds table
@@ -92,19 +89,14 @@ func main() {
 
 		// Loss calculation
 		loss := CrossEntropy(logits, targets)
-		scaledLoss := variable.MulC(1.0/float64(virtualBatchSize), loss)
 		if (i % evalIters) == 0 {
 			fmt.Println(loss.Data[0][0])
 		}
 
 		// Backward pass
-		scaledLoss.Backward()
-		accumCount++
-		if accumCount == virtualBatchSize {
-			optimize.Update(Model{params})
-			accumCount = 0
-			params.Cleargrads()
-		}
+		loss.Backward()
+		optimize.Update(Model{params})
+		params.Cleargrads()
 	}
 
 	// Generate text
