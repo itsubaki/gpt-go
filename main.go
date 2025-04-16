@@ -27,6 +27,7 @@ var (
 	OneLike      = variable.OneLike
 	Softmax      = function.Softmax
 	CrossEntropy = function.SoftmaxCrossEntropy
+	ReLU         = function.ReLU
 )
 
 // Embeddings are basically tensors under the hood
@@ -77,10 +78,9 @@ func main() {
 		inputEmbeds := Rows(embeds, inputs.Data[0]...) // Get embed for every input token
 		input := Add(inputEmbeds, posEmbeds)           // Add positional embedding, (blockSize, embedSize)
 
-		features := mulHead.Forward(input)          // Encode relationships between positions, (blockSize, embedSize)
-		processedFeatures := ffwd.Forward(features) // Learn more complex patterns, which linear projections can't
-		processedFeatures = function.ReLU(processedFeatures)
-		logits := lmHead.Forward(features)
+		features := mulHead.Forward(input)                // Encode relationships between positions, (blockSize, embedSize)
+		processedFeatures := ReLU(ffwd.Forward(features)) // Learn more complex patterns, which linear projections can't
+		logits := lmHead.Forward(processedFeatures)
 
 		// Compute loss
 		loss := CrossEntropy(logits, targets)
