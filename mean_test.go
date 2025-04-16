@@ -21,6 +21,15 @@ func TestMeanBasic(t *testing.T) {
 	r.Equal(expected, result.Data, "Mean failed to calculate correctly")
 }
 
+func TestMeanWithZero(t *testing.T) {
+	r := require.New(t)
+
+	a := variable.NewOf([]float64{1, 0, 1})
+	result := Mean(a)
+
+	r.InDelta(2/3.0, result.Data[0][0], 1e-10)
+}
+
 func TestMeanWithZeros(t *testing.T) {
 	r := require.New(t)
 

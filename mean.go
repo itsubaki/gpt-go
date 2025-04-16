@@ -28,6 +28,7 @@ func (m *MeanT) Forward(x ...*variable.Variable) []*variable.Variable {
 	}
 }
 
+// Derivative of mean(x1, x2) by xn = 1/n
 func (m *MeanT) Backward(gy ...*variable.Variable) []*variable.Variable {
 	g := variable.ZeroLike(m.x)
 	for i := range g.Data {
