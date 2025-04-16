@@ -14,7 +14,7 @@ const (
 	blockSize    = 64 // We don't have batches, so we increase blockSize for convergence
 	embedSize    = 64
 	numHeads     = 4
-	epochs       = 40000
+	epochs       = 5000
 	learningRate = 0.002
 )
 
@@ -32,7 +32,6 @@ var (
 // What if we code-generate files for different tensors/linear layers
 func main() {
 	rand.Seed(42)
-
 	data, vocabSize := Data()
 
 	embeds := RandKaiming(vocabSize, embedSize)
@@ -42,11 +41,10 @@ func main() {
 		NewBlock(embedSize, numHeads),
 		NewBlock(embedSize, numHeads),
 	}
+	norm := NewLayerNorm(embedSize)
 	lmHead := NewLinear(embedSize, vocabSize)
 
 	params := make(layer.Parameters)
-	params.Add("weights", lmHead.Weight)
-	params.Add("bias", lmHead.Bias)
 	params.Add("embeds", embeds)
 	params.Add("posEmbeds", posEmbeds)
 	for i, block := range blocks {
@@ -54,6 +52,11 @@ func main() {
 			params.Add(fmt.Sprintf("%d-%d#block", i, j), param)
 		}
 	}
+	params.Add("normScale", norm.Scale)
+	params.Add("normShift", norm.Shift)
+	params.Add("weights", lmHead.Weight)
+	params.Add("bias", lmHead.Bias)
+
 	numParams := 0
 	for _, param := range params {
 		numParams += len(param.Data) * len(param.Data[0])

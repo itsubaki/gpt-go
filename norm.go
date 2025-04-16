@@ -7,16 +7,16 @@ import (
 )
 
 type LayerNorm struct {
+	Scale *variable.Variable
+	Shift *variable.Variable
 	eps   float64
-	scale *variable.Variable
-	shift *variable.Variable
 }
 
 func NewLayerNorm(dim int) *LayerNorm {
 	return &LayerNorm{
 		eps:   1e-05,
-		scale: OneLike(Zeros(1, dim)),
-		shift: Zeros(1, dim),
+		Scale: OneLike(Zeros(1, dim)),
+		Shift: Zeros(1, dim),
 	}
 }
 
@@ -25,14 +25,14 @@ func (ln *LayerNorm) Forward(x *variable.Variable) *variable.Variable {
 	xmean := Mean(x)
 	xvar := Variance(x)
 	xhat := function.Div(function.Sub(x, xmean), function.Pow(0.5)(Add(xvar, variable.New(ln.eps))))
-	out := function.Add(function.Mul(ln.scale, xhat), ln.shift)
+	out := function.Add(function.Mul(ln.Scale, xhat), ln.Shift)
 
 	return out
 }
 
 func (ln *LayerNorm) Params() []layer.Parameter {
 	return []layer.Parameter{
-		ln.scale,
-		ln.shift,
+		ln.Scale,
+		ln.Shift,
 	}
 }
