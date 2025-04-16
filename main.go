@@ -11,11 +11,14 @@ import (
 )
 
 const (
-	blockSize    = 64 // We don't have batches, so we increase blockSize for convergence
-	embedSize    = 64
-	numHeads     = 4
+	blockSize    = 512 // We don't have batches, so we increase blockSize for convergence
+	embedSize    = 384
+	numHeads     = 6
+	numLayers    = 6
 	epochs       = 5000
-	learningRate = 0.002
+	learningRate = 0.001
+	evalIters    = 100
+	dropout      = 0.2
 )
 
 var (
@@ -36,10 +39,9 @@ func main() {
 
 	embeds := RandKaiming(vocabSize, embedSize)
 	posEmbeds := RandKaiming(blockSize, embedSize)
-	blocks := []*Block{
-		NewBlock(embedSize, numHeads),
-		NewBlock(embedSize, numHeads),
-		NewBlock(embedSize, numHeads),
+	var blocks []*Block
+	for range numLayers {
+		blocks = append(blocks, NewBlock(embedSize, numHeads))
 	}
 	norm := NewLayerNorm(embedSize)
 	lmHead := NewLinear(embedSize, vocabSize)
@@ -90,7 +92,7 @@ func main() {
 		// Loss calculation
 		loss := CrossEntropy(logits, targets)
 		scaledLoss := variable.MulC(1.0/float64(virtualBatchSize), loss)
-		if (i % 100) == 0 {
+		if (i % evalIters) == 0 {
 			fmt.Println(loss.Data[0][0])
 		}
 
