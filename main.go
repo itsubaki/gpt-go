@@ -12,10 +12,10 @@ import (
 
 const (
 	blockSize    = 64 // We don't have batches, so we increase blockSize for convergence
-	learningRate = 0.005
-	embedSize    = 32
+	embedSize    = 64
 	numHeads     = 4
-	epochs       = 40000
+	epochs       = 10000
+	learningRate = 0.005
 )
 
 var (
@@ -39,20 +39,21 @@ func main() {
 
 	embeds := RandKaiming(vocabSize, embedSize)
 	posEmbeds := RandKaiming(blockSize, embedSize)
-	mulHead := NewMultiHeadAttention(numHeads, embedSize, embedSize/numHeads)
+	blocks := []*Block{
+		NewBlock(embedSize, numHeads),
+	}
 	lmHead := NewLinear(embedSize, vocabSize)
-	ffwd := NewLinear(embedSize, embedSize)
 
 	params := make(layer.Parameters)
 	params.Add("weights", lmHead.Weight)
 	params.Add("bias", lmHead.Bias)
 	params.Add("embeds", embeds)
 	params.Add("posEmbeds", posEmbeds)
-	for i, param := range mulHead.Params() {
-		params.Add(fmt.Sprintf("%d#mulHead", i), param)
+	for i, block := range blocks {
+		for j, param := range block.Params() {
+			params.Add(fmt.Sprintf("%d-%j#block", i, j), param)
+		}
 	}
-	params.Add("ffwdWeight", ffwd.Weight)
-	params.Add("ffwdBias", ffwd.Bias)
 
 	optimize := optimizer.Adam{
 		Alpha: learningRate,
@@ -70,11 +71,10 @@ func main() {
 		inputs, targets := GetSequence(data.Data[0], blockSize)
 
 		// Forward pass
-		inputEmbeds := Rows(embeds, inputs.Data[0]...)    // Get embed for every input token
-		input := Add(inputEmbeds, posEmbeds)              // Add positional embedding, (blockSize, embedSize)
-		features := mulHead.Forward(input)                // Encode relationships between positions, (blockSize, embedSize)
-		processedFeatures := ReLU(ffwd.Forward(features)) // Learn more complex patterns, which linear projections can't
-		logits := lmHead.Forward(processedFeatures)       // Get a list of final probabilities for the next token
+		inputEmbeds := Rows(embeds, inputs.Data[0]...) // Get embed for every input token
+		input := Add(inputEmbeds, posEmbeds)           // Add positional embedding, (blockSize, embedSize)
+		features := blocks[0].Forward(input)
+		logits := lmHead.Forward(features) // Get a list of final probabilities for the next token
 
 		// Loss calculation
 		loss := CrossEntropy(logits, targets)
@@ -107,9 +107,8 @@ func main() {
 		// Get embeddings for all tokens in context
 		inputEmbeds := Rows(embeds, contextTokens...)
 		input := Add(inputEmbeds, posEmbeds)
-		features := mulHead.Forward(input)
-		processedFeatures := ffwd.Forward(features)
-		output := lmHead.Forward(processedFeatures)
+		features := blocks[0].Forward(input)
+		output := lmHead.Forward(features)
 
 		// We only care about the prediction for the next token, which is the last position
 		lastTokenOutput := variable.GetItem([]int{len(contextTokens) - 1})(output)

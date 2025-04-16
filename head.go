@@ -15,8 +15,9 @@ type MultiHeadAttention struct {
 	headSize  int
 }
 
-func NewMultiHeadAttention(numHeads, embedSize, headSize int) *MultiHeadAttention {
+func NewMultiHeadAttention(embedSize, numHeads int) *MultiHeadAttention {
 	heads := make([]*Head, numHeads)
+	headSize := embedSize / numHeads
 	for i := range heads {
 		heads[i] = NewHead(embedSize, headSize)
 	}
