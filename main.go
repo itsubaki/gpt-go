@@ -11,8 +11,8 @@ import (
 )
 
 const (
-	blockSize    = 32 // We don't have batches, so we increase blockSize for convergence, with 64 we have good convergence
-	learningRate = 0.001
+	blockSize    = 64 // We don't have batches, so we increase blockSize for convergence
+	learningRate = 0.005
 	embedSize    = 32
 	numHeads     = 4
 	epochs       = 40000
@@ -51,6 +51,8 @@ func main() {
 	for i, param := range mulHead.Params() {
 		params.Add(fmt.Sprintf("%d#mulHead", i), param)
 	}
+	params.Add("ffwdWeight", ffwd.Weight)
+	params.Add("ffwdBias", ffwd.Bias)
 
 	optimize := optimizer.Adam{
 		Alpha: learningRate,
@@ -72,7 +74,7 @@ func main() {
 		input := Add(inputEmbeds, posEmbeds)              // Add positional embedding, (blockSize, embedSize)
 		features := mulHead.Forward(input)                // Encode relationships between positions, (blockSize, embedSize)
 		processedFeatures := ReLU(ffwd.Forward(features)) // Learn more complex patterns, which linear projections can't
-		logits := lmHead.Forward(processedFeatures)
+		logits := lmHead.Forward(processedFeatures)       // Get a list of final probabilities for the next token
 
 		// Loss calculation
 		loss := CrossEntropy(logits, targets)
@@ -105,7 +107,6 @@ func main() {
 		// Get embeddings for all tokens in context
 		inputEmbeds := Rows(embeds, contextTokens...)
 		input := Add(inputEmbeds, posEmbeds)
-
 		features := mulHead.Forward(input)
 		processedFeatures := ffwd.Forward(features)
 		output := lmHead.Forward(processedFeatures)
