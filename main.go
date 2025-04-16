@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"math/rand"
 
 	"github.com/itsubaki/autograd/function"
@@ -16,8 +17,8 @@ const (
 	embedSize    = 64
 	numHeads     = 4
 	numLayers    = 4
-	epochs       = 22000
-	learningRate = 0.0003
+	epochs       = 80000
+	learningRate = 0.003
 	evalIters    = 100
 	dropout      = 0.0
 )
@@ -89,12 +90,14 @@ func main() {
 
 		// Loss calculation
 		loss := CrossEntropy(logits, targets)
+		//scaledLoss := variable.MulC(1.0/float64(batchSize), loss)
 		if (i % evalIters) == 0 {
 			fmt.Println(loss.Data[0][0])
 		}
 
 		// Backward pass
 		loss.Backward()
+		//ClipGradByNorm(0.3, params)
 		optimize.Update(Model{params})
 		params.Cleargrads()
 	}
@@ -130,5 +133,33 @@ func main() {
 		fmt.Printf(decodedToken)
 
 		contextTokens = append(contextTokens, nextToken)
+	}
+}
+
+// 2. Add gradient clipping
+func ClipGradByNorm(maxNorm float64, p layer.Parameters) {
+	for _, param := range p {
+		if param.Grad == nil {
+			continue
+		}
+
+		// Calculate gradient norm
+		gradNormSquared := 0.0
+		for i := range param.Grad.Data {
+			for j := range param.Grad.Data[i] {
+				gradNormSquared += param.Grad.Data[i][j] * param.Grad.Data[i][j]
+			}
+		}
+		gradNorm := math.Sqrt(gradNormSquared)
+
+		// Clip if needed
+		if gradNorm > maxNorm {
+			scale := maxNorm / gradNorm
+			for i := range param.Grad.Data {
+				for j := range param.Grad.Data[i] {
+					param.Grad.Data[i][j] *= scale
+				}
+			}
+		}
 	}
 }
