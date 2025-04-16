@@ -11,8 +11,8 @@ import (
 )
 
 const (
-	blockSize    = 64 // We don't have batches, so we increase blockSize for convergence
-	learningRate = 0.005
+	blockSize    = 32 // We don't have batches, so we increase blockSize for convergence, with 64 we have good convergence
+	learningRate = 0.001
 	embedSize    = 32
 	numHeads     = 4
 	epochs       = 40000
@@ -60,8 +60,6 @@ func main() {
 
 	// Parameters for gradient accumulation
 	virtualBatchSize := 32 // Target batch size to emulate
-	actualBatchSize := 1   // Current batch size (single sample)
-	accumSteps := virtualBatchSize / actualBatchSize
 	accumCount := 0
 
 	// Main training loop
@@ -75,43 +73,28 @@ func main() {
 		inputs, targets := GetSequence(data.Data[0], blockSize)
 
 		// Forward pass
-		inputEmbeds := Rows(embeds, inputs.Data[0]...) // Get embed for every input token
-		input := Add(inputEmbeds, posEmbeds)           // Add positional embedding, (blockSize, embedSize)
-
+		inputEmbeds := Rows(embeds, inputs.Data[0]...)    // Get embed for every input token
+		input := Add(inputEmbeds, posEmbeds)              // Add positional embedding, (blockSize, embedSize)
 		features := mulHead.Forward(input)                // Encode relationships between positions, (blockSize, embedSize)
 		processedFeatures := ReLU(ffwd.Forward(features)) // Learn more complex patterns, which linear projections can't
 		logits := lmHead.Forward(processedFeatures)
 
-		// Compute loss
+		// Loss calculation
 		loss := CrossEntropy(logits, targets)
-
-		// Scale the loss to maintain proper gradient magnitudes
-		scaledLoss := variable.MulC(1.0/float64(accumSteps), loss)
-
-		// Backward pass with scaled loss
-		scaledLoss.Backward()
-
-		// Print original loss (not scaled) for monitoring
+		scaledLoss := variable.MulC(1.0/float64(virtualBatchSize), loss)
 		if (i % 100) == 0 {
 			fmt.Println(loss.Data[0][0])
 		}
 
-		// Update accumulation counter
+		// Backward pass
+		scaledLoss.Backward()
 		accumCount++
-
-		// Only update weights after accumulating gradients from accumSteps samples
-		if accumCount == accumSteps {
-			// Update weights using accumulated gradients
+		if accumCount == virtualBatchSize {
 			optimize.Update(Model{params})
-			// Reset counter
 			accumCount = 0
 		}
 	}
 
-	// Handle case where epochs doesn't divide evenly by accumSteps
-	if accumCount > 0 {
-		optimize.Update(Model{params})
-	}
 	// Generate text
 	context := "Alibab i"
 	maxTokens := 500
@@ -128,7 +111,8 @@ func main() {
 		input := Add(inputEmbeds, posEmbeds)
 
 		features := mulHead.Forward(input)
-		output := lmHead.Forward(features)
+		processedFeatures := ffwd.Forward(features)
+		output := lmHead.Forward(processedFeatures)
 
 		// We only care about the prediction for the next token, which is the last position
 		lastTokenOutput := variable.GetItem([]int{len(contextTokens) - 1})(output)
@@ -139,6 +123,6 @@ func main() {
 		decodedToken := Decode(nextToken)
 		fmt.Printf(decodedToken)
 
-		contextTokens = append(contextTokens, float64(nextToken))
+		contextTokens = append(contextTokens, nextToken)
 	}
 }
