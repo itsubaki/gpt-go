@@ -31,6 +31,19 @@ var (
 // Embeddings are basically tensors under the hood
 // What if we code-generate files for different tensors/linear layers
 func main() {
+	x := T2{
+		{4.0, 3.0, 2.0},
+	}.Var()
+	gamma := variable.New(110, -10, 110) //variable.OneLike(Zeros(1, 3))
+	beta := Zeros(1, 3)
+
+	xmean := Mean(x)
+	xvar := Variance(x)
+	xhat := function.Div(function.Sub(x, xmean), function.Pow(0.5)(Add(xvar, variable.New(0.2))))
+	out := function.Add(function.Mul(gamma, xhat), beta)
+	out.Backward()
+	fmt.Println(x.Grad)
+	return
 	rand.Seed(42)
 
 	data, vocabSize := Data()
