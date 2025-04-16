@@ -40,6 +40,7 @@ func main() {
 	posEmbeds := RandKaiming(blockSize, embedSize)
 	mulHead := NewMultiHeadAttention(numHeads, embedSize, embedSize/numHeads)
 	lmHead := NewLinear(embedSize, vocabSize)
+	ffwd := NewLinear(embedSize, embedSize)
 
 	params := make(layer.Parameters)
 	params.Add("weights", lmHead.Weight)
@@ -73,10 +74,12 @@ func main() {
 		inputs, targets := GetSequence(data.Data[0], blockSize)
 
 		// Forward pass
-		inputEmbeds := Rows(embeds, inputs.Data[0]...)
-		input := Add(inputEmbeds, posEmbeds)
+		inputEmbeds := Rows(embeds, inputs.Data[0]...) // Get embed for every input token
+		input := Add(inputEmbeds, posEmbeds)           // Add positional embedding, (blockSize, embedSize)
 
-		features := mulHead.Forward(input)
+		features := mulHead.Forward(input)          // Encode relationships between positions, (blockSize, embedSize)
+		processedFeatures := ffwd.Forward(features) // Learn more complex patterns, which linear projections can't
+		processedFeatures = function.ReLU(processedFeatures)
 		logits := lmHead.Forward(features)
 
 		// Compute loss
