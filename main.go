@@ -29,6 +29,7 @@ var (
 	Softmax      = function.Softmax
 	CrossEntropy = function.SoftmaxCrossEntropy
 	ReLU         = function.ReLU
+	Dropout      = function.DropoutSimple
 )
 
 // Embeddings are basically tensors under the hood
@@ -107,6 +108,7 @@ func main() {
 	}
 
 	// Generate text
+	variable.Config.Train = false // Prevent dropout
 	context := "Alibab i"
 	maxTokens := 500
 	contextTokens := Encode(context).Data[0]

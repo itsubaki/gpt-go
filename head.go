@@ -39,8 +39,10 @@ func (mh *MultiHeadAttention) Forward(input *variable.Variable) *variable.Variab
 	}
 
 	out := Cat(features...)
+	out = mh.proj.Forward(out)  // Project back to (embedSize, embedSize)
+	out = Dropout(dropout)(out) // Dropping out some neurons to prevent overfitting
 
-	return mh.proj.Forward(out) // Project back to (embedSize, embedSize)
+	return out
 }
 
 func (mh *MultiHeadAttention) Params() []layer.Parameter {
@@ -72,14 +74,16 @@ func NewHead(embedSize, headSize int) *Head {
 
 func (h *Head) Forward(input *variable.Variable) *variable.Variable {
 	T := len(input.Data)
-	wei := MatMul(h.Key.Forward(input), variable.Transpose(h.Query.Forward(input)))
+	key := h.Key.Forward(input)
+	query := variable.Transpose(h.Query.Forward(input))
+	wei := MatMul(key, query)
 
 	tril := Tril(OneLike(Zeros(T, T)))
 	wei = MaskedInfFill(wei, tril)
 	wei = function.Softmax(wei)
+	wei = Dropout(dropout)(wei)
 
 	v := h.Value.Forward(input)
-
 	weightedSum := MatMul(wei, v)
 	normalizedSum := function.MulC(math.Pow(float64(h.embedSize), -0.5), weightedSum)
 
