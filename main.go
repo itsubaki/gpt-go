@@ -64,11 +64,6 @@ func main() {
 
 	// Main training loop
 	for i := 0; i < epochs; i++ {
-		// Zero gradients only at the start of a virtual batch
-		if accumCount == 0 {
-			params.Cleargrads()
-		}
-
 		// Inputs are indexes for embeds table
 		inputs, targets := GetSequence(data.Data[0], blockSize)
 
@@ -92,6 +87,7 @@ func main() {
 		if accumCount == virtualBatchSize {
 			optimize.Update(Model{params})
 			accumCount = 0
+			params.Cleargrads()
 		}
 	}
 
