@@ -18,17 +18,23 @@ func NewBlock(embedSize, numHeads int) *Block {
 		embedSize: embedSize,
 		headCount: numHeads,
 		saHead:    NewMultiHeadAttention(embedSize, numHeads),
-		ffwd:      NewLinear(embedSize, embedSize),
-		ffwdProj:  NewLinear(embedSize, embedSize),
+		ffwd:      NewLinear(embedSize, embedSize*4),
+		ffwdProj:  NewLinear(embedSize*4, embedSize),
 	}
 }
 
 func (b *Block) Forward(input *variable.Variable) *variable.Variable {
-	// Skip (Residual) connections. Input is our highway, we allow the gradient to flow back unimpeded
-	input = Add(input, b.saHead.Forward(input))         // Encode relationships between positions, (blockSize, embedSize)
-	features := Add(input, ReLU(b.ffwd.Forward(input))) // Learn more complex patterns, which linear projections can't
+	// Self-attention with residual connections. Input is our highway, we allow the gradient to flow back unimpeded.
+	saOut := b.saHead.Forward(input) // Encode relationships between positions, (blockSize, embedSize)
+	input = Add(input, saOut)        // Add residual attention output back to main path
 
-	return b.ffwdProj.Forward(features)
+	// Feed-forward network with residual connection
+	ffwdExpanded := b.ffwd.Forward(input)           // Expand to higher dimension
+	ffwdActivated := ReLU(ffwdExpanded)             // Apply activation function
+	ffwdOutput := b.ffwdProj.Forward(ffwdActivated) // Project back to original dimension
+	input = Add(input, ffwdOutput)                  // Add feed-forward residual output to main path
+
+	return input
 }
 
 func (b *Block) Params() []layer.Parameter {

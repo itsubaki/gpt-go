@@ -12,7 +12,7 @@ import (
 
 const (
 	blockSize    = 64 // We don't have batches, so we increase blockSize for convergence
-	embedSize    = 64
+	embedSize    = 32
 	numHeads     = 4
 	epochs       = 40000
 	learningRate = 0.005
