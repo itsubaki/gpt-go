@@ -11,10 +11,10 @@ import (
 )
 
 const (
-	blockSize    = 512 // We don't have batches, so we increase blockSize for convergence
-	embedSize    = 384
-	numHeads     = 6
-	numLayers    = 6
+	blockSize    = 64 // We don't have batches, so we increase blockSize for convergence
+	embedSize    = 64
+	numHeads     = 4
+	numLayers    = 4
 	epochs       = 5000
 	learningRate = 0.001
 	evalIters    = 100
