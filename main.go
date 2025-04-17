@@ -2,11 +2,9 @@ package main
 
 import (
 	"fmt"
-	"math"
 	"math/rand"
 
 	"github.com/itsubaki/autograd/function"
-	"github.com/itsubaki/autograd/layer"
 	"github.com/itsubaki/autograd/variable"
 
 	"gptgo/pkg"
@@ -85,13 +83,11 @@ func main() {
 		loss := CrossEntropy(logits, targets)
 		scaledLoss := variable.MulC(lossScale, loss)
 		if (i % evalIters) == 0 {
-			fmt.Printf("%.5f, step: %d\n", loss.Data[0][0], i)
+			fmt.Printf("%.5f, epoch: %d\n", loss.Data[0][0], i)
 		}
 
 		// Backward pass
 		scaledLoss.Backward()
-		//loss.Backward()non
-		//ClipGradByNorm(0.3, params)
 		optimize.Update(params)
 		params.ZeroGrad()
 	}
@@ -127,33 +123,5 @@ func main() {
 		fmt.Printf(decodedToken)
 
 		contextTokens = append(contextTokens, nextToken)
-	}
-}
-
-// 2. Add gradient clipping
-func ClipGradByNorm(maxNorm float64, p layer.Parameters) {
-	for _, param := range p {
-		if param.Grad == nil {
-			continue
-		}
-
-		// Calculate gradient norm
-		gradNormSquared := 0.0
-		for i := range param.Grad.Data {
-			for j := range param.Grad.Data[i] {
-				gradNormSquared += param.Grad.Data[i][j] * param.Grad.Data[i][j]
-			}
-		}
-		gradNorm := math.Sqrt(gradNormSquared)
-
-		// Clip if needed
-		if gradNorm > maxNorm {
-			scale := maxNorm / gradNorm
-			for i := range param.Grad.Data {
-				for j := range param.Grad.Data[i] {
-					param.Grad.Data[i][j] *= scale
-				}
-			}
-		}
 	}
 }
