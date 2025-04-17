@@ -19,10 +19,10 @@ const (
 	numHeads     = 4
 	numLayers    = 4
 	epochs       = 20000
-	learningRate = 0.0001
-	evalIters    = 100
-	dropout      = 0.0
-	batchSize    = 32 // Emulated batch
+	learningRate = 0.001
+	evalIters    = 1000
+	dropout      = 0
+	lossScale    = 0.3
 )
 
 var (
@@ -67,7 +67,7 @@ func main() {
 	}
 
 	// Main training loop
-	fmt.Printf("bs=%d, es=%d, lr=%f, epochs=%d\n", blockSize, embedSize, learningRate, epochs)
+	fmt.Printf("bs=%d, es=%d, lr=%f, ls=%f, epochs=%d\n", blockSize, embedSize, learningRate, lossScale, epochs)
 	for i := 0; i < epochs; i++ {
 		// Inputs are indexes for embeds table
 		inputs, targets := GetSequence(data.Data[0], blockSize)
@@ -83,7 +83,7 @@ func main() {
 
 		// Loss calculation
 		loss := CrossEntropy(logits, targets)
-		scaledLoss := variable.MulC(1.0/float64(batchSize), loss)
+		scaledLoss := variable.MulC(lossScale, loss)
 		if (i % evalIters) == 0 {
 			fmt.Println(loss.Data[0][0])
 		}
