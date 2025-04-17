@@ -67,7 +67,7 @@ func main() {
 	}
 
 	// Main training loop
-	fmt.Printf("bs=%d, es=%d, lr=%f, ls=%f, epochs=%d\n", blockSize, embedSize, learningRate, lossScale, epochs)
+	fmt.Printf("bs=%d, es=%d, lr=%.3f, ls=%2f, epochs=%d\n", blockSize, embedSize, learningRate, lossScale, epochs)
 	for i := 0; i < epochs; i++ {
 		// Inputs are indexes for embeds table
 		inputs, targets := GetSequence(data.Data[0], blockSize)
@@ -85,7 +85,7 @@ func main() {
 		loss := CrossEntropy(logits, targets)
 		scaledLoss := variable.MulC(lossScale, loss)
 		if (i % evalIters) == 0 {
-			fmt.Println(loss.Data[0][0])
+			fmt.Printf("Step: %d, Loss: %.5f\n", i, loss.Data[0][0])
 		}
 
 		// Backward pass
