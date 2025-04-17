@@ -28,7 +28,7 @@ var (
 	MatMul       = variable.MatMul
 	Zeros        = variable.Zero
 	OneLike      = variable.OneLike
-	Softmax      = pkg.Softmax
+	Softmax      = function.Softmax
 	CrossEntropy = function.SoftmaxCrossEntropy
 	ReLU         = function.ReLU
 	Dropout      = function.DropoutSimple

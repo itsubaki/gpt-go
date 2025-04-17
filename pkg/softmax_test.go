@@ -5,6 +5,7 @@ import (
 	"math"
 	"testing"
 
+	"github.com/itsubaki/autograd/function"
 	"github.com/itsubaki/autograd/variable"
 	"github.com/stretchr/testify/require"
 )
@@ -13,7 +14,7 @@ func TestSoftmaxBasic(t *testing.T) {
 	r := require.New(t)
 
 	a := variable.NewOf([]float64{1, 2, 3}, []float64{4, 5, 6})
-	result := Softmax(a)
+	result := function.Softmax(a)
 
 	// Expected values calculated from numpy for comparison
 	// softmax([1, 2, 3]) = [0.09003057, 0.24472847, 0.66524096]
@@ -42,7 +43,7 @@ func TestSoftmaxWithLargeValues(t *testing.T) {
 	r := require.New(t)
 
 	a := variable.NewOf([]float64{100, 100.1, 100.2})
-	result := Softmax(a)
+	result := function.Softmax(a)
 
 	fmt.Println(result)
 	expected := [][]float64{
@@ -71,7 +72,7 @@ func TestSoftmaxWithMasking(t *testing.T) {
 		[]float64{1, 2, math.Inf(-1)},            // Third row has masked third element
 		[]float64{1, math.Inf(-1), math.Inf(-1)}, // Fourth row has only one valid element
 	)
-	result := Softmax(a)
+	result := function.Softmax(a)
 
 	expected := [][]float64{
 		{0.119203, 0.0, 0.880797}, // softmax([1, -Inf, 3])
@@ -102,7 +103,7 @@ func TestSoftmaxWithAllMasked(t *testing.T) {
 		[]float64{0, math.Inf(-1), math.Inf(-1)},
 		[]float64{1, 2, 3},
 	)
-	result := Softmax(a)
+	result := function.Softmax(a)
 
 	fmt.Println(result)
 	expected := [][]float64{
@@ -133,7 +134,7 @@ func TestSoftmaxGradient(t *testing.T) {
 	r := require.New(t)
 
 	a := variable.NewOf([]float64{1, 2, 3})
-	result := Softmax(a)
+	result := function.Softmax(a)
 
 	expected := [][]float64{
 		{0.09003057, 0.24472847, 0.66524096},
@@ -151,7 +152,7 @@ func TestSoftmaxGradient(t *testing.T) {
 	}
 
 	b := variable.NewOf([]float64{1, 2, 3})
-	resultB := Softmax(b)
+	resultB := function.Softmax(b)
 	resultB.Grad = variable.NewOf([]float64{1, 0, 0}) // Only gradient for first output
 	resultB.Backward()
 
