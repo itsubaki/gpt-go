@@ -20,7 +20,7 @@ const (
 	learningRate = 0.001
 	evalIters    = 100
 	dropout      = 0
-	lossScale    = 0.03
+	lossScale    = 1.00
 )
 
 var (

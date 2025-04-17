@@ -1000,7 +1000,7 @@ Among the long grass, Pencroft felt that his feet were crushing dry
 branches which crackled like fireworks.
 
 Well, my boy, said he to Herbert, if I dont know the name of these
-trees, at any rate I reckon that we may call them ‘burning wood, and
+trees, at any rate I reckon that we may call them burning wood, and
 just now thats the chief thing we want.
 
 Let us get a supply, replied Herbert, who immediately set to work.
@@ -2755,7 +2755,7 @@ be able to reconnoiter it from the summit of that peak which overlooks
 the country, and then we shall see how best to establish ourselves here
 as if we are never to go away.
 
-Never? cried the reporter. You say ‘Never, my dear Cyrus?
+Never? cried the reporter. You say Never, my dear Cyrus?
 
 Better to put things at the worst at first, replied the engineer, and
 reserve the best for a surprise.
@@ -3949,7 +3949,7 @@ kangaroos, which are more easy to get hold of. It is reckoned that there
 are about a dozen species.
 
 Herbert, replied the sailor sententiously, there is only one species
-of kangaroos to me, that is ‘kangaroo on the spit, and its just the
+of kangaroos to me, that is kangaroo on the spit, and its just the
 one we havent got this evening!
 
 They could not help laughing at Master Pencrofts new classification.
@@ -4548,12 +4548,6 @@ The engineer then took a flat stone which he had brought back from one
 of his previous excursions, a sort of slate, on which it was easy
 to trace figures with a sharp shell. He then proved the following
 proportions: 
-
-15:500::10:x
-
-500 x 10 = 5000
-
-5000  15 = 333.3
 
 From which it was proved that the granite cliff measured 333 feet in
 height.
@@ -8548,7 +8542,7 @@ they are called in Australia and New Zealand?
 
 No, captain.
 
-They are called ‘fever trees.
+They are called fever trees.
 
 Because they give fevers?
 
@@ -10146,7 +10140,7 @@ Why not donkeys? asked Neb.
 
 Because they have not long ears, and their shape is more graceful!
 
-Donkeys or horses, interrupted Pencroft, they are ‘moving powers, as
+Donkeys or horses, interrupted Pencroft, they are moving powers, as
 the captain would say, and as such must be captured!
 
 The sailor, without frightening the animals, crept through the grass
@@ -10716,7 +10710,7 @@ scaly bark, which bore leaves streaked with little parallel veins.
 
 And what is this tree which resembles a little palm? asked Harding.
 
-It is a ‘cycas revoluta, of which I have a picture in our dictionary
+It is a cycas revoluta, of which I have a picture in our dictionary
 of Natural History! said Herbert.
 
 But I cant see any fruit on this shrub! observed his companion.
@@ -10990,7 +10984,7 @@ called the Cape Whale.
 
 What a lucky chance it would be if we could capture it! cried the
 sailor. Ah! if we only had a proper boat and a good harpoon, I would
-say ‘After the beast, for he would be well worth the trouble of
+say After the beast, for he would be well worth the trouble of
 catching!
 
 Well, Pencroft, observed Harding, I should much like to watch you
@@ -11083,7 +11077,7 @@ inscription on it:
 MARIA STELLA, VINEYARD
 
 A vessel from the Vineyard! A ship from my country! he cried. The
-‘Maria Stella! A fine whaler, ‘pon my word, I know her well! Oh, my
+Maria Stella! A fine whaler, pon my word, I know her well! Oh, my
 friends, a vessel from the Vineyard! a whaler from the Vineyard!
 
 And the sailor brandishing the harpoon, repeated, not without emotion,
@@ -11330,7 +11324,7 @@ sea, when we sail round our island, for we will do so together I fancy,
 I say, that you will no longer hesitate to let me go. I dont conceal
 from you that your boat will be a masterpiece.
 
-Say ‘our boat, at least, Pencroft, replied the engineer, disarmed for
+Say our boat, at least, Pencroft, replied the engineer, disarmed for
 the moment. The conversation ended thus, to be resumed later on, without
 convincing either the sailor or the engineer.
 
@@ -11927,7 +11921,7 @@ My word, no, replied Neb. What astonishes me is that he hasnt spoken
 to us before, for now he wants nothing but speech!
 
 It would amuse me all the same, resumed the sailor, if some fine day
-he said to me, ‘Suppose we change pipes, Pencroft.
+he said to me, Suppose we change pipes, Pencroft.
 
 Yes, replied Neb, what a pity he was born dumb!
 
@@ -12058,7 +12052,7 @@ What voyage, Pencroft?
 One to Tabor Island, for instance.
 
 My friend, replied Harding, I think that in any pressing emergency
-we need not hesitate to trust ourselves to the ‘Bonadventure even for
+we need not hesitate to trust ourselves to the Bonadventure even for
 a longer voyage, but you know I should see you set off to Tabor Island
 with great uneasiness, since nothing obliges you to go there.
 
@@ -12160,7 +12154,7 @@ building this boat and of trying her this very day, for a day later and
 this bottle might have been broken on the rocks.
 
 Indeed, said Herbert, it is a fortunate chance that the
-‘Bonadventure passed exactly where the bottle was still floating!
+Bonadventure passed exactly where the bottle was still floating!
 
 Does not this appear strange to you? asked Harding of Pencroft.
 
@@ -12621,7 +12615,7 @@ It matters very little, Pencroft!
 Very little indeed, answered the sailor, and we will save the
 survivor of her crew if he is still living, to whatever country he may
 belong. But before beginning our search again let us go on board the
-‘Bonadventure.
+Bonadventure.
 
 A sort of uneasiness had seized Pencroft upon the subject of his vessel.
 Should the island be inhabited after all, and should some one have taken
@@ -13115,7 +13109,7 @@ was no reason for substituting ordinary powder.
 When the unloading of the vessel was finished, 
 
 Captain, said Pencroft, I think it would be prudent to put our
-‘Bonadventure in a safe place.
+Bonadventure in a safe place.
 
 Is she not safe at the mouth of the Mercy? asked Cyrus Harding.
 
@@ -13126,7 +13120,7 @@ behaved admirably during the squall which struck us on our return.
 Could she not float in the river?
 
 No doubt, captain, she could, but there is no shelter there, and in the
-east winds, I think that the ‘Bonadventure would suffer much from the
+east winds, I think that the Bonadventure would suffer much from the
 surf.
 
 Well, where would you put her, Pencroft?
@@ -13139,7 +13133,7 @@ Is it not rather far?
 Pooh! it is not more than three miles from Granite House, and we have a
 fine straight road to take us there!
 
-Do it then, Pencroft, and take your ‘Bonadventure there, replied
+Do it then, Pencroft, and take your Bonadventure there, replied
 the engineer, and yet I would rather have her under our more immediate
 protection. When we have time, we must make a little harbor for her.
 
@@ -13920,15 +13914,15 @@ nobleman, Lord Glenarvan, anchored off Cape Bernouilli, on the western
 coast of Australia, in the thirty seventh parallel. On board this yacht
 were Lord Glenarvan and his wife, a major in the English army, a French
 geographer, a young girl, and a young boy. These two last were the
-children of Captain Grant, whose ship, the ‘Britannia, had been lost,
-crew and cargo, a year before. The ‘Duncan was commanded by Captain
+children of Captain Grant, whose ship, the Britannia, had been lost,
+crew and cargo, a year before. The Duncan was commanded by Captain
 John Mangles, and manned by a crew of fifteen men.
 
 This is the reason the yacht at this time lay off the coast of
 Australia. Six months before, a bottle, enclosing a document written in
 English, German, and French, had been found in the Irish Sea, and picked
-up by the ‘Duncan. This document stated in substance that there still
-existed three survivors from the wreck of the ‘Britannia, that these
+up by the Duncan. This document stated in substance that there still
+existed three survivors from the wreck of the Britannia, that these
 survivors were Captain Grant and two of his men, and that they had found
 refuge on some land, of which the document gave the latitude, but of
 which the longitude, effaced by the sea, was no longer legible.
@@ -13939,15 +13933,15 @@ and seas, they would be certain to reach the spot inhabited by Captain
 Grant and his two companions. The English Admiralty having hesitated to
 undertake this search, Lord Glenarvan resolved to attempt everything to
 find the captain. He communicated with Mary and Robert Grant, who joined
-him. The ‘Duncan yacht was equipped for the distant voyage, in which
+him. The Duncan yacht was equipped for the distant voyage, in which
 the noblemans family and the captains children wished to take part,
-and the ‘Duncan, leaving Glasgow, proceeded towards the Atlantic,
+and the Duncan, leaving Glasgow, proceeded towards the Atlantic,
 passed through the Straits of Magellan, and ascended the Pacific as
 far as Patagonia, where, according to a previous interpretation of the
 document, they supposed that Captain Grant was a prisoner among the
 Indians.
 
-The ‘Duncan disembarked her passengers on the western coast of
+The Duncan disembarked her passengers on the western coast of
 Patagonia, and sailed to pick them up again on the eastern coast at
 Cape Corrientes. Lord Glenarvan traversed Patagonia, following the
 thirty seventh parallel, and having found no trace of the captain, he
@@ -13955,7 +13949,7 @@ re embarked on the 13th of November, so as to pursue his search through
 the Ocean.
 
 After having unsuccessfully visited the islands of Tristan dAcunha and
-Amsterdam, situated in her course, the ‘Duncan, as I have said, arrived
+Amsterdam, situated in her course, the Duncan, as I have said, arrived
 at Cape Bernouilli, on the Australian coast, on the 20th of December,
 1854.
 
@@ -13964,27 +13958,27 @@ traversed America, and he disembarked. A few miles from the coast was
 established a farm, belonging to an Irishman, who offered hospitality to
 the travelers. Lord Glenarvan made known to the Irishman the cause
 which had brought him to these parts, and asked if he knew whether a
-three masted English vessel, the ‘Britannia, had been lost less than
+three masted English vessel, the Britannia, had been lost less than
 two years before on the west coast of Australia.
 
 The Irishman had never heard of this wreck, but, to the great surprise
 of the bystanders, one of his servants came forward and said, 
 
-‘My lord, praise and thank God! If Captain Grant is still living, he is
+My lord, praise and thank God! If Captain Grant is still living, he is
 living on the Australian shores.
 
-‘Who are you? asked Lord Glenarvan.
+Who are you? asked Lord Glenarvan.
 
-‘A Scotchman like yourself, my lord, replied the man, ‘I am one of
+A Scotchman like yourself, my lord, replied the man, I am one of
 Captain Grants crew one of the castaways of the Britannia.
 
 This man was called Ayrton. He was, in fact, the boatswains mate of
-the ‘Britannia, as his papers showed. But, separated from Captain Grant
+the Britannia, as his papers showed. But, separated from Captain Grant
 at the moment when the ship struck upon the rocks, he had till then
 believed that the captain with all his crew had perished, and that he,
-Ayrton, was the sole survivor of the ‘Britannia.
+Ayrton, was the sole survivor of the Britannia.
 
-‘Only, he added, ‘it was not on the west coast, but on the east coast
+Only, he added, it was not on the west coast, but on the east coast
 of Australia that the vessel was lost, and if Captain Grant is still
 living, as his document indicates, he is a prisoner among the natives,
 and it is on the other coast that he must be looked for.
@@ -13996,25 +13990,25 @@ therefore, believed in the fidelity of this man and, by his advice,
 resolved to cross Australia, following the thirty seventh parallel. Lord
 Glenarvan, his wife, the two children, the major, the Frenchman, Captain
 Mangles, and a few sailors composed the little band under the command
-of Ayrton, while the ‘Duncan, under charge of the mate, Tom Austin,
+of Ayrton, while the Duncan, under charge of the mate, Tom Austin,
 proceeded to Melbourne, there to await Lord Glenarvans instructions.
 
 They set out on the 23rd of December, 1854.
 
 It is time to say that Ayrton was a traitor. He was, indeed, the
-boatswains mate of the ‘Britannia, but, after some dispute with his
+boatswains mate of the Britannia, but, after some dispute with his
 captain, he endeavored to incite the crew to mutiny and seize the ship,
 and Captain Grant had landed him, on the 8th of April, 1852, on the
 west coast of Australia, and then sailed, leaving him there, as was only
 just.
 
 Therefore this wretched man knew nothing of the wreck of the
-‘Britannia, he had just heard of it from Glenarvans account. Since his
+Britannia, he had just heard of it from Glenarvans account. Since his
 abandonment, he had become, under the name of Ben Joyce, the leader of
 the escaped convicts, and if he boldly maintained that the wreck had
 taken place on the east coast, and led Lord Glenarvan to proceed in that
 direction, it was that he hoped to separate him from his ship, seize the
-‘Duncan, and make the yacht a pirate in the Pacific.
+Duncan, and make the yacht a pirate in the Pacific.
 
 Here the stranger stopped for a moment. His voice trembled, but he
 continued, 
@@ -14024,12 +14018,12 @@ inevitably unfortunate, since Ayrton, or Ben Joyce, as he may be
 called, guided it, sometimes preceded, sometimes followed by his band of
 convicts, who had been told what they had to do.
 
-Meanwhile, the ‘Duncan had been sent to Melbourne for repairs. It was
+Meanwhile, the Duncan had been sent to Melbourne for repairs. It was
 necessary, then, to get Lord Glenarvan to order her to leave Melbourne
 and go to the east coast of Australia, where it would be easy to seize
 her. After having led the expedition near enough to the coast, in the
 midst of vast forests with no resources, Ayrton obtained a letter, which
-he was charged to carry to the mate of the ‘Duncan a letter which
+he was charged to carry to the mate of the Duncan a letter which
 ordered the yacht to repair immediately to the east coast, to Twofold
 Bay, that is to say a few days journey from the place where the
 expedition had stopped. It was there that Ayrton had agreed to meet his
@@ -14037,7 +14031,7 @@ accomplices, and two days after gaining possession of the letter, he
 arrived at Melbourne.
 
 So far the villain had succeeded in his wicked design. He would be able
-to take the ‘Duncan into Twofold Bay, where it would be easy for the
+to take the Duncan into Twofold Bay, where it would be easy for the
 convicts to seize her, and her crew massacred, Ben Joyce would become
 master of the seas. But it pleased God to prevent the accomplishment of
 these terrible projects.
@@ -14056,15 +14050,15 @@ in irons. He was then taken to the coast of New Zealand, not knowing
 what would become of his accomplices, or what would become of Lord
 Glenarvan.
 
-The ‘Duncan cruised about on this coast until the 3rd of March. On
-that day Ayrton heard the report of guns. The guns on the ‘Duncan were
+The Duncan cruised about on this coast until the 3rd of March. On
+that day Ayrton heard the report of guns. The guns on the Duncan were
 being fired, and soon Lord Glenarvan and his companions came on board.
 
 This is what had happened.
 
 After a thousand hardships, a thousand dangers, Lord Glenarvan had
 accomplished his journey, and arrived on the east coast of Australia, at
-Twofold Bay. ‘No Duncan! He telegraphed to Melbourne. They answered,
+Twofold Bay. No Duncan! He telegraphed to Melbourne. They answered,
 Duncan sailed on the 18th instant. Destination unknown.
 
 Lord Glenarvan could only arrive at one conclusion, that his honest
@@ -14075,17 +14069,17 @@ However, Lord Glenarvan would not give up. He was a bold and generous
 man. He embarked in a merchant vessel, sailed to the west coast of New
 Zealand, traversed it along the thirty seventh parallel, without
 finding any trace of Captain Grant, but on the other side, to his
-great surprise, and by the will of Heaven, he found the ‘Duncan, under
+great surprise, and by the will of Heaven, he found the Duncan, under
 command of the mate, who had been waiting for him for five weeks!
 
 This was on the 3rd of March, 1855. Lord Glenarvan was now on board the
-‘Duncan, but Ayrton was there also. He appeared before the nobleman,
+Duncan, but Ayrton was there also. He appeared before the nobleman,
 who wished to extract from him all that the villain knew about Captain
 Grant. Ayrton refused to speak. Lord Glenarvan then told him, that at
 the first port they put into, he would be delivered up to the English
 authorities. Ayrton remained mute.
 
-The ‘Duncan continued her voyage along the thirty seventh parallel.
+The Duncan continued her voyage along the thirty seventh parallel.
 In the meanwhile, Lady Glenarvan undertook to vanquish the resistance of
 the ruffian.
 
@@ -14100,7 +14094,7 @@ nothing from the day on which Captain Grant had landed him on the
 Australian coast.
 
 Nevertheless, Lord Glenarvan kept the promise which he had given. The
-‘Duncan continued her voyage and arrived at Tabor Island. It was there
+Duncan continued her voyage and arrived at Tabor Island. It was there
 that Ayrton was to be landed, and it was there also that, by a
 veritable miracle, they found Captain Grant and two men, exactly on the
 thirty seventh parallel.
@@ -14109,15 +14103,15 @@ The convict, then, went to take their place on this desert islet, and
 at the moment he left the yacht these words were pronounced by Lord
 Glenarvan: 
 
-‘Here, Ayrton, you will be far from any land, and without any possible
+Here, Ayrton, you will be far from any land, and without any possible
 communication with your fellow creatures. You cannot escape from this
-islet on which the ‘Duncan leaves you. You will be alone, under the eye
+islet on which the Duncan leaves you. You will be alone, under the eye
 of a God who reads the depths of the heart, but you will be neither
 lost nor forgotten, as was Captain Grant. Unworthy as you are to be
 remembered by men, men will remember you. I know where you are Ayrton,
 and I know where to find you. I will never forget it!
 
-And the ‘Duncan, making sail, soon disappeared. This was 18th of
+And the Duncan, making sail, soon disappeared. This was 18th of
 March, 1855.
 
 The events which have just been briefly related are taken
@@ -14700,7 +14694,7 @@ come till later, and it will be time enough in the first fine October
 days to go to Tabor Island, and leave a notice there.
 
 We must allow, said Neb, that it will be very unfortunate if the
-‘Duncan has returned to these parts only a few months ago!
+Duncan has returned to these parts only a few months ago!
 
 I hope that it is not so, replied Cyrus Harding, and that Heaven has
 not deprived us of the best chance which remains to us.
@@ -14868,7 +14862,7 @@ light pieces of cotton wool, and their presence usually announces some
 sudden change in the weather.
 
 Well, said Harding, let us carry as much sail as possible, and run
-for shelter into Shark Gulf. I think that the ‘Bonadventure will be
+for shelter into Shark Gulf. I think that the Bonadventure will be
 safe there.
 
 Perfectly, replied Pencroft, and besides, the north coast is merely
@@ -14895,7 +14889,7 @@ to you.
 
 Dont make your mind uneasy, captain, replied the sailor, I shall not
 expose myself needlessly! I would rather a knife were run into my ribs
-than a sharp rock into those of my ‘Bonadventure!
+than a sharp rock into those of my Bonadventure!
 
 That which Pencroft called ribs was the part of his vessel under water,
 and he valued it more than his own skin.
@@ -14943,7 +14937,7 @@ but frankly, without that fire we should never have been able
 
 A fire? asked Harding, much astonished at the reporters words.
 
-We mean, captain, answered Pencroft, that on board the ‘Bonadventure
+We mean, captain, answered Pencroft, that on board the Bonadventure
 we were very anxious during the few hours before our return, and we
 should have passed to windward of the island, if it had not been for the
 precaution you took of lighting a fire the night of the 19th of October,
@@ -15025,14 +15019,14 @@ stormiest weather, the sea here must be as calm as a lake.
 No doubt, returned the sailor, since the wind has only that narrow
 entrance between the two capes to get in by, and, besides, the north
 cape protects that of the south in a way which would make the entrance
-of gusts very difficult. I declare our ‘Bonadventure could stay here
+of gusts very difficult. I declare our Bonadventure could stay here
 from one end of the year to the other, without even dragging at her
 anchor!
 
 It is rather large for her! observed the reporter.
 
 Well! Mr. Spilett, replied the sailor, I agree that it is too large
-for the ‘Bonadventure, but if the fleets of the Union were in want of a
+for the Bonadventure, but if the fleets of the Union were in want of a
 harbor in the Pacific, I dont think they would ever find a better place
 than this!
 
@@ -15049,7 +15043,7 @@ Hallo! cried Pencroft, here is Neb turning up his nose at my gulf,
 just as I was thinking of presenting it to America!
 
 But, at any rate, is the water deep enough? asked the engineer, for a
-depth sufficient for the keel of the ‘Bonadventure would not be enough
+depth sufficient for the keel of the Bonadventure would not be enough
 for those of our iron clads.
 
 That is easily found out, replied Pencroft.
@@ -15194,7 +15188,7 @@ stared at each other, not knowing what to reply, for this succession of
 incidents, grouped thus for the first time, could not but excite their
 surprise to the highest degree.
 
-‘Pon my word, said Pencroft at last, you are right, captain, and it
+Pon my word, said Pencroft at last, you are right, captain, and it
 is difficult to explain all these things!
 
 Well, my friends, resumed the engineer, a last fact has just been
@@ -15459,7 +15453,7 @@ from the Polynesian Archipelagoes, from New Zealand, and from the
 American coast? To this question, which each one asked himself, a reply
 was suddenly made by Herbert.
 
-Can it be the ‘Duncan? he cried.
+Can it be the Duncan? he cried.
 
 The Duncan, as has been said, was Lord Glenarvans yacht, which had
 left Ayrton on the islet, and which was to return there someday to fetch
@@ -15469,7 +15463,7 @@ hundred and fifty miles only separated them in longitude, and seventy in
 latitude.
 
 We must tell Ayrton, said Gideon Spilett, and send for him
-immediately. He alone can say if it is the ‘Duncan.
+immediately. He alone can say if it is the Duncan.
 
 This was the opinion of all, and the reporter, going to the telegraphic
 apparatus which placed the corral in communication with Granite House,
@@ -15481,14 +15475,14 @@ I am coming, replied Ayrton.
 
 Then the settlers continued to watch the vessel.
 
-If it is the ‘Duncan, said Herbert, Ayrton will recognize her
+If it is the Duncan, said Herbert, Ayrton will recognize her
 without difficulty, since he sailed on board her for some time.
 
 And if he recognizes her, added Pencroft, it will agitate him
 exceedingly!
 
 Yes, answered Cyrus Harding, but now Ayrton is worthy to return on
-board the ‘Duncan, and pray Heaven that it is indeed Lord Glenarvans
+board the Duncan, and pray Heaven that it is indeed Lord Glenarvans
 yacht, for I should be suspicious of any other vessel. These are
 ill famed seas, and I have always feared a visit from Malay pirates to
 our island.
@@ -15562,17 +15556,17 @@ then, leaning out the window, he surveyed the horizon, but could see
 nothing.
 
 Take this telescope, said Spilett, and look carefully, Ayrton, for
-it is possible that this ship may be the ‘Duncan come to these seas for
+it is possible that this ship may be the Duncan come to these seas for
 the purpose of taking you home again.
 
-The ‘Duncan! murmured Ayrton. Already? This last word escaped
+The Duncan! murmured Ayrton. Already? This last word escaped
 Ayrtons lips as if involuntarily, and his head drooped upon his hands.
 
 Did not twelve years solitude on a desert island appear to him a
 sufficient expiation? Did not the penitent yet feel himself pardoned,
 either in his own eyes or in the eyes of others?
 
-No, said he, no! it cannot be the ‘Duncan!
+No, said he, no! it cannot be the Duncan!
 
 Look, Ayrton, then said the engineer, for it is necessary that we
 should know beforehand what to expect.
@@ -15582,11 +15576,11 @@ some minutes he examined the horizon without moving, without uttering a
 word. Then, 
 
 It is indeed a vessel, said he, but I do not think she is the
-‘Duncan.
+Duncan.
 
 Why do you not think so? asked Gideon Spilett.
 
-Because the ‘Duncan is a steam yacht, and I cannot perceive any trace
+Because the Duncan is a steam yacht, and I cannot perceive any trace
 of smoke either above or near that vessel.
 
 Perhaps she is simply sailing, observed Pencroft. The wind is
@@ -15656,7 +15650,7 @@ five miles.
 The horizon was still very clear. The examination was easy, and Ayrton
 soon let the glass fall again, saying 
 
-It is not the ‘Duncan! It could not be!
+It is not the Duncan! It could not be!
 
 Pencroft again brought the brig within the range of the telescope, and
 could see that she was of between three and four hundred tons burden,
@@ -15958,7 +15952,7 @@ principally struck Ayrton:
 
 Our brig is a famous acquisition.
 
-She sails well, and merits her name of the ‘Speedy.
+She sails well, and merits her name of the Speedy.
 
 She would show all the navy of Norfolk a clean pair of heels.
 
@@ -16763,7 +16757,7 @@ the chest found at Flotsam Point.
 And besides, thought Pencroft, why should it be impossible to refloat
 the brig? If she has only a leak, that may be stopped up, a vessel from
 three to four hundred tons, why she is a regular ship compared to our
-‘Bonadventure! And we could go a long distance in her! We could go
+Bonadventure! And we could go a long distance in her! We could go
 anywhere we liked! Captain Harding, Ayrton and I must examine her! She
 would be well worth the trouble!
 
@@ -16803,7 +16797,7 @@ Yes, captain.
 And it astonishes me also, Herbert, replied he, but when we visit the
 hull of the brig, we shall no doubt find the explanation of the matter.
 
-Why, captain, said Pencroft, you dont suppose that the ‘Speedy
+Why, captain, said Pencroft, you dont suppose that the Speedy
 simply foundered like a ship which has struck on a rock?
 
 Why not, observed Neb, if there are rocks in the channel?
@@ -17058,7 +17052,7 @@ with his companions in the workshop of the Chimneys.
 Cyrus Harding examined the cylinder attentively, then, turning to
 Pencroft, 
 
-You persist, my friend, said he, in maintaining that the ‘Speedy was
+You persist, my friend, said he, in maintaining that the Speedy was
 not lost in consequence of a collision?
 
 Yes, captain, answered the sailor. You know as well as I do that
@@ -17501,7 +17495,7 @@ moored, had been visited by the convicts.
 These gentlemen, he observed, landed on the south coast, and if they
 followed the shore, it is to be feared that they may have discovered the
 little harbor, and in that case, I wouldnt give half a dollar for our
-‘Bonadventure.
+Bonadventure.
 
 Pencrofts apprehensions were not without foundation, and a visit
 to Port Balloon appeared to be very desirable. The sailor and his
@@ -17535,7 +17529,7 @@ Come, said Pencroft, the blackguards have not been there yet. Long
 grass suits reptiles best, and evidently we shall find them in the Far
 West.
 
-And its very lucky, for if they had found the ‘Bonadventure, added
+And its very lucky, for if they had found the Bonadventure, added
 Herbert, they would have gone off in her, and we should have been
 prevented from returning to Tabor Island.
 
@@ -17544,7 +17538,7 @@ document there which will make known the situation of Lincoln Island,
 and Ayrtons new residence, in case the Scotch yacht returns to fetch
 him.
 
-Well, the ‘Bonadventure is always there, Mr. Spilett, answered the
+Well, the Bonadventure is always there, Mr. Spilett, answered the
 sailor. She and her crew are ready to start at a moments notice!
 
 I think, Pencroft, that that is a thing to be done after our
@@ -17587,7 +17581,7 @@ and ones hand is never mistaken!
 Then can the convicts have been on board? asked Herbert.
 
 I know nothing about that, answered Pencroft, but what is certain,
-is that some one has weighed the ‘Bonadventures anchor and dropped it
+is that some one has weighed the Bonadventures anchor and dropped it
 again! And look here, here is another proof! The cable of the anchor has
 been run out, and its service is no longer at the hawse hole. I repeat
 that some one has been using our vessel!
@@ -17602,7 +17596,7 @@ We must, besides, be sure that they know of the islet, rejoined the
 reporter.
 
 However that may be, said the sailor, as sure as my name is
-Bonadventure Pencroft, of the Vineyard, our ‘Bonadventure has sailed
+Bonadventure Pencroft, of the Vineyard, our Bonadventure has sailed
 without us!
 
 The sailor was positive that neither Gideon Spilett nor Herbert could
@@ -17612,7 +17606,7 @@ sailor, he had not the slightest doubt that the anchor had been raised
 and then dropped again. Now, what was the use of these two maneuvers,
 unless the vessel had been employed in some expedition?
 
-But how was it we did not see the ‘Bonadventure pass in the sight of
+But how was it we did not see the Bonadventure pass in the sight of
 the island? observed the reporter, who was anxious to bring forward
 every possible objection.
 
@@ -17621,17 +17615,17 @@ in the night with a good breeze, and they would be out of sight of the
 island in two hours.
 
 Well, resumed Gideon Spilett, I ask again, what object could the
-convicts have had in using the ‘Bonadventure, and why, after they had
+convicts have had in using the Bonadventure, and why, after they had
 made use of her, should they have brought her back to port?
 
 Why, Mr. Spilett, replied the sailor, we must put that among the
 unaccountable things, and not think anything more about it. The chief
-thing is that the ‘Bonadventure was there, and she is there now. Only,
+thing is that the Bonadventure was there, and she is there now. Only,
 unfortunately, if the convicts take her a second time, we shall very
 likely not find her again in her place!
 
 Then, Pencroft, said Herbert, would it not be wisest to bring the
-‘Bonadventure off to Granite House?
+Bonadventure off to Granite House?
 
 Yes and no, answered Pencroft, or rather no. The mouth of the Mercy
 is a bad place for a vessel, and the sea is heavy there.
@@ -17639,7 +17633,7 @@ is a bad place for a vessel, and the sea is heavy there.
 But by hauling her up on the sand, to the foot of the Chimneys?
 
 Perhaps yes, replied Pencroft. At any rate, since we must leave
-Granite House for a long expedition, I think the ‘Bonadventure will be
+Granite House for a long expedition, I think the Bonadventure will be
 safer here during our absence, and we shall do best to leave her here
 until the island is rid of these blackguards.
 
@@ -19920,11 +19914,11 @@ if it is not already too late?
 
 But, Pencroft, asked Ayrton, how do you intend to make this voyage?
 
-In the ‘Bonadventure.
+In the Bonadventure.
 
-The ‘Bonadventure! exclaimed Ayrton. She no longer exists.
+The Bonadventure! exclaimed Ayrton. She no longer exists.
 
-My ‘Bonadventure exists no longer! shouted Pencroft, bounding from
+My Bonadventure exists no longer! shouted Pencroft, bounding from
 his seat.
 
 No, answered Ayrton. The convicts discovered her in her little harbor
@@ -19939,7 +19933,7 @@ Oh, the villains, the cutthroats, the infamous scoundrels! exclaimed
 Pencroft.
 
 Pencroft, said Herbert, taking the sailors hand, we will build
-another ‘Bonadventure a larger one. We have all the ironwork all the
+another Bonadventure a larger one. We have all the ironwork all the
 rigging of the brig at our disposal.
 
 But do you know, returned Pencroft, that it will take at least five
@@ -19948,7 +19942,7 @@ or six months to build a vessel of from thirty to forty tons?
 We can take our time, said the reporter, and we must give up the
 voyage to Tabor Island for this year.
 
-Oh, my ‘Bonadventure! my poor ‘Bonadventure! cried Pencroft, almost
+Oh, my Bonadventure! my poor Bonadventure! cried Pencroft, almost
 broken hearted at the destruction of the vessel of which he was so
 proud.
 
@@ -20431,7 +20425,7 @@ places than this!
 
 Neb began to laugh.
 
-‘Pon my word, he replied, the only thing I think about is my daily
+Pon my word, he replied, the only thing I think about is my daily
 work!
 
 The truth was that indoors as well as out there was no want of work.
@@ -21078,9 +21072,9 @@ You know the name I formerly bore, sir? he asked.
 I do, answered Cyrus Harding, and also that of this wonderful
 submarine vessel 
 
-The ‘Nautilus? said the captain, with a faint smile.
+The Nautilus? said the captain, with a faint smile.
 
-The ‘Nautilus.
+The Nautilus.
 
 But do you do you know who I am?
 
@@ -21100,9 +21094,9 @@ since?
 The same.
 
 He and his two companions did not then perish in the maelstrom, in the
-midst of which the ‘Nautilus was struggling?
+midst of which the Nautilus was struggling?
 
-They escaped, and a book has appeared under the title of ‘Twenty
+They escaped, and a book has appeared under the title of Twenty
 Thousand Leagues Under the Sea, which contains your history.
 
 The history of a few months only of my life! interrupted the captain
@@ -21446,8 +21440,8 @@ the light of the sun, he might perhaps recover.
 
 No, Pencroft, answered the engineer, it is useless to attempt it.
 Besides, Captain Nemo would never consent to leave his vessel. He
-has lived for a dozen years on board the ‘Nautilus, and on board the
-‘Nautilus he desires to die.
+has lived for a dozen years on board the Nautilus, and on board the
+Nautilus he desires to die.
 
 Without doubt Captain Nemo heard Cyrus Hardings reply, for he raised
 himself slightly, and in a voice more feeble, but always intelligible, 
@@ -21498,13 +21492,13 @@ Gentlemen, resumed the captain, to morrow I shall be dead.
 Herbert was about to utter an exclamation, but a sign from the captain
 arrested him.
 
-To morrow I shall die, and I desire no other tomb than the ‘Nautilus.
+To morrow I shall die, and I desire no other tomb than the Nautilus.
 It is my grave! All my friends repose in the depths of the ocean, their
 resting place shall be mine.
 
 These words were received with profound silence.
 
-Pay attention to my wishes, he continued. The ‘Nautilus is
+Pay attention to my wishes, he continued. The Nautilus is
 imprisoned in this grotto, the entrance of which is blocked up, but,
 although egress is impossible, the vessel may at least sink in the
 abyss, and there bury my remains.
@@ -21512,7 +21506,7 @@ abyss, and there bury my remains.
 The colonists listened reverently to the words of the dying man.
 
 To morrow, after my death, Mr. Harding, continued the captain,
-yourself and companions will leave the ‘Nautilus, for all the
+yourself and companions will leave the Nautilus, for all the
 treasures it contains must perish with me. One token alone will remain
 with you of Prince Dakkar, with whose history you are now acquainted.
 That coffer yonder contains diamonds of the value of many millions,
@@ -21529,15 +21523,15 @@ Captain Nemo continued,
 
 To morrow you will take the coffer, you will leave the saloon, of which
 you will close the door, then you will ascend on to the deck of the
-‘Nautilus, and you will lower the mainhatch so as entirely to close the
+Nautilus, and you will lower the mainhatch so as entirely to close the
 vessel.
 
 It shall be done, captain, answered Cyrus Harding.
 
 Good. You will then embark in the canoe which brought you hither, but,
-before leaving the ‘Nautilus, go to the stern and there open two large
+before leaving the Nautilus, go to the stern and there open two large
 stop cocks which you will find upon the water line. The water will
-penetrate into the reservoirs, and the ‘Nautilus will gradually sink
+penetrate into the reservoirs, and the Nautilus will gradually sink
 beneath the water to repose at the bottom of the abyss.
 
 And comprehending a gesture of Cyrus Harding, the captain added, 
@@ -21588,14 +21582,14 @@ What a man! said Pencroft. Is it possible that he can have lived at
 the bottom of the sea? And it seems to me that perhaps he has not found
 peace there any more than elsewhere!
 
-The ‘Nautilus, observed Ayrton, might have enabled us to leave
+The Nautilus, observed Ayrton, might have enabled us to leave
 Lincoln Island and reach some inhabited country.
 
 Good Heavens! exclaimed Pencroft, I for one would never risk myself
 in such a craft. To sail on the seas, good, but under the seas, never!
 
 I believe, Pencroft, answered the reporter, that the navigation of a
-submarine vessel such as the ‘Nautilus ought to be very easy, and that
+submarine vessel such as the Nautilus ought to be very easy, and that
 we should soon become accustomed to it. There would be no storms, no
 lee shore to fear. At some feet beneath the surface the waters of the
 ocean are as calm as those of a lake.
@@ -21605,8 +21599,8 @@ board a well found craft. A vessel is built to sail on the sea, and not
 beneath it.
 
 My friends, said the engineer, it is useless, at any rate as regards
-the ‘Nautilus, to discuss the question of submarine vessels. The
-‘Nautilus is not ours, and we have not the right to dispose of it.
+the Nautilus, to discuss the question of submarine vessels. The
+Nautilus is not ours, and we have not the right to dispose of it.
 Moreover, we could in no case avail ourselves of it. Independently of
 the fact that it would be impossible to get it out of this cavern, whose
 entrance is now closed by the uprising of the basaltic rocks, Captain
@@ -21936,7 +21930,7 @@ it pleases, that is no reason why we should be idle! Come, Ayrton, Neb,
 Herbert, Captain Harding, Mr. Spilett, every one of us must turn to at
 our work to day! We are going to place the keelson, and a dozen pair
 of hands would not be too many. Before two months I want our new
-‘Bonadventure for we shall keep the old name, shall we not? to float
+Bonadventure for we shall keep the old name, shall we not? to float
 on the waters of Port Balloon! Therefore there is not an hour to lose!
 
 All the colonists, their services thus requisitioned by Pencroft,
@@ -22822,7 +22816,7 @@ object. The reef was the mark for which she was making in a direct line,
 under all steam, and the unfortunate colonists might have made her out
 some hours before if they had had the strength to watch the horizon.
 
-The ‘Duncan! murmured Ayrton and fell back without sign of life.
+The Duncan! murmured Ayrton and fell back without sign of life.
 
 When Cyrus Harding and his companions recovered consciousness, thanks to
 the attention lavished upon them, they found themselves in the cabin of
@@ -22830,9 +22824,9 @@ a steamer, without being able to comprehend how they had escaped death.
 
 A word from Ayrton explained everything.
 
-The ‘Duncan! he murmured.
+The Duncan! he murmured.
 
-The ‘Duncan! exclaimed Cyrus Harding. And raising his hand to Heaven,
+The Duncan! exclaimed Cyrus Harding. And raising his hand to Heaven,
 he said, Oh! Almighty God! mercifully hast Thou preserved us!
 
 It was, in fact, the Duncan, Lord Glenarvans yacht, now commanded by
@@ -22873,7 +22867,7 @@ It is Captain Nemo! cried Cyrus Harding, after having read the notice,
 and recognized that the handwriting was similar to that of the paper
 found at the corral.
 
-Ah! said Pencroft, it was then he who took our ‘Bonadventure and
+Ah! said Pencroft, it was then he who took our Bonadventure and
 hazarded himself alone to go to Tabor Island!
 
 In order to leave this notice, added Herbert.
@@ -23004,7 +22998,7 @@ Fifteen days later, two thousand miles farther off, the Helvetia, of
 the Compagnie Nationale, and the Shannon, of the Royal Mail Steamship
 Company, sailing to windward in that portion of the Atlantic lying
 between the United States and Europe, respectively signalled the
-monster to each other in 42 15′ N. lat. and 60 35′ W. long. In these
+monster to each other in 42 15 N. lat. and 60 35 W. long. In these
 simultaneous observations they thought themselves justified in
 estimating the minimum length of the mammal at more than three hundred
 and fifty feet, as the Shannon and Helvetia were of smaller
@@ -23072,7 +23066,7 @@ monster became a small island, a rock, a reef, but a reef of indefinite
 and shifting proportions.
 
 On the 5th of March, 1867, the Moravian, of the Montreal Ocean
-Company, finding herself during the night in 27 30′ lat. and 72 15′
+Company, finding herself during the night in 27 30 lat. and 72 15
 long., struck on her starboard quarter a rock, marked in no chart for
 that part of the sea. Under the combined efforts of the wind and its
 four hundred horse power, it was going at the rate of thirteen knots.
@@ -23099,7 +23093,7 @@ belonged, the circumstance became extensively circulated.
 
 The 13th of April, 1867, the sea being beautiful, the breeze
 favourable, the Scotia, of the Cunard Companys line, found herself
-in 15 12′ long. and 45 37′ lat. She was going at the speed of
+in 15 12 long. and 45 37 lat. She was going at the speed of
 thirteen knots and a half.
 
 At seventeen minutes past four in the afternoon, whilst the passengers
@@ -23273,7 +23267,7 @@ ten times more powerful, launch it at the rate of twenty miles an hour,
 and you obtain a shock capable of producing the catastrophe required.
 Until further information, therefore, I shall maintain it to be a
 sea unicorn of colossal dimensions, armed not with a halberd, but with
-a real spur, as the armoured frigates, or the ‘rams of war, whose
+a real spur, as the armoured frigates, or the rams of war, whose
 massiveness and motive power it would possess at the same time. Thus
 may this puzzling phenomenon be explained, unless there be something
 over and above all that one has ever conjectured, seen, perceived, or
@@ -23434,7 +23428,7 @@ As you think proper, sir, coolly replied Conseil.
 
 You see, my friend, it has to do with the monsterthe famous narwhal.
 We are going to purge it from the seas. The author of a work in quarto
-in two volumes, on the ‘Mysteries of the Great Submarine Grounds
+in two volumes, on the Mysteries of the Great Submarine Grounds
 cannot forbear embarking with Commander Farragut. A glorious mission,
 but a dangerous one! We cannot tell where we may go, these animals can
 be very capricious. But we will go whether or no, we have got a captain
@@ -23673,7 +23667,7 @@ greater than that of fresh water. Very well, when you dive, Ned, as
 many times thirty two feet of water as there are above you, so many
 times does your body bear a pressure equal to that of the atmosphere,
 that is to say, 15 lbs. for each square inch of its surface. It
-follows, then, that at 320 feet this pressure = that of 10 atmospheres,
+follows, then, that at 320 feet this pressure that of 10 atmospheres,
 of 100 atmospheres at 3200 feet, and of 1000 atmospheres at 32,000
 feet, that is, about 6 miles, which is equivalent to saying that if you
 could attain this depth in the ocean, each square three eighths of an
@@ -23871,7 +23865,7 @@ speaking expire, after that time, Commander Farragut, faithful to his
 promise, was to turn the course to the south east and abandon for ever
 the northern regions of the Pacific.
 
-The frigate was then in 31 15′ north latitude and 136 42′ east
+The frigate was then in 31 15 north latitude and 136 42 east
 longitude. The coast of Japan still remained less than two hundred
 miles to leeward. Night was approaching. They had just struck eight
 bells, large clouds veiled the face of the moon, then in its first
@@ -24297,7 +24291,7 @@ master had better not count too much on her.
 You think so?
 
 I say that, at the time I threw myself into the sea, I heard the men
-at the wheel say, ‘The screw and the rudder are broken.
+at the wheel say, The screw and the rudder are broken.
 
 Broken?
 
@@ -25067,7 +25061,7 @@ Now, permit me to finish what I have to say to you. I know you, M.
 Aronnax. You and your companions will not, perhaps, have so much to
 complain of in the chance which has bound you to my fate. You will find
 amongst the books which are my favourite study the work which you have
-published on ‘the depths of the sea. I have often read it. You have
+published on the depths of the sea. I have often read it. You have
 carried out your work as far as terrestrial science permitted you. But
 you do not know allyou have not seen all. Let me tell you then,
 Professor, that you will not regret the time passed on board my vessel.
@@ -25163,7 +25157,7 @@ Yes, I love it! The sea is everything. It covers seven tenths of the
 terrestrial globe. Its breath is pure and healthy. It is an immense
 desert, where man is never lonely, for he feels life stirring on all
 sides. The sea is only the embodiment of a supernatural and wonderful
-existence. It is nothing but love and emotion, it is the ‘Living
+existence. It is nothing but love and emotion, it is the Living
 Infinite, as one of your poets has said. In fact, Professor, Nature
 manifests herself in it by her three kingdoms, mineral, vegetable, and
 animal. The sea is the vast reservoir of Nature. The globe began with
@@ -26182,7 +26176,7 @@ to hunt in a forest, I contented myself with replying
 
 Let us first see where the island of Crespo is.
 
-I consulted the planisphere, and in 32 40′ north lat. and 157 50′
+I consulted the planisphere, and in 32 40 north lat. and 157 50
 west long., I found a small island, recognised in 1801 by Captain
 Crespo, and marked in the ancient Spanish maps as Rocca de la Plata,
 the meaning of which is The Silver Rock. We were then about eighteen
@@ -27080,7 +27074,7 @@ To the N.E. two volcanic islands emerged of unequal size, surrounded by
 a coral reef that measured forty miles in circumference. We were close
 to Vanikoro, really the one to which Dumont dUrville gave the name of
 Isle de la Recherche, and exactly facing the little harbour of Vanou,
-situated in 16 4′ S. lat., and 164 32′ E. long. The earth seemed
+situated in 16 4 S. lat., and 164 32 E. long. The earth seemed
 covered with verdure from the shore to the summits in the interior,
 that were crowned by Mount Kapogo, 476 feet high. The Nautilus,
 having passed the outer belt of rocks by a narrow strait, found itself
@@ -27165,7 +27159,7 @@ Dumont dUrville, commander of the Astrolabe, had then sailed, and two
 months after Dillon had left Vanikoro he put into Hobart Town. There he
 learned the results of Dillons inquiries, and found that a certain
 James Hobbs, second lieutenant of the Union of Calcutta, after landing
-on an island situated 8 18′ S. lat., and 156 30′ E. long., had seen
+on an island situated 8 18 S. lat., and 156 30 E. long., had seen
 some iron bars and red stuffs used by the natives of these parts.
 Dumont dUrville, much perplexed, and not knowing how to credit the
 reports of low class journals, decided to follow Dillons track.
@@ -27271,7 +27265,7 @@ Master, will you permit me to wish you a happy New Year?
 
 What! Conseil, exactly as if I was at Paris in my study at the Jardin
 des Plantes? Well, I accept your good wishes, and thank you for them.
-Only, I will ask you what you mean by a ‘Happy New Year under our
+Only, I will ask you what you mean by a Happy New Year under our
 circumstances? Do you mean the year that will bring us to the end of
 our imprisonment, or the year that sees us continue this strange
 voyage?
@@ -28911,7 +28905,7 @@ sub class to which they belong. The second sub class gives us specimens
 of didactyles fourteen or fifteen inches in length, with yellow rays,
 and heads of a most fantastic appearance. As to the first sub class, it
 gives several specimens of that singular looking fish appropriately
-called a ‘seafrog, with large head, sometimes pierced with holes,
+called a seafrog, with large head, sometimes pierced with holes,
 sometimes swollen with protuberances, bristling with spikes, and
 covered with tubercles, it has irregular and hideous horns, its body
 and tail are covered with callosities, its sting makes a dangerous
@@ -28923,8 +28917,8 @@ and forty miles, or twenty two miles an hour. If we recognised so many
 different varieties of fish, it was because, attracted by the electric
 light, they tried to follow us, the greater part, however, were soon
 distanced by our speed, though some kept their place in the waters of
-the Nautilus for a time. The morning of the 24th, in 12 5′ S. lat.,
-and 94 33′ long., we observed Keeling Island, a coral formation,
+the Nautilus for a time. The morning of the 24th, in 12 5 S. lat.,
+and 94 33 long., we observed Keeling Island, a coral formation,
 planted with magnificent cocos, and which had been visited by Mr.
 Darwin and Captain Fitzroy. The Nautilus skirted the shores of this
 desert island for a little distance. Its nets brought up numerous
@@ -29045,7 +29039,7 @@ CHAPTER II
 A NOVEL PROPOSAL OF CAPTAIN NEMOS
 
 On the 28th of February, when at noon the Nautilus came to the
-surface of the sea, in 9 4′ N. lat., there was land in sight about
+surface of the sea, in 9 4 N. lat., there was land in sight about
 eight miles to westward. The first thing I noticed was a range of
 mountains about two thousand feet high, the shapes of which were most
 capricious. On taking the bearings, I knew that we were nearing the
@@ -29628,7 +29622,7 @@ miles an hour, slid into the labyrinth of canals which separate the
 Maldives from the Laccadives. It coasted even the Island of Kiltan, a
 land originally coraline, discovered by Vasco da Gama in 1499, and one
 of the nineteen principal islands of the Laccadive Archipelago,
-situated between 10 and 14 30′ N. lat., and 69 50′ 72″ E. long.
+situated between 10 and 14 30 N. lat., and 69 50 72 E. long.
 
 We had made 16,220 miles, or 7,500 French leagues from our
 starting point in the Japanese Seas.
@@ -29783,7 +29777,7 @@ Etesian winds and in the rainy season. The Arabian Edrisi portrays it
 under the name of the Gulf of Colzoum, and relates that vessels
 perished there in great numbers on the sandbanks and that no one would
 risk sailing in the night. It is, he pretends, a sea subject to fearful
-hurricanes, strewn with inhospitable islands, and ‘which offers nothing
+hurricanes, strewn with inhospitable islands, and which offers nothing
 good either on its surface or in its depths.
 
 One may see, I replied, that these historians never sailed on board
@@ -29841,7 +29835,7 @@ A poets explanation, Captain Nemo, I replied, but I cannot content
 myself with that. I ask you for your personal opinion.
 
 Here it is, M. Aronnax. According to my idea, we must see in this
-appellation of the Red Sea a translation of the Hebrew word ‘Edom, and
+appellation of the Red Sea a translation of the Hebrew word Edom, and
 if the ancients gave it that name, it was on account of the particular
 colour of its waters.
 
@@ -29999,7 +29993,7 @@ through my Arabian tunnel!
 CHAPTER V
 THE ARABIAN TUNNEL
 
-That same evening, in 21 30′ N. lat., the Nautilus floated on the
+That same evening, in 21 30 N. lat., the Nautilus floated on the
 surface of the sea, approaching the Arabian coast. I saw Djeddah, the
 most important counting house of Egypt, Syria, Turkey, and India. I
 distinguished clearly enough its buildings, the vessels anchored at the
@@ -30367,8 +30361,8 @@ beat the coasts of France, England, or America, on which flight may be
 attempted as advantageously as here.
 
 M. Aronnax, replied the Canadian, your arguments are rotten at the
-foundation. You speak in the future, ‘We shall be there! we shall be
-here! I speak in the present, ‘We are here, and we must profit by
+foundation. You speak in the future, We shall be there! we shall be
+here! I speak in the present, We are here, and we must profit by
 it.
 
 Ned Lands logic pressed me hard, and I felt myself beaten on that
@@ -31202,7 +31196,7 @@ this brightness to take its height. Then, the sea becoming more
 billowy, we descended, and the panel closed.
 
 An hour after, upon consulting the chart, I saw the position of the
-Nautilus was marked at 16 17′ long., and 33 22′ lat., at 150
+Nautilus was marked at 16 17 long., and 33 22 lat., at 150
 leagues from the nearest coast. There was no means of flight, and I
 leave you to imagine the rage of the Canadian when I informed him of
 our situation.
@@ -31834,7 +31828,7 @@ under the water. Our navigation continued until the 13th of March, that
 day the Nautilus was employed in taking soundings, which greatly
 interested me. We had then made about 13,000 leagues since our
 departure from the high seas of the Pacific. The bearings gave us 45
-37′ S. lat., and 37 53′ W. long. It was the same water in which
+37 S. lat., and 37 53 W. long. It was the same water in which
 Captain Denham of the Herald sounded 7,000 fathoms without finding the
 bottom. There, too, Lieutenant Parker, of the American frigate
 Congress, could not touch the bottom with 15,140 fathoms. Captain Nemo
@@ -32332,7 +32326,7 @@ An iceberg! said the Canadian to me.
 I knew that to Ned Land, as well as to all other navigators who had
 preceded us, this was an inevitable obstacle. The sun appearing for an
 instant at noon, Captain Nemo took an observation as near as possible,
-which gave our situation at 51 30′ long. and 67 39′ of S. lat. We had
+which gave our situation at 51 30 long. and 67 39 of S. lat. We had
 advanced one degree more in this Antarctic region. Of the liquid
 surface of the sea there was no longer a glimpse. Under the spur of the
 Nautilus lay stretched a vast plain, entangled with confused blocks.
@@ -32493,7 +32487,7 @@ We shall pass it, if you please, sir, said Conseil.
 I believe we shall, I said, in a tone of firm conviction.
 
 In this open sea, the Nautilus had taken its course direct to the
-pole, without leaving the fifty second meridian. From 67 30′ to 90
+pole, without leaving the fifty second meridian. From 67 30 to 90
 deg., twenty two degrees and a half of latitude remained to travel,
 that is, about five hundred leagues. The Nautilus kept up a mean
 speed of twenty six miles an hourthe speed of an express train. If
@@ -32611,7 +32605,7 @@ nothing of their expansive powers, though, having climbed a high
 acclivity, I could see no volcano for a radius of several miles. We
 know that in those Antarctic countries, James Ross found two craters,
 the Erebus and Terror, in full activity, on the 167th meridian,
-latitude 77 32′. The vegetation of this desolate continent seemed to
+latitude 77 32. The vegetation of this desolate continent seemed to
 me much restricted. Some lichens lay upon the black rocks, some
 microscopic plants, rudimentary diatomas, a kind of cells placed
 between two quartz shells, long purple and scarlet weed, supported on
@@ -33712,7 +33706,7 @@ developed from the mouth of the Rio de la Plata to Florida. If we are
 to believe Toussenel, this plague is nothing to what it would be if the
 seas were cleaned of whales and seals. Then, infested with poulps,
 medus, and cuttle fish, they would become immense centres of
-infection, since their waves would not possess ‘these vast stomachs
+infection, since their waves would not possess these vast stomachs
 that God had charged to infest the surface of the seas.
 
 CHAPTER XVIII
@@ -33834,7 +33828,7 @@ disappeared under the water.
 Indeed! is that a fact?
 
 An indisputable fact, my good Ned. They proposed to name this poulp
-‘Bouguers cuttlefish.
+Bouguers cuttlefish.
 
 What length was it? asked the Canadian.
 
@@ -34277,7 +34271,7 @@ have told that such a hurricane had been let loose on the surface of
 that ocean?
 
 CHAPTER XX
-FROM LATITUDE 47 24′ TO LONGITUDE 17 28′
+FROM LATITUDE 47 24 TO LONGITUDE 17 28
 
 In consequence of the storm, we had been thrown eastward once more. All
 hope of escape on the shores of New York or St. Lawrence had faded
@@ -34447,11 +34441,11 @@ under the command of Admiral Van Stebel. On the 11th and 12th Prairal
 of the second year, this squadron fell in with an English vessel. Sir,
 to day is the 13th Prairal, the first of June, 1868. It is now
 seventy four years ago, day for day on this very spot, in latitude 47
-24′, longitude 17 28′, that this vessel, after fighting heroically,
+24, longitude 17 28, that this vessel, after fighting heroically,
 losing its three masts, with the water in its hold, and the third of
 its crew disabled, preferred sinking with its 356 sailors to
 surrendering, and, nailing its colours to the poop, disappeared under
-the waves to the cry of ‘Long live the Republic!
+the waves to the cry of Long live the Republic!
 
 The Avenger! I exclaimed.
 
@@ -35095,14 +35089,14 @@ the American to the Canadian bank three miles from the falls.
 
 The Englishman stepped up to the American.
 
-I contend, nevertheless, that it was ‘Rule Britannia!
+I contend, nevertheless, that it was Rule Britannia!
 
-And I say it was ‘Yankee Doodle! replied the young American.
+And I say it was Yankee Doodle! replied the young American.
 
 The dispute was about to begin again when one of the secondsdoubtless
 in the interests of the milk tradeinterposed.
 
-Suppose we say it was ‘Rule Doodle and ‘Yankee Britannia and adjourn
+Suppose we say it was Rule Doodle and Yankee Britannia and adjourn
 to breakfast?
 
 This compromise between the national airs of Great Britain and the
@@ -35811,8 +35805,8 @@ heavier to be stronger than the air!
 And then the assembly exploded. What a broadside of yells escaped from
 all these mouths, aimed at Robur like the muzzles of so many guns! Was
 not this hurling a declaration of war into the very camp of the
-balloonists? Was not this a stirring up of strife between ‘the lighter
-and ‘the heavier than air?
+balloonists? Was not this a stirring up of strife between the lighter
+and the heavier than air?
 
 Robur did not even frown. With folded arms he waited bravely till
 silence was obtained.
@@ -35851,7 +35845,7 @@ stepnot one steptowards your end.
 
 Sir. said the president, who in vain endeavored to keep himself cool,
 you forget what was said by our immortal Franklin at the first
-appearance of the fire balloon, ‘It is but a child, but it will grow!
+appearance of the fire balloon, It is but a child, but it will grow!
 It was but a child, and it has grown.
 
 No, Mr. President, it has not grown! It has got fatterand this is not
@@ -35910,8 +35904,8 @@ Which would never fly! said secretary Phil Evans.
 
 Which have flown, and which will fly. said Robur, without being in
 the least disconcerted, and which we can call streophores,
-helicopters, orthoptersor, in imitation of the word ‘nef, which comes
-from ‘navis, call them from ‘avis, ‘efs,by means of which man will
+helicopters, orthoptersor, in imitation of the word nef, which comes
+from navis, call them from avis, efs,by means of which man will
 become the master of space. The helix
 
 Ah, the helix! replied Phil Evans. But the bird has no helix, that
@@ -38236,7 +38230,7 @@ to this scoundrels intention with regard to us.
 None. said Phil Evans. He will only give us our liberty when it
 suits him, and perhaps not at all.
 
-In that case we must do all we can to get away from the ‘Albatross.
+In that case we must do all we can to get away from the Albatross.
 
 A splendid craft, she is, I must admit.
 
@@ -39762,7 +39756,7 @@ seventy nine days. Everything showed that the Albatross was about to
 plunge into an abyss.
 
 During the day an observation, had it been possible, would have given
-66 40′ south latitude. The aeronef was within fourteen hundred miles
+66 40 south latitude. The aeronef was within fourteen hundred miles
 of the pole.
 
 Irresistibly was she drawn towards this inaccessible corner of the
@@ -39988,8 +39982,8 @@ the time of its culmination he could calculate his position.
 The result of the observation, taken with the greatest exactitude, was
 as follows:
 
-Longitude, 176 10′ west.
-Latitude, 44 25′ south.
+Longitude, 176 10 west.
+Latitude, 44 25 south.
 
 This point on the map answered to the position of the Chatham Islands,
 and particularly of Pitt Island, one of the group.
@@ -40828,7 +40822,7 @@ yet be divulged.
 
 And then Uncle Prudent, resuming his speech amid a silence up to then
 unknown in the meetings of the Weldon Institute, said, Gentlemen, it
-now only remains for us to finish the aerostat ‘Go Ahead. It is left
+now only remains for us to finish the aerostat Go Ahead. It is left
 to her to effect the conquest of the air! The meeting is at an end!
 
 Chapter XXII
@@ -52238,7 +52232,7 @@ handing the cards to Thomas Flanagan.
 The discussion fell during the rubber, after which Stuart took up its
 thread.
 
-What do you mean by ‘once? Has the world grown smaller?
+What do you mean by once? Has the world grown smaller?
 
 Certainly, returned Ralph. I agree with Mr. Fogg. The world has
 grown smaller, since a man can now go round it ten times more quickly
@@ -52679,7 +52673,7 @@ steamer is never behind time?
 
 No, Mr. Fix, replied the consul. She was bespoken yesterday at Port
 Said, and the rest of the way is of no account to such a craft. I
-repeat that the ‘Mongolia has been in advance of the time required by
+repeat that the Mongolia has been in advance of the time required by
 the companys regulations, and gained the prize awarded for excess of
 speed.
 
@@ -52689,7 +52683,7 @@ Directly from Brindisi, she takes on the Indian mails there, and she
 left there Saturday at five p.m. Have patience, Mr. Fix, she will not
 be late. But really, I dont see how, from the description you have,
 you will be able to recognise your man, even if he is on board the
-‘Mongolia.
+Mongolia.
 
 A man rather feels the presence of these fellows, consul, than
 recognises them. You must have a scent for them, and a scent is like a
@@ -52813,7 +52807,7 @@ consuls office, where he was at once admitted to the presence of that
 official.
 
 Consul, said he, without preamble, I have strong reasons for
-believing that my man is a passenger on the ‘Mongolia. And he
+believing that my man is a passenger on the Mongolia. And he
 narrated what had just passed concerning the passport.
 
 Well, Mr. Fix, replied the consul, I shall not be sorry to see the
@@ -52908,7 +52902,7 @@ Left Turin, Friday, at 7.20 a.m.
 
 Arrived at Brindisi, Saturday, October 5th, at 4 p.m.
 
-Sailed on the ‘Mongolia, Saturday, at 5 p.m.
+Sailed on the Mongolia, Saturday, at 5 p.m.
 
 Reached Suez, Wednesday, October 9th, at 11 a.m.
 
@@ -53024,7 +53018,7 @@ Is he rich?
 
 No doubt, for he is carrying an enormous sum in brand new banknotes
 with him. And he doesnt spare the money on the way, either: he has
-offered a large reward to the engineer of the ‘Mongolia if he gets us
+offered a large reward to the engineer of the Mongolia if he gets us
 to Bombay well in advance of time.
 
 And you have known your master a long time?
@@ -53097,7 +53091,7 @@ In short, said the consul, appearances are wholly against this man.
 And what are you going to do?
 
 Send a dispatch to London for a warrant of arrest to be dispatched
-instantly to Bombay, take passage on board the ‘Mongolia, follow my
+instantly to Bombay, take passage on board the Mongolia, follow my
 rogue to India, and there, on English ground, arrest him politely, with
 my warrant in my hand, and my hand on his shoulder.
 
@@ -54859,7 +54853,7 @@ was due at Singapore.
 Fix emerged from his cabin and went on deck. Passepartout was
 promenading up and down in the forward part of the steamer. The
 detective rushed forward with every appearance of extreme surprise, and
-exclaimed, You here, on the ‘Rangoon?
+exclaimed, You here, on the Rangoon?
 
 What, Monsieur Fix, are you on board? returned the really astonished
 Passepartout, recognising his crony of the Mongolia. Why, I left you
@@ -54899,7 +54893,7 @@ Nothing to be done there, said Fix to himself, concealing his
 disappointment. A glass of gin, Mr. Passepartout?
 
 Willingly, Monsieur Fix. We must at least have a friendly glass on
-board the ‘Rangoon.
+board the Rangoon.
 
 CHAPTER XVII.
 SHOWING WHAT HAPPENED ON THE VOYAGE FROM SINGAPORE TO HONG KONG
@@ -55184,7 +55178,7 @@ pilot, while Fix would have been glad to twist his neck.
 
 What is the steamers name? asked Mr. Fogg.
 
-The ‘Carnatic.
+The Carnatic.
 
 Ought she not to have gone yesterday?
 
@@ -55253,7 +55247,7 @@ Passepartout!
 
 Monsieur.
 
-Go to the ‘Carnatic, and engage three cabins.
+Go to the Carnatic, and engage three cabins.
 
 Passepartout, delighted that the young woman, who was very gracious to
 him, was going to continue the journey with them, went off at a brisk
@@ -55529,7 +55523,7 @@ becoming heavy under the influence of the narcotic, fell upon the
 table.
 
 At last! said Fix, seeing Passepartout unconscious. Mr. Fogg will
-not be informed of the ‘Carnatics departure, and, if he is, he will
+not be informed of the Carnatics departure, and, if he is, he will
 have to go without this cursed Frenchman!
 
 And, after paying his bill, Fix left the tavern.
@@ -55575,7 +55569,7 @@ nothing more.
 
 At this moment a man who had been observing him attentively approached.
 It was Fix, who, bowing, addressed Mr. Fogg: Were you not, like me,
-sir, a passenger by the ‘Rangoon, which arrived yesterday?
+sir, a passenger by the Rangoon, which arrived yesterday?
 
 I was, sir, replied Mr. Fogg coldly. But I have not the honour
 
@@ -55586,14 +55580,14 @@ Do you know where he is, sir? asked Aouda anxiously.
 What! responded Fix, feigning surprise. Is he not with you?
 
 No, said Aouda. He has not made his appearance since yesterday.
-Could he have gone on board the ‘Carnatic without us?
+Could he have gone on board the Carnatic without us?
 
 Without you, madam? answered the detective. Excuse me, did you
-intend to sail in the ‘Carnatic?
+intend to sail in the Carnatic?
 
 Yes, sir.
 
-So did I, madam, and I am excessively disappointed. The ‘Carnatic,
+So did I, madam, and I am excessively disappointed. The Carnatic,
 its repairs being completed, left Hong Kong twelve hours before the
 stated time, without any notice being given, and we must now wait a
 week for another steamer.
@@ -55602,7 +55596,7 @@ As he said a week Fix felt his heart leap for joy. Fogg detained at
 Hong Kong for a week! There would be time for the warrant to arrive,
 and fortune at last favoured the representative of the law. His horror
 may be imagined when he heard Mr. Fogg say, in his placid voice, But
-there are other vessels besides the ‘Carnatic, it seems to me, in the
+there are other vessels besides the Carnatic, it seems to me, in the
 harbour of Hong Kong.
 
 And, offering his arm to Aouda, he directed his steps toward the docks
@@ -55642,7 +55636,7 @@ Yes, will you agree to take me to Yokohama?
 The sailor leaned on the railing, opened his eyes wide, and said, Is
 your honour joking?
 
-No. I have missed the ‘Carnatic, and I must get to Yokohama by the
+No. I have missed the Carnatic, and I must get to Yokohama by the
 14th at the latest, to take the boat for San Francisco.
 
 I am sorry, said the sailor, but it is impossible.
@@ -55715,7 +55709,7 @@ put up.
 
 It is a bargain. Are you the master of the boat?
 
-Yes, John Bunsby, master of the ‘Tankadere.
+Yes, John Bunsby, master of the Tankadere.
 
 Would you like some earnest money?
 
@@ -56103,7 +56097,7 @@ influence of the narcotic. The thought of a duty unfulfilled shook off
 his torpor, and he hurried from the abode of drunkenness. Staggering
 and holding himself up by keeping against the walls, falling down and
 creeping up again, and irresistibly impelled by a kind of instinct, he
-kept crying out, The ‘Carnatic! the ‘Carnatic!
+kept crying out, The Carnatic! the Carnatic!
 
 The steamer lay puffing alongside the quay, on the point of starting.
 Passepartout had but few steps to go, and, rushing upon the plank, he
@@ -56155,7 +56149,7 @@ list of the passengers, you may see for yourself.
 Passepartout scanned the list, but his masters name was not upon it.
 All at once an idea struck him.
 
-Ah! am I on the ‘Carnatic?
+Ah! am I on the Carnatic?
 
 Yes.
 
@@ -56897,7 +56891,7 @@ black hats disappeared, and the greater part of the crowd seemed to
 have diminished in height.
 
 It is evidently a meeting, said Fix, and its object must be an
-exciting one. I should not wonder if it were about the ‘Alabama,
+exciting one. I should not wonder if it were about the Alabama,
 despite the fact that that question is settled.
 
 Perhaps, replied Mr. Fogg, simply.
@@ -58593,7 +58587,7 @@ None.
 
 The captain spoke in a tone which did not admit of a reply.
 
-But the owners of the ‘Henrietta resumed Phileas Fogg.
+But the owners of the Henrietta resumed Phileas Fogg.
 
 The owners are myself, replied the captain. The vessel belongs to
 me.
@@ -58836,7 +58830,7 @@ No! By all the devils, no!
 
 But I shall be obliged to burn her.
 
-Burn the ‘Henrietta!
+Burn the Henrietta!
 
 Yes, at least the upper part of her. The coal has given out.
 
@@ -59365,7 +59359,7 @@ intelligence from him, though there are telegraphic lines all along his
 route.
 
 He has lost, gentleman, said Andrew Stuart, he has a hundred times
-lost! You know, besides, that the ‘Chinathe only steamer he could
+lost! You know, besides, that the Chinathe only steamer he could
 have taken from New York to get here in time arrived yesterday. I have
 seen a list of the passengers, and the name of Phileas Fogg is not
 among them. Even if we admit that fortune has favoured him, he can
@@ -59673,7 +59667,7 @@ Excelsior!
 
 Never had one of Brights or Cobdens sudden onslaughts, never had one
 of Palmerstons abrupt demands for funds to plate the rocks of the
-English coast with iron, made such a sensation. Sir Francis M‘s
+English coast with iron, made such a sensation. Sir Francis Ms
 address was completely overshadowed. The doctor had shown himself
 moderate, sublime, and self contained, in one, he had uttered the word
 of the situation
@@ -60164,7 +60158,7 @@ ever!
 
 Yes! but in the good sense of the word. Let us not trouble ourselves,
 then, about what fate has in store for us, and let us not forget our
-good old English proverb: ‘The man who was born to be hung will never
+good old English proverb: The man who was born to be hung will never
 be drowned!
 
 There was no reply to make, but that did not prevent Kennedy from
@@ -60269,9 +60263,9 @@ I shall descend when I please.
 And how will you do that?
 
 Ah, ha! therein lies my secret, friend Dick. Have faith, and let my
-device be yours‘Excelsior!
+device be yoursExcelsior!
 
-‘Excelsior be it then, said the sportsman, who did not understand a
+Excelsior be it then, said the sportsman, who did not understand a
 word of Latin.
 
 But he made up his mind to oppose his friends departure by all means
@@ -60511,16 +60505,16 @@ look upon him as irrevocably destined to become his arial companion.
 Not even the shadow of a doubt was ever suggested, and Samuel made an
 intolerable misuse of the first person plural:
 
-‘We are getting along, ‘we shall be ready on the, ‘we shall start
+We are getting along, we shall be ready on the, we shall start
 on the, etc., etc.
 
 And then there was the singular possessive adjective:
 
-‘Our balloon, ‘our car, ‘our expedition.
+Our balloon, our car, our expedition.
 
 And the same in the plural, too:
 
-‘Our preparations, ‘our discoveries, ‘our ascensions.
+Our preparations, our discoveries, our ascensions.
 
 Dick shuddered at them, although he was determined not to go, but he
 did not want to annoy his friend. Let us also disclose the fact that,
@@ -60856,8 +60850,8 @@ Oh! now, you wont vex the doctor in that way!
 Aye! that I will.
 
 Well! said Joe with a laugh, you say that because hes not here, but
-when he says to your face, ‘Dick! with all respect to you, sir,
-‘Dick, I want to know exactly how much you weigh, youll go, I warrant
+when he says to your face, Dick! with all respect to you, sir,
+Dick, I want to know exactly how much you weigh, youll go, I warrant
 it.
 
 No, I will not go!
@@ -61268,7 +61262,7 @@ And the balloon withstood it?
 Perfectly well. It was at the time of the coronation of Napoleon, in
 1804. The aronaut, Gernerin, sent up a balloon at Paris, about eleven
 oclock in the evening. It bore the following inscription, in letters
-of gold: ‘Paris, 25 Frimaire, year XIII, Coronation of the Emperor
+of gold: Paris, 25 Frimaire, year XIII, Coronation of the Emperor
 Napoleon by his Holiness, Pius VII. On the next morning, the
 inhabitants of Rome saw the same balloon soaring above the Vatican,
 whence it crossed the Campagna, and finally fluttered down into the
@@ -61407,7 +61401,7 @@ Yes, my youngster, so that in that country youd be toddling after
 your mammy yet, and that old chap yonder, who looks about fifty, would
 only be a little shaver of four and a half.
 
-Blazes! thats a good ‘un! shouted the whole forecastle together.
+Blazes! thats a good un! shouted the whole forecastle together.
 
 Solemn truth! said Joe, stoutly.
 
@@ -62409,7 +62403,7 @@ onward to flow into the Kingani, in the midst of gigantic clumps of
 sycamore, tamarind, calabash, and palmyra trees.
 
 Attention! said Dr. Ferguson. We are approaching Rubeho, the name of
-which signifies, in the language of the country, the ‘Passage of the
+which signifies, in the language of the country, the Passage of the
 Winds, and we would do well to double its jagged pinnacles at a
 certain height. If my chart be exact, we are going to ascend to an
 elevation of five thousand feet.
@@ -63777,7 +63771,7 @@ grasp.
 Hes taking us exactly to where we want to go, my dear Dick. A little
 patience!
 
-‘Wig a more! wig a more! as the Scotch country folks say, shouted
+Wig a more! wig a more! as the Scotch country folks say, shouted
 Joe, in high glee. Gee up! gee up there!
 
 The huge animal now broke into a very rapid gallop. He flung his trunk
@@ -64659,7 +64653,7 @@ yet, they would be nothing astonishing in the New World.
 
 Why, are there still loftier trees in existence?
 
-Undoubtedly, among the ‘mammoth trees of California, there is a cedar
+Undoubtedly, among the mammoth trees of California, there is a cedar
 four hundred and eighty feet in height. It would overtop the Houses of
 Parliament, and even the Great Pyramid of Egypt. The trunk at the
 surface of the ground was one hundred and twenty feet in circumference,
@@ -64989,7 +64983,7 @@ Kennedy and Joe, dumb with amazement, had regained the car immediately.
 
 Did you hear that? the doctor asked them.
 
-Undoubtedly, that supernatural cry, ‘ moi! moi! comes from a
+Undoubtedly, that supernatural cry,  moi! moi! comes from a
 Frenchman in the hands of these barbarians!
 
 A traveller.
@@ -66021,7 +66015,7 @@ scattered in sharp edged pebbles which soon again became coarse sand,
 and finally impalpable dust.
 
 Here, at last, is Africa, such as you pictured it to yourself, Joe!
-Was I not right in saying, ‘Wait a little? eh?
+Was I not right in saying, Wait a little? eh?
 
 Well, master, its all natural, at leastheat and dust. It would be
 foolish to look for any thing else in such a country. Do you see, he
@@ -67001,13 +66995,13 @@ possible nor true. Bruce made no reply, but went out and returned a few
 minutes later with a raw steak, seasoned with pepper and salt, in the
 African style.
 
-‘Sir, said he to the Scotchman, ‘in doubting my statements, you have
+Sir, said he to the Scotchman, in doubting my statements, you have
 grossly affronted me, in believing the thing to be impossible, you have
 been egregiously mistaken, and, in proof thereof, you will now eat this
 beef steak raw, or you will give me instant satisfaction! The
 Scotchman had a wholesome dread of the brawny traveller, and did eat
 the steak, although not without a good many wry faces. Thereupon, with
-the utmost coolness, James Bruce added: ‘Even admitting, sir, that the
+the utmost coolness, James Bruce added: Even admitting, sir, that the
 thing were untrue, you will, at least, no longer maintain that it is
 impossible.
 
@@ -69334,7 +69328,7 @@ that I took good care to go around. No! I crossed the ploughed fields,
 I leaped the hedges, I scrambled over the fences, I dug my heels into
 my nag, I thrashed him, I fairly lifted the poor fellow off his feet!
 At last I got to the end of the tilled land. Good! There was the
-desert. ‘That suits me! said I, ‘for I can see better ahead of me and
+desert. That suits me! said I, for I can see better ahead of me and
 farther too. I was hoping all the time to see the balloon tacking
 about and waiting for me. But not a bit of it, and so, in about three
 hours, I go plump, like a fool, into a camp of Arabs! Whew! what a hunt
@@ -69607,7 +69601,7 @@ I wanted to talk to you about this river, said Dr. Ferguson, and it
 is already far from us. Under the names of Dhiouleba, Mayo, Egghirreou,
 Quorra, and other titles besides, it traverses an immense extent of
 country, and almost competes in length with the Nile. These
-appellations signify simply ‘the River, according to the dialects of
+appellations signify simply the River, according to the dialects of
 the countries through which it passes.
 
 Did Dr. Barth follow this route? asked Kennedy.
@@ -69689,7 +69683,7 @@ where he arrived on the 30th of April. In 1760, another Frenchman,
 Imbert by name, and, in 1810, an Englishman, Robert Adams, had seen
 this curious place, but Ren Cailli was to be the first European who
 could bring back any authentic data concerning it. On the 4th of May he
-quitted this ‘Queen of the desert, on the 9th, he surveyed the very
+quitted this Queen of the desert, on the 9th, he surveyed the very
 spot where Major Laing had been murdered, on the 19th, he arrived at
 El Arouan, and left that commercial town to brave a thousand dangers in
 crossing the vast solitudes comprised between the Soudan and the
@@ -69776,7 +69770,7 @@ beholder might have fancied them to be the legendary ruins of some vast
 city of the middle ages, such as the icebergs of the polar seas
 sometimes mimic them in nights of gloom.
 
-An admirable landscape for the ‘Mysteries of Udolpho! exclaimed the
+An admirable landscape for the Mysteries of Udolpho! exclaimed the
 doctor. Ann Radcliffe could not have depicted yon mountains in a more
 appalling aspect.
 
