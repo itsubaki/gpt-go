@@ -1,0 +1,44 @@
+// Softmax implementation with numerical stability
+package pkg
+
+import (
+	"github.com/itsubaki/autograd/function"
+	"github.com/itsubaki/autograd/matrix"
+	"github.com/itsubaki/autograd/variable"
+)
+
+func Softmax(x ...*variable.Variable) *variable.Variable {
+	return (&variable.Function{Forwarder: &SoftmaxT{}}).First(x...)
+}
+
+type SoftmaxT struct {
+	y *variable.Variable
+}
+
+func (f *SoftmaxT) Forward(x ...*variable.Variable) []*variable.Variable {
+	max := matrix.MaxAxis1(x[0].Data)              // max(x, axis=1)
+	expy := matrix.Exp(matrix.Sub(x[0].Data, max)) // expy = exp(x - max)
+	sumy := matrix.SumAxis1(expy)                  // sumy = sum(expy, axis=1)
+	const epsilon float64 = 1e-12
+	sumyStable := matrix.F(sumy, func(x float64) float64 {
+		if x < epsilon {
+			return epsilon // Prevent division by zero
+		}
+		return x
+	})
+	y := matrix.Div(expy, sumyStable) // y = expy / sumy
+
+	f.y = variable.NewOf(y...)
+	return []*variable.Variable{
+		f.y,
+	}
+}
+
+func (f *SoftmaxT) Backward(gy ...*variable.Variable) []*variable.Variable {
+	gyy := Mul(gy[0], f.y)                       // gyy = gy * y
+	sum := function.SumTo(len(gyy.Data), 1)(gyy) // sum = sum(gx, axis=1)
+
+	return []*variable.Variable{
+		Sub(gyy, Mul(f.y, sum)), // gyy - y * sum
+	}
+}
