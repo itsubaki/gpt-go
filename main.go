@@ -14,14 +14,14 @@ import (
 
 const (
 	blockSize    = 64 // We don't have batches, so we increase blockSize for convergence
-	batchSize    = 32 // Emulated batch
 	embedSize    = 64
 	numHeads     = 4
 	numLayers    = 4
 	epochs       = 20000
-	learningRate = 0.003
+	learningRate = 0.0001
 	evalIters    = 100
 	dropout      = 0.0
+	batchSize    = 32 // Emulated batch
 )
 
 var (
@@ -81,13 +81,14 @@ func main() {
 
 		// Loss calculation
 		loss := CrossEntropy(logits, targets)
-		//scaledLoss := variable.MulC(1.0/float64(batchSize), loss)
+		scaledLoss := variable.MulC(1.0/float64(batchSize), loss)
 		if (i % evalIters) == 0 {
 			fmt.Println(loss.Data[0][0])
 		}
 
 		// Backward pass
-		loss.Backward()
+		scaledLoss.Backward()
+		//loss.Backward()non
 		//ClipGradByNorm(0.3, params)
 		optimize.Update(params)
 		params.ZeroGrad()
