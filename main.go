@@ -49,7 +49,7 @@ func main() {
 		blocks = append(blocks, NewBlock(embedSize, numHeads))
 	}
 	norm := pkg.NewLayerNorm(embedSize)
-	lmHead := pkg.NewLinear(embedSize, vocabSize)
+	lmHead := NewLinear(embedSize, vocabSize)
 
 	params := pkg.NewParams()
 	params.Add(embeds, posEmbeds)

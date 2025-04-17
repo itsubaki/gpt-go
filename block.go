@@ -11,8 +11,8 @@ type Block struct {
 	embedSize int
 	headCount int
 	saHead    *MultiHeadAttention
-	ffwd      *pkg.Linear
-	ffwdProj  *pkg.Linear
+	ffwd      *Linear
+	ffwdProj  *Linear
 	norm1     *pkg.LayerNorm
 	norm2     *pkg.LayerNorm
 }
@@ -22,8 +22,8 @@ func NewBlock(embedSize, numHeads int) *Block {
 		embedSize: embedSize,
 		headCount: numHeads,
 		saHead:    NewMultiHeadAttention(embedSize, numHeads),
-		ffwd:      pkg.NewLinear(embedSize, embedSize*4),
-		ffwdProj:  pkg.NewLinear(embedSize*4, embedSize),
+		ffwd:      NewLinear(embedSize, embedSize*4),
+		ffwdProj:  NewLinear(embedSize*4, embedSize),
 		norm1:     pkg.NewLayerNorm(embedSize),
 		norm2:     pkg.NewLayerNorm(embedSize),
 	}

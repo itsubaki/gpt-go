@@ -15,7 +15,7 @@ type MultiHeadAttention struct {
 	embedSize int
 	headSize  int
 	Heads     []*Head
-	proj      *pkg.Linear
+	proj      *Linear
 }
 
 func NewMultiHeadAttention(embedSize, numHeads int) *MultiHeadAttention {
@@ -30,7 +30,7 @@ func NewMultiHeadAttention(embedSize, numHeads int) *MultiHeadAttention {
 		numHeads:  numHeads,
 		embedSize: embedSize,
 		headSize:  headSize,
-		proj:      pkg.NewLinear(embedSize, embedSize),
+		proj:      NewLinear(embedSize, embedSize),
 	}
 }
 
@@ -60,16 +60,16 @@ func (mh *MultiHeadAttention) Params() []layer.Parameter {
 type Head struct {
 	embedSize int
 	headSize  int
-	Key       *pkg.Linear
-	Query     *pkg.Linear
-	Value     *pkg.Linear
+	Key       *Linear
+	Query     *Linear
+	Value     *Linear
 }
 
 // Number of embeds
 func NewHead(embedSize, headSize int) *Head {
-	key := pkg.NewLinear(embedSize, headSize, pkg.NoBias())
-	query := pkg.NewLinear(embedSize, headSize, pkg.NoBias())
-	value := pkg.NewLinear(embedSize, headSize, pkg.NoBias())
+	key := NewLinear(embedSize, headSize, NoBias())
+	query := NewLinear(embedSize, headSize, NoBias())
+	value := NewLinear(embedSize, headSize, NoBias())
 
 	return &Head{embedSize, headSize, key, query, value}
 }
@@ -90,10 +90,4 @@ func (h *Head) Forward(input *variable.Variable) *variable.Variable {
 	normalizedSum := function.MulC(math.Pow(float64(h.embedSize), -0.5), weightedSum)
 
 	return normalizedSum
-}
-
-func (h *Head) ZeroGrad() {
-	h.Key.ZeroGrad()
-	h.Query.ZeroGrad()
-	h.Value.ZeroGrad()
 }
