@@ -12,13 +12,13 @@ import (
 
 // Hyperparameters
 const (
-	blockSize    = 64 // We don't have batches, so we increase blockSize for convergence
+	blockSize    = 32 // We don't have batches, so we increase blockSize for convergence
 	embedSize    = 64
 	numHeads     = 4
 	numLayers    = 4
 	epochs       = 20000
-	learningRate = 0.001
-	evalIters    = 1000
+	learningRate = 0.005
+	evalIters    = 100
 	dropout      = 0
 	lossScale    = 0.03
 )
