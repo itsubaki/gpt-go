@@ -67,7 +67,7 @@ func main() {
 	}
 
 	// Main training loop
-	fmt.Printf("bs=%d, es=%d, lr=%f\n", blockSize, embedSize, learningRate)
+	fmt.Printf("bs=%d, es=%d, lr=%f, epochs=%d\n", blockSize, embedSize, learningRate, epochs)
 	for i := 0; i < epochs; i++ {
 		// Inputs are indexes for embeds table
 		inputs, targets := GetSequence(data.Data[0], blockSize)
