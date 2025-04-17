@@ -67,7 +67,7 @@ func main() {
 	}
 
 	// Main training loop
-	fmt.Printf("bs=%d, es=%d, lr=%.3f, ls=%2f, epochs=%d\n", blockSize, embedSize, learningRate, lossScale, epochs)
+	fmt.Printf("bs=%d, es=%d, lr=%.3f, ls=%.2f, epochs=%d\n", blockSize, embedSize, learningRate, lossScale, epochs)
 	for i := 0; i < epochs; i++ {
 		// Inputs are indexes for embeds table
 		inputs, targets := GetSequence(data.Data[0], blockSize)
@@ -98,7 +98,7 @@ func main() {
 
 	// Generate text
 	variable.Config.Train = false // Prevent dropout
-	context := "Alibab i"
+	context := "Mysterious Island"
 	maxTokens := 500
 	contextTokens := Encode(context).Data[0]
 	fmt.Println("\nGenerated text after training:")
