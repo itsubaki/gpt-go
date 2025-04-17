@@ -85,7 +85,7 @@ func main() {
 		loss := CrossEntropy(logits, targets)
 		scaledLoss := variable.MulC(lossScale, loss)
 		if (i % evalIters) == 0 {
-			fmt.Printf("Step: %d, Loss: %.5f\n", i, loss.Data[0][0])
+			fmt.Printf("%.5f, step: %d\n", loss.Data[0][0], i)
 		}
 
 		// Backward pass
