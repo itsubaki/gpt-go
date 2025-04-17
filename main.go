@@ -12,7 +12,7 @@ import (
 
 // Hyperparameters
 const (
-	blockSize    = 32 // We don't have batches, so we increase blockSize for convergence
+	blockSize    = 64 // We don't have batches, so we increase blockSize for convergence
 	embedSize    = 64
 	numHeads     = 4
 	numLayers    = 4
