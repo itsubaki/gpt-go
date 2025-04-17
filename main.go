@@ -16,11 +16,11 @@ const (
 	embedSize    = 64
 	numHeads     = 4
 	numLayers    = 4
-	epochs       = 20000
+	epochs       = 80000
 	learningRate = 0.001
-	evalIters    = 100
+	evalIters    = 1000
 	dropout      = 0
-	lossScale    = 1.00
+	lossScale    = 0.03
 )
 
 var (
