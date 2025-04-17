@@ -12,6 +12,7 @@ import (
 	"gptgo/pkg"
 )
 
+// Hyperparameters
 const (
 	blockSize    = 64 // We don't have batches, so we increase blockSize for convergence
 	embedSize    = 64
@@ -66,6 +67,7 @@ func main() {
 	}
 
 	// Main training loop
+	fmt.Printf("bs=%d, es=%d, lr=%f\n", blockSize, embedSize, learningRate)
 	for i := 0; i < epochs; i++ {
 		// Inputs are indexes for embeds table
 		inputs, targets := GetSequence(data.Data[0], blockSize)
