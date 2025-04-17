@@ -9,7 +9,7 @@ import (
 	"github.com/itsubaki/autograd/layer"
 	"github.com/itsubaki/autograd/variable"
 
-	"tinygpt/pkg"
+	"gptgo/pkg"
 )
 
 const (
@@ -50,24 +50,14 @@ func main() {
 	norm := pkg.NewLayerNorm(embedSize)
 	lmHead := pkg.NewLinear(embedSize, vocabSize)
 
-	params := make(layer.Parameters)
-	params.Add("embeds", embeds)
-	params.Add("posEmbeds", posEmbeds)
-	for i, block := range blocks {
-		for j, param := range block.Params() {
-			params.Add(fmt.Sprintf("%d-%d#block", i, j), param)
-		}
+	params := pkg.NewParams()
+	params.Add(embeds, posEmbeds)
+	for _, block := range blocks {
+		params.Add(block.Params()...)
 	}
-	params.Add("normScale", norm.Scale)
-	params.Add("normShift", norm.Shift)
-	params.Add("weights", lmHead.Weight)
-	params.Add("bias", lmHead.Bias)
-
-	numParams := 0
-	for _, param := range params {
-		numParams += len(param.Data) * len(param.Data[0])
-	}
-	fmt.Printf("%.3fM parameters\n", float64(numParams)/1e6)
+	params.Add(norm.Scale, norm.Shift)
+	params.Add(lmHead.Weight, lmHead.Bias)
+	fmt.Println(params)
 
 	optimize := pkg.AdamW{
 		Alpha: learningRate,
@@ -99,8 +89,8 @@ func main() {
 		// Backward pass
 		loss.Backward()
 		//ClipGradByNorm(0.3, params)
-		optimize.Update(pkg.Model{params})
-		params.Cleargrads()
+		optimize.Update(params)
+		params.ZeroGrad()
 	}
 
 	// Generate text

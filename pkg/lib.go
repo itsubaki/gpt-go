@@ -8,16 +8,40 @@ import (
 	"github.com/itsubaki/autograd/matrix"
 	"github.com/itsubaki/autograd/variable"
 	"gonum.org/v1/gonum/stat/distuv"
-
-	"tinygpt"
 )
 
-type Model struct {
+// Just a small wrapper over autograd's params
+type Params struct {
 	params layer.Parameters
+	count  int
 }
 
-func (m Model) Params() layer.Parameters {
-	return m.params
+func NewParams() *Params {
+	return &Params{params: layer.Parameters{}}
+}
+
+func (p *Params) Add(params ...layer.Parameter) {
+	for _, param := range params {
+		p.params.Add(fmt.Sprintf("%d#params", p.count), param)
+		p.count++
+	}
+}
+
+func (p *Params) Params() layer.Parameters {
+	return p.params
+}
+
+func (p *Params) String() string {
+	numParams := 0
+	for _, param := range p.params {
+		numParams += len(param.Data) * len(param.Data[0])
+	}
+
+	return fmt.Sprintf("%.3fM parameters\n", float64(numParams)/1e6)
+}
+
+func (p *Params) ZeroGrad() {
+	p.params.Cleargrads()
 }
 
 func Rows(x *variable.Variable, indexes ...float64) *variable.Variable {
@@ -61,7 +85,7 @@ func MaskedInfFill(m, mask *variable.Variable) *variable.Variable {
 
 		return a
 	})
-	mMasked := main.Add(variable.Mul(m, mask), variable.NewOf(negInfMaskedData...))
+	mMasked := Add(variable.Mul(m, mask), variable.NewOf(negInfMaskedData...))
 
 	return mMasked
 }

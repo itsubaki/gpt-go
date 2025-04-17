@@ -18,7 +18,7 @@ type AdamW struct {
 	ms, vs      map[*variable.Variable]matrix.Matrix
 }
 
-func (o *AdamW) Update(model Model) {
+func (o *AdamW) Update(model optimizer.Model) {
 	params := optimizer.Params(model, o.Hook)
 
 	if len(o.ms) == 0 {

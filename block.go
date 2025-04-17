@@ -4,7 +4,7 @@ import (
 	"github.com/itsubaki/autograd/layer"
 	"github.com/itsubaki/autograd/variable"
 
-	"tinygpt/pkg"
+	"gptgo/pkg"
 )
 
 type Block struct {

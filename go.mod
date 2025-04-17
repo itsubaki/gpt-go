@@ -1,4 +1,4 @@
-module tinygpt
+module gptgo
 
 go 1.23.6
 
