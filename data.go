@@ -12,10 +12,10 @@ import (
 func Data() (*variable.Variable, int) {
 	rand.Seed(42) // TODO remove
 
-	filePath := "input.txt"
+	filePath := "jules_verne.txt"
 
 	if _, err := os.Stat(filePath); os.IsNotExist(err) {
-		panic("Missing Shakespeare dataset...")
+		panic("Missing Jules Verne dataset...")
 	}
 
 	data, err := os.ReadFile(filePath)
