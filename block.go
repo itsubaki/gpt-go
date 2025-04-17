@@ -3,16 +3,18 @@ package main
 import (
 	"github.com/itsubaki/autograd/layer"
 	"github.com/itsubaki/autograd/variable"
+
+	"tinygpt/pkg"
 )
 
 type Block struct {
 	embedSize int
 	headCount int
 	saHead    *MultiHeadAttention
-	ffwd      *Linear
-	ffwdProj  *Linear
-	norm1     *LayerNorm
-	norm2     *LayerNorm
+	ffwd      *pkg.Linear
+	ffwdProj  *pkg.Linear
+	norm1     *pkg.LayerNorm
+	norm2     *pkg.LayerNorm
 }
 
 func NewBlock(embedSize, numHeads int) *Block {
@@ -20,10 +22,10 @@ func NewBlock(embedSize, numHeads int) *Block {
 		embedSize: embedSize,
 		headCount: numHeads,
 		saHead:    NewMultiHeadAttention(embedSize, numHeads),
-		ffwd:      NewLinear(embedSize, embedSize*4),
-		ffwdProj:  NewLinear(embedSize*4, embedSize),
-		norm1:     NewLayerNorm(embedSize),
-		norm2:     NewLayerNorm(embedSize),
+		ffwd:      pkg.NewLinear(embedSize, embedSize*4),
+		ffwdProj:  pkg.NewLinear(embedSize*4, embedSize),
+		norm1:     pkg.NewLayerNorm(embedSize),
+		norm2:     pkg.NewLayerNorm(embedSize),
 	}
 }
 

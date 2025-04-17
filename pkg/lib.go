@@ -1,4 +1,4 @@
-package main
+package pkg
 
 import (
 	"fmt"
@@ -8,6 +8,8 @@ import (
 	"github.com/itsubaki/autograd/matrix"
 	"github.com/itsubaki/autograd/variable"
 	"gonum.org/v1/gonum/stat/distuv"
+
+	"tinygpt"
 )
 
 type Model struct {
@@ -59,7 +61,7 @@ func MaskedInfFill(m, mask *variable.Variable) *variable.Variable {
 
 		return a
 	})
-	mMasked := Add(variable.Mul(m, mask), variable.NewOf(negInfMaskedData...))
+	mMasked := main.Add(variable.Mul(m, mask), variable.NewOf(negInfMaskedData...))
 
 	return mMasked
 }

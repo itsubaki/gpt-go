@@ -1,4 +1,4 @@
-package main
+package pkg
 
 import (
 	"github.com/itsubaki/autograd/variable"

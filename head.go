@@ -6,6 +6,8 @@ import (
 	"github.com/itsubaki/autograd/function"
 	"github.com/itsubaki/autograd/layer"
 	"github.com/itsubaki/autograd/variable"
+
+	"tinygpt/pkg"
 )
 
 type MultiHeadAttention struct {
@@ -13,7 +15,7 @@ type MultiHeadAttention struct {
 	embedSize int
 	headSize  int
 	Heads     []*Head
-	proj      *Linear
+	proj      *pkg.Linear
 }
 
 func NewMultiHeadAttention(embedSize, numHeads int) *MultiHeadAttention {
@@ -28,7 +30,7 @@ func NewMultiHeadAttention(embedSize, numHeads int) *MultiHeadAttention {
 		numHeads:  numHeads,
 		embedSize: embedSize,
 		headSize:  headSize,
-		proj:      NewLinear(embedSize, embedSize),
+		proj:      pkg.NewLinear(embedSize, embedSize),
 	}
 }
 
@@ -38,7 +40,7 @@ func (mh *MultiHeadAttention) Forward(input *variable.Variable) *variable.Variab
 		features = append(features, head.Forward(input))
 	}
 
-	out := Cat(features...)
+	out := pkg.Cat(features...)
 	out = mh.proj.Forward(out)  // Project back to (embedSize, embedSize)
 	out = Dropout(dropout)(out) // Dropping out some neurons to prevent overfitting
 
@@ -58,16 +60,16 @@ func (mh *MultiHeadAttention) Params() []layer.Parameter {
 type Head struct {
 	embedSize int
 	headSize  int
-	Key       *Linear
-	Query     *Linear
-	Value     *Linear
+	Key       *pkg.Linear
+	Query     *pkg.Linear
+	Value     *pkg.Linear
 }
 
 // Number of embeds
 func NewHead(embedSize, headSize int) *Head {
-	key := NewLinear(embedSize, headSize, NoBias())
-	query := NewLinear(embedSize, headSize, NoBias())
-	value := NewLinear(embedSize, headSize, NoBias())
+	key := pkg.NewLinear(embedSize, headSize, pkg.NoBias())
+	query := pkg.NewLinear(embedSize, headSize, pkg.NoBias())
+	value := pkg.NewLinear(embedSize, headSize, pkg.NoBias())
 
 	return &Head{embedSize, headSize, key, query, value}
 }
@@ -78,8 +80,8 @@ func (h *Head) Forward(input *variable.Variable) *variable.Variable {
 	query := variable.Transpose(h.Query.Forward(input))
 	wei := MatMul(key, query)
 
-	tril := Tril(OneLike(Zeros(T, T)))
-	wei = MaskedInfFill(wei, tril)
+	tril := pkg.Tril(OneLike(Zeros(T, T)))
+	wei = pkg.MaskedInfFill(wei, tril)
 	wei = function.Softmax(wei)
 	wei = Dropout(dropout)(wei)
 

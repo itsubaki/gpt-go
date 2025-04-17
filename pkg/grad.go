@@ -1,4 +1,4 @@
-package main
+package pkg
 
 func (t *Tensor) Backward() {
 	// Do we need other than Ones-filled initial grad?

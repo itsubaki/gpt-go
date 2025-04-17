@@ -1,5 +1,5 @@
 // Maybe move to tensor?
-package main
+package pkg
 
 import (
 	"math"

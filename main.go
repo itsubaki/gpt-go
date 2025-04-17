@@ -7,17 +7,18 @@ import (
 
 	"github.com/itsubaki/autograd/function"
 	"github.com/itsubaki/autograd/layer"
-	"github.com/itsubaki/autograd/optimizer"
 	"github.com/itsubaki/autograd/variable"
+
+	"tinygpt/pkg"
 )
 
 const (
-	blockSize    = 32 // We don't have batches, so we increase blockSize for convergence
+	blockSize    = 64 // We don't have batches, so we increase blockSize for convergence
 	batchSize    = 32 // Emulated batch
 	embedSize    = 64
 	numHeads     = 4
 	numLayers    = 4
-	epochs       = 80000
+	epochs       = 20000
 	learningRate = 0.003
 	evalIters    = 100
 	dropout      = 0.0
@@ -40,14 +41,14 @@ func main() {
 	rand.Seed(42)
 	data, vocabSize := Data()
 
-	embeds := RandKaiming(vocabSize, embedSize)
-	posEmbeds := RandKaiming(blockSize, embedSize)
+	embeds := pkg.RandKaiming(vocabSize, embedSize)
+	posEmbeds := pkg.RandKaiming(blockSize, embedSize)
 	var blocks []*Block
 	for range numLayers {
 		blocks = append(blocks, NewBlock(embedSize, numHeads))
 	}
-	norm := NewLayerNorm(embedSize)
-	lmHead := NewLinear(embedSize, vocabSize)
+	norm := pkg.NewLayerNorm(embedSize)
+	lmHead := pkg.NewLinear(embedSize, vocabSize)
 
 	params := make(layer.Parameters)
 	params.Add("embeds", embeds)
@@ -68,7 +69,7 @@ func main() {
 	}
 	fmt.Printf("%.3fM parameters\n", float64(numParams)/1e6)
 
-	optimize := optimizer.Adam{
+	optimize := pkg.AdamW{
 		Alpha: learningRate,
 		Beta1: 0.9,
 		Beta2: 0.999,
@@ -80,8 +81,8 @@ func main() {
 		inputs, targets := GetSequence(data.Data[0], blockSize)
 
 		// Forward pass
-		inputEmbeds := Rows(embeds, inputs.Data[0]...) // Get embed for every input token
-		input := Add(inputEmbeds, posEmbeds)           // Add positional embedding, (blockSize, embedSize)
+		inputEmbeds := pkg.Rows(embeds, inputs.Data[0]...) // Get embed for every input token
+		input := Add(inputEmbeds, posEmbeds)               // Add positional embedding, (blockSize, embedSize)
 		for _, block := range blocks {
 			input = block.Forward(input)
 		}
@@ -98,7 +99,7 @@ func main() {
 		// Backward pass
 		loss.Backward()
 		//ClipGradByNorm(0.3, params)
-		optimize.Update(Model{params})
+		optimize.Update(pkg.Model{params})
 		params.Cleargrads()
 	}
 
@@ -115,7 +116,7 @@ func main() {
 		}
 
 		// Get embeddings for all tokens in context
-		inputEmbeds := Rows(embeds, contextTokens...)
+		inputEmbeds := pkg.Rows(embeds, contextTokens...)
 		input := Add(inputEmbeds, posEmbeds)
 		for _, block := range blocks {
 			input = block.Forward(input)
@@ -127,7 +128,7 @@ func main() {
 		lastTokenOutput := variable.GetItem([]int{len(contextTokens) - 1})(logits)
 
 		probs := Softmax(lastTokenOutput)
-		nextToken := Sample(probs)
+		nextToken := pkg.Sample(probs)
 
 		decodedToken := Decode(nextToken)
 		fmt.Printf(decodedToken)

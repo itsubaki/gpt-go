@@ -1,11 +1,13 @@
 // Add embeddings
-package main
+package pkg
 
 import (
 	"math"
 
 	"github.com/itsubaki/autograd/matrix"
 	"github.com/itsubaki/autograd/variable"
+
+	"tinygpt"
 )
 
 type Linear struct {
@@ -46,10 +48,10 @@ func NoBias() LinearOption {
 
 // Forward computes the output based on the input (forward pass)
 func (l *Linear) Forward(input *variable.Variable) *variable.Variable {
-	logits := MatMul(input, l.Weight)
+	logits := main.MatMul(input, l.Weight)
 
 	if l.Biased {
-		logits = Add(logits, l.Bias)
+		logits = main.Add(logits, l.Bias)
 	}
 
 	return logits
