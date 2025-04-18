@@ -39,11 +39,6 @@ var (
 func main() {
 	dataset, vocabSize := data.Data()
 
-	fmt.Println(data.Encode("I have a dog"))
-	fmt.Println(data.Encode("Cyrus"))
-
-	return
-
 	// Basic transformer components
 	embeds := pkg.RandKaiming(vocabSize, embedSize)
 	posEmbeds := pkg.RandKaiming(blockSize, embedSize)
