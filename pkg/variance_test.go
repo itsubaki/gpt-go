@@ -1,7 +1,6 @@
 package pkg
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/itsubaki/autograd/variable"
@@ -55,7 +54,6 @@ func TestVarianceWithNegatives(t *testing.T) {
 	// Allow small floating point differences
 	for i := range expected {
 		for j := range expected[i] {
-			fmt.Println(result.Data[i][j])
 			r.InDelta(expected[i][j], result.Data[i][j], 1e-10, "Variance calculated incorrectly")
 		}
 	}

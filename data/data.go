@@ -11,16 +11,11 @@ import (
 )
 
 var (
-	// On top of per-character token we can load pretrained tokens
-	numSubwordTokens int
-
-	chars []rune
-	stoi  map[rune]int
-	itos  map[int]rune
-
-	tokenStoi     map[string]int
-	tokenItos     map[int]string
+	tokenToID     map[string]int
+	idToToken     map[int]string
 	longestTokens []string
+	// On top of per-character token we can load pretrained tokens
+	pretrainedTokens int
 
 	//go:embed fairy_tales.txt
 	data string
@@ -28,58 +23,34 @@ var (
 	tokens string
 )
 
-func Data(subwordTokens int) ([]float64, int) {
-	numSubwordTokens = subwordTokens
-	fmt.Printf("Length of text: %d characters\n", len(data))
-	fmt.Printf("First 100 characters:\n%s\n", strings.TrimSpace(data[:100]))
+func Data(numPretrainedTokens int) ([]float64, int) {
+	pretrainedTokens = numPretrainedTokens
+	tokenToID = make(map[string]int)
+	idToToken = make(map[int]string)
 
-	AddCharactersToVocabulary(data)
-	AddSubwordTokensToVocabulary(tokens)
+	addTokensFromText(data)
+	addPretrainedTokens(tokens)
 
-	fmt.Printf("Vocabulary: %s\n", string(chars[:min(100, len(chars))]))
-
-	encodedText := Encode(data)
-
-	return encodedText, VocabSize()
+	return Encode(data), VocabSize()
 }
 
 func Encode(s string) []float64 {
 	encoded := make([]float64, 0)
-	i := 0
 
 	runes := []rune(s)
-	for i < len(runes) {
-		matched := false
-
+	for len(runes) > 0 {
+		found := false
 		for _, token := range longestTokens {
-			tokenRunes := []rune(token)
-			tokenRuneLength := len(tokenRunes)
-
-			// Check if we have enough runes left and if the slices match
-			if i+tokenRuneLength <= len(runes) {
-				matchCandidate := runes[i : i+tokenRuneLength]
-
-				if string(matchCandidate) == token {
-					if tokenID, ok := tokenStoi[token]; ok {
-						encoded = append(encoded, float64(tokenID))
-						i += len(token)
-						matched = true
-						break
-					}
-				}
+			if strings.HasPrefix(string(runes), token) {
+				encoded = append(encoded, float64(tokenToID[token]))
+				runes = runes[len([]rune(token)):]
+				found = true
+				break
 			}
 		}
 
-		// If no token matches, fall back to character encoding
-		if !matched {
-			ch := runes[i]
-			if idx, ok := stoi[ch]; ok {
-				encoded = append(encoded, float64(idx))
-			} else {
-				msg := fmt.Sprintf("Warning: Character '%c' (code %d) not in vocabulary\n", ch, ch)
-				panic(msg)
-			}
-			i++
+		if !found {
+			panic("can't encode token")
 		}
 	}
 
@@ -91,11 +62,11 @@ func Decode(indices ...float64) string {
 
 	for _, idx := range indices {
 		id := int(idx)
-
-		if token, ok := tokenItos[id]; ok {
+		if token, ok := idToToken[id]; ok {
 			result.WriteString(token)
-		} else if ch, ok := itos[id]; ok {
-			result.WriteRune(ch)
+		} else {
+			msg := fmt.Sprintf("Uknown token ID=%d", id)
+			panic(msg)
 		}
 	}
 
@@ -103,11 +74,11 @@ func Decode(indices ...float64) string {
 }
 
 func VocabSize() int {
-	return len(chars) + len(tokenStoi)
+	return len(tokenToID)
 }
 
 func Sample(data []float64, blockSize int) (*variable.Variable, *variable.Variable) {
-	dataLen := len(data) - blockSize
+	dataLen := len(data) - (blockSize + 1)
 	if dataLen <= 0 {
 		panic("Not enough Data for the given block size")
 	}
@@ -125,52 +96,48 @@ func Sample(data []float64, blockSize int) (*variable.Variable, *variable.Variab
 	return variable.New(x...), variable.New(y...)
 }
 
-func AddCharactersToVocabulary(text string) {
-	charMap := make(map[rune]bool)
+func addTokensFromText(text string) {
 	for _, ch := range text {
-		charMap[ch] = true
-	}
-
-	chars = make([]rune, 0, len(charMap))
-	for ch := range charMap {
-		chars = append(chars, ch)
-	}
-	sort.Slice(chars, func(i, j int) bool {
-		return chars[i] < chars[j]
-	})
-
-	stoi = make(map[rune]int)
-	itos = make(map[int]rune)
-	for i, ch := range chars {
-		stoi[ch] = i
-		itos[i] = ch
+		addTokens(string(ch))
 	}
 }
 
-func AddSubwordTokensToVocabulary(subwordTokens string) {
-	tokenStoi = make(map[string]int)
-	tokenItos = make(map[int]string)
-	longestTokens = make([]string, 0)
+func addPretrainedTokens(tokens string) {
+	splitTokens := strings.Split(strings.TrimSpace(tokens), "\n")
+	splitTokens = splitTokens[:min(pretrainedTokens, len(splitTokens))]
+	fmt.Println(splitTokens, tokens)
 
-	splitTokens := strings.Split(strings.TrimSpace(subwordTokens), "\n")
-	var filteredTokens []string
-	for _, token := range splitTokens {
-		if token != "" {
-			filteredTokens = append(filteredTokens, token)
+	addTokens(splitTokens...)
+}
+
+func addTokens(tokens ...string) {
+	for _, token := range tokens {
+		if _, ok := tokenToID[token]; ok {
+			continue
 		}
-	}
-	filteredTokens = filteredTokens[:min(numSubwordTokens, len(filteredTokens))]
 
-	baseVocabSize := len(chars)
-	for i, token := range filteredTokens {
-		tokenID := baseVocabSize + i
-		tokenStoi[token] = tokenID
-		tokenItos[tokenID] = token
+		tokenID := len(tokenToID)
+		tokenToID[token] = tokenID
+		idToToken[tokenID] = token
+		longestTokens = append(longestTokens, token)
 	}
 
-	longestTokens = make([]string, len(filteredTokens))
-	copy(longestTokens, filteredTokens)
 	sort.Slice(longestTokens, func(i, j int) bool {
+		if len(longestTokens[i]) == len(longestTokens[j]) {
+			return longestTokens[i] < longestTokens[j]
+		}
+
 		return len(longestTokens[i]) > len(longestTokens[j])
 	})
+}
+
+func Characters() string {
+	var result strings.Builder
+	for _, token := range longestTokens {
+		if len(token) == 1 {
+			result.WriteString(token)
+		}
+	}
+
+	return result.String()
 }

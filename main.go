@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/itsubaki/autograd/function"
 	"github.com/itsubaki/autograd/variable"
@@ -12,16 +13,16 @@ import (
 
 // Hyperparameters
 const (
-	blockSize     = 32
-	embedSize     = 64
-	numHeads      = 4
-	numLayers     = 4
-	epochs        = 40000
-	learningRate  = 0.003
-	evalIters     = 1000
-	dropout       = 0
-	lossScale     = 0.05
-	subwordTokens = 1500
+	blockSize        = 16
+	embedSize        = 16
+	numHeads         = 4
+	numLayers        = 4
+	epochs           = 40000
+	learningRate     = 0.0005
+	evalIters        = 1000
+	dropout          = 0
+	lossScale        = 1.00
+	pretrainedTokens = 5000
 )
 
 var (
@@ -31,7 +32,9 @@ var (
 )
 
 func main() {
-	dataset, vocabSize := data.Data(subwordTokens)
+	dataset, vocabSize := data.Data(pretrainedTokens)
+	fmt.Printf("First 100 characters:\n%s\n", strings.TrimSpace(data.Decode(dataset[:100]...)))
+	fmt.Printf("Vocabulary: %s\n", data.Characters())
 
 	// Basic transformer components
 	embeds := pkg.RandKaiming(vocabSize, embedSize)
@@ -91,7 +94,7 @@ func main() {
 
 	// Generate text
 	variable.Config.Train = false // Prevent dropout
-	context := "Mysterious Island"
+	context := "Magic forest"
 	maxTokens := 500
 	contextTokens := data.Encode(context)
 	fmt.Printf("\n%s", context)
