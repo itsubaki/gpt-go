@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"sort"
 	"strings"
+	"time"
 
 	"github.com/itsubaki/autograd/function"
 	"github.com/itsubaki/autograd/variable"
@@ -13,11 +15,11 @@ import (
 
 // Hyperparameters
 const (
-	blockSize        = 32
+	blockSize        = 64
 	embedSize        = 32
 	heads            = 4
 	layers           = 4
-	epochs           = 40000
+	epochs           = 4000
 	learningRate     = 0.0005
 	evalIters        = 1000
 	dropout          = 0
@@ -65,33 +67,116 @@ func main() {
 
 	// Main training loop
 	fmt.Printf("bs=%d, es=%d, lr=%.4f, ls=%.2f, vs=%d, epochs=%d\n", blockSize, embedSize, learningRate, lossScale, vocabSize, epochs)
+	timings := make(map[string]time.Duration)
+	counts := make(map[string]int)
+
 	for i := 0; i < epochs; i++ {
 		// Inputs are indexes for embeds table
+		startTime := time.Now()
 		inputs, targets := data.Sample(dataset, blockSize)
+		timings["Sample"] += time.Since(startTime)
+		counts["Sample"]++
 
 		// Forward pass
+		startTime = time.Now()
 		inputEmbeds := pkg.Rows(embeds, inputs.Data[0]...) // Get embed for every input token
-		input := Add(inputEmbeds, posEmbeds)               // Add positional embedding, (blockSize, embedSize)
-		for _, block := range blocks {
+		timings["Rows"] += time.Since(startTime)
+		counts["Rows"]++
+
+		startTime = time.Now()
+		input := Add(inputEmbeds, posEmbeds) // Add positional embedding, (blockSize, embedSize)
+		timings["Add"] += time.Since(startTime)
+		counts["Add"]++
+
+		for j, block := range blocks {
+			startTime = time.Now()
 			input = block.Forward(input)
+			blockName := fmt.Sprintf("Block-%d", j)
+			timings[blockName] += time.Since(startTime)
+			counts[blockName]++
 		}
-		input = norm.Forward(input)     // Normalize inputs
+
+		startTime = time.Now()
+		input = norm.Forward(input) // Normalize inputs
+		timings["Norm"] += time.Since(startTime)
+		counts["Norm"]++
+
+		startTime = time.Now()
 		logits := lmHead.Forward(input) // Get a list of final logits for the next token
+		timings["LMHead"] += time.Since(startTime)
+		counts["LMHead"]++
 
 		// Loss calculation
+		startTime = time.Now()
 		loss := CrossEntropy(logits, targets)
+		timings["CrossEntropy"] += time.Since(startTime)
+		counts["CrossEntropy"]++
+
+		startTime = time.Now()
 		scaledLoss := variable.MulC(lossScale, loss)
+		timings["MulC"] += time.Since(startTime)
+		counts["MulC"]++
+
 		if (i % evalIters) == 0 {
 			fmt.Printf("%.5f, epoch: %d\n", loss.Data[0][0], i)
 		}
 
 		// Backward pass
+		startTime = time.Now()
 		scaledLoss.Backward()
+		timings["Backward"] += time.Since(startTime)
+		counts["Backward"]++
 
 		// Weights update
+		startTime = time.Now()
 		optimize.Update(params)
+		timings["Update"] += time.Since(startTime)
+		counts["Update"]++
+
 		params.ZeroGrad()
 	}
+
+	fmt.Println("\n--- Timing Statistics (milliseconds) ---")
+
+	// Convert to sorted slice for output
+	type TimingEntry struct {
+		Name    string
+		TotalMs int64
+		AvgMs   float64
+		Percent float64
+	}
+
+	var entries []TimingEntry
+	totalTime := time.Duration(0)
+	for _, timing := range timings {
+		totalTime += timing
+	}
+
+	for name, timing := range timings {
+		entries = append(entries, TimingEntry{
+			Name:    name,
+			TotalMs: timing.Milliseconds(),
+			AvgMs:   float64(timing.Milliseconds()) / float64(counts[name]),
+			Percent: float64(timing) / float64(totalTime) * 100,
+		})
+	}
+
+	// Sort by total time (descending)
+	sort.Slice(entries, func(i, j int) bool {
+		return entries[i].TotalMs > entries[j].TotalMs
+	})
+
+	// Print formatted table
+	fmt.Printf("%-15s %-15s %-15s %-15s\n", "Operation", "Total (ms)", "Avg (ms)", "Percent (%)")
+	fmt.Println("---------------------------------------------------------------")
+	for _, entry := range entries {
+		fmt.Printf("%-15s %-15d %-15.2f %-15.2f\n",
+			entry.Name,
+			entry.TotalMs,
+			entry.AvgMs,
+			entry.Percent)
+	}
+	fmt.Printf("\nTotal training time: %d ms\n", totalTime.Milliseconds())
 
 	// Generate text
 	variable.Config.Train = false // Prevent dropout
