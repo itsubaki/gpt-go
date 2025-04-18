@@ -17,26 +17,19 @@ const (
 	numHeads      = 4
 	numLayers     = 4
 	epochs        = 40000
-	learningRate  = 0.001
+	learningRate  = 0.003
 	evalIters     = 1000
 	dropout       = 0
-	lossScale     = 1.0
-	subwordTokens = 2000
+	lossScale     = 0.05
+	subwordTokens = 1500
 )
 
 var (
 	Add          = variable.Add
-	MatMul       = variable.MatMul
-	Zeros        = variable.Zero
-	OneLike      = variable.OneLike
 	Softmax      = function.Softmax
 	CrossEntropy = function.SoftmaxCrossEntropy
-	ReLU         = function.ReLU
-	Dropout      = function.DropoutSimple
 )
 
-// Embeddings are basically tensors under the hood
-// What if we code-generate files for different tensors/linear layers
 func main() {
 	dataset, vocabSize := data.Data(subwordTokens)
 
@@ -90,6 +83,8 @@ func main() {
 
 		// Backward pass
 		scaledLoss.Backward()
+
+		// Weights update
 		optimize.Update(params)
 		params.ZeroGrad()
 	}

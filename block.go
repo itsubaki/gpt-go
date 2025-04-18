@@ -1,10 +1,19 @@
 package main
 
 import (
+	"github.com/itsubaki/autograd/function"
 	"github.com/itsubaki/autograd/layer"
 	"github.com/itsubaki/autograd/variable"
 
 	"gptgo/pkg"
+)
+
+var (
+	Zeros   = variable.Zero
+	OneLike = variable.OneLike
+	ReLU    = function.ReLU
+	Dropout = function.DropoutSimple
+	MatMul  = variable.MatMul
 )
 
 type Block struct {
