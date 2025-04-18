@@ -12,15 +12,15 @@ import (
 
 // Hyperparameters
 const (
-	blockSize    = 64 // We don't have batches, so we increase blockSize for convergence
+	blockSize    = 32 // We don't have batches, so we increase blockSize for convergence
 	embedSize    = 64
 	numHeads     = 4
 	numLayers    = 4
-	epochs       = 80000
-	learningRate = 0.001
+	epochs       = 20000
+	learningRate = 0.005
 	evalIters    = 1000
 	dropout      = 0
-	lossScale    = 0.03
+	lossScale    = 1.0
 )
 
 var (
@@ -65,7 +65,7 @@ func main() {
 	}
 
 	// Main training loop
-	fmt.Printf("bs=%d, es=%d, lr=%.3f, ls=%.2f, epochs=%d\n", blockSize, embedSize, learningRate, lossScale, epochs)
+	fmt.Printf("bs=%d, es=%d, lr=%.4f, ls=%.2f, epochs=%d\n", blockSize, embedSize, learningRate, lossScale, epochs)
 	for i := 0; i < epochs; i++ {
 		// Inputs are indexes for embeds table
 		inputs, targets := GetSequence(data.Data[0], blockSize)
@@ -97,7 +97,6 @@ func main() {
 	context := "Mysterious Island"
 	maxTokens := 500
 	contextTokens := Encode(context).Data[0]
-	fmt.Println("\nGenerated text after training:")
 	fmt.Printf(context)
 	for i := 0; i < maxTokens; i++ {
 		if len(contextTokens) > blockSize {
