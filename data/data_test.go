@@ -13,7 +13,6 @@ func TestAddCharactersToVocabulary(t *testing.T) {
 	idToToken = make(map[int]string)
 	tokenToID = make(map[string]int)
 	longestTokens = nil
-	pretrainedTokens = 0
 
 	testText := "hello world"
 	addTokensFromText(testText)
@@ -39,8 +38,7 @@ func TestAddPretrainedTokensToVocabulary(t *testing.T) {
 	longestTokens = nil
 	addTokensFromText("abc")
 
-	pretrainedTokens = 3
-	addPretrainedTokens("test\ntoken\nlongest_token")
+	addPretrainedTokens("test\ntoken\nlongest_token", 3)
 
 	r.Len(longestTokens, 6)
 	r.Len(tokenToID, 6)
@@ -151,5 +149,5 @@ func TestSample(t *testing.T) {
 	// Test panic condition
 	r.Panics(func() {
 		Sample([]float64{1, 2}, 3)
-	}, "Should panic when data is smaller than blockSize+1")
+	}, "Should panic when text is smaller than blockSize+1")
 }

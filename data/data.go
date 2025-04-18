@@ -4,6 +4,7 @@ import (
 	_ "embed"
 	"fmt"
 	"math/rand"
+	"slices"
 	"sort"
 	"strings"
 
@@ -14,24 +15,21 @@ var (
 	tokenToID     map[string]int
 	idToToken     map[int]string
 	longestTokens []string
-	// On top of per-character token we can load pretrained tokens
-	pretrainedTokens int
 
 	//go:embed fairy_tales.txt
-	data string
+	text string
 	//go:embed fairy_tokens.txt
-	tokens string
+	pretrainedTokens string
 )
 
 func Data(numPretrainedTokens int) ([]float64, int) {
-	pretrainedTokens = numPretrainedTokens
 	tokenToID = make(map[string]int)
 	idToToken = make(map[int]string)
 
-	addTokensFromText(data)
-	addPretrainedTokens(tokens)
+	addTokensFromText(text)
+	addPretrainedTokens(pretrainedTokens, numPretrainedTokens)
 
-	return Encode(data), VocabSize()
+	return Encode(text), VocabSize()
 }
 
 func Encode(s string) []float64 {
@@ -41,7 +39,13 @@ func Encode(s string) []float64 {
 	for len(runes) > 0 {
 		found := false
 		for _, token := range longestTokens {
-			if strings.HasPrefix(string(runes), token) {
+			tokenRunes := []rune(token)
+			canTokenFit := len(runes) >= len(tokenRunes)
+			if !canTokenFit {
+				continue
+			}
+
+			if slices.Equal(runes[:len(tokenRunes)], tokenRunes) {
 				encoded = append(encoded, float64(tokenToID[token]))
 				runes = runes[len([]rune(token)):]
 				found = true
@@ -50,7 +54,8 @@ func Encode(s string) []float64 {
 		}
 
 		if !found {
-			panic("can't encode token")
+			msg := fmt.Sprintf("Can't encode token=%s", string(runes[0]))
+			panic(msg)
 		}
 	}
 
@@ -96,21 +101,33 @@ func Sample(data []float64, blockSize int) (*variable.Variable, *variable.Variab
 	return variable.New(x...), variable.New(y...)
 }
 
-func addTokensFromText(text string) {
-	for _, ch := range text {
-		addTokens(string(ch))
+func Characters() string {
+	var result strings.Builder
+	for _, token := range longestTokens {
+		if len(token) == 1 {
+			result.WriteString(token)
+		}
 	}
+
+	return result.String()
 }
 
-func addPretrainedTokens(tokens string) {
+func addTokensFromText(text string) {
+	var chars []string
+	for _, ch := range text {
+		chars = append(chars, string(ch))
+	}
+	addTokens(chars)
+}
+
+func addPretrainedTokens(tokens string, numPretrainedTokens int) {
 	splitTokens := strings.Split(strings.TrimSpace(tokens), "\n")
-	splitTokens = splitTokens[:min(pretrainedTokens, len(splitTokens))]
-	fmt.Println(splitTokens, tokens)
+	splitTokens = splitTokens[:min(numPretrainedTokens, len(splitTokens))]
 
-	addTokens(splitTokens...)
+	addTokens(splitTokens)
 }
 
-func addTokens(tokens ...string) {
+func addTokens(tokens []string) {
 	for _, token := range tokens {
 		if _, ok := tokenToID[token]; ok {
 			continue
@@ -129,15 +146,4 @@ func addTokens(tokens ...string) {
 
 		return len(longestTokens[i]) > len(longestTokens[j])
 	})
-}
-
-func Characters() string {
-	var result strings.Builder
-	for _, token := range longestTokens {
-		if len(token) == 1 {
-			result.WriteString(token)
-		}
-	}
-
-	return result.String()
 }

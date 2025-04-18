@@ -15,14 +15,14 @@ import (
 const (
 	blockSize        = 16
 	embedSize        = 16
-	numHeads         = 4
-	numLayers        = 4
+	heads            = 4
+	layers           = 4
 	epochs           = 40000
 	learningRate     = 0.0005
 	evalIters        = 1000
 	dropout          = 0
 	lossScale        = 1.00
-	pretrainedTokens = 5000
+	pretrainedTokens = 1000
 )
 
 var (
@@ -32,6 +32,7 @@ var (
 )
 
 func main() {
+	fmt.Println("Loading dataset...")
 	dataset, vocabSize := data.Data(pretrainedTokens)
 	fmt.Printf("First 100 characters:\n%s\n", strings.TrimSpace(data.Decode(dataset[:100]...)))
 	fmt.Printf("Vocabulary: %s\n", data.Characters())
@@ -40,8 +41,8 @@ func main() {
 	embeds := pkg.RandKaiming(vocabSize, embedSize)
 	posEmbeds := pkg.RandKaiming(blockSize, embedSize)
 	var blocks []*Block
-	for range numLayers {
-		blocks = append(blocks, NewBlock(embedSize, numHeads))
+	for range layers {
+		blocks = append(blocks, NewBlock(embedSize, heads))
 	}
 	norm := pkg.NewLayerNorm(embedSize)
 	lmHead := NewLinear(embedSize, vocabSize)
