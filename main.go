@@ -13,8 +13,8 @@ import (
 
 // Hyperparameters
 const (
-	blockSize        = 16
-	embedSize        = 16
+	blockSize        = 32
+	embedSize        = 32
 	heads            = 4
 	layers           = 4
 	epochs           = 40000
@@ -22,7 +22,7 @@ const (
 	evalIters        = 1000
 	dropout          = 0
 	lossScale        = 1.00
-	pretrainedTokens = 1000
+	pretrainedTokens = 5000
 )
 
 var (
@@ -33,7 +33,7 @@ var (
 
 func main() {
 	fmt.Println("Loading dataset...")
-	dataset, vocabSize := data.Data(pretrainedTokens)
+	dataset, vocabSize := data.Tokenize(pretrainedTokens)
 	fmt.Printf("First 100 characters:\n%s\n", strings.TrimSpace(data.Decode(dataset[:100]...)))
 	fmt.Printf("Vocabulary: %s\n", data.Characters())
 

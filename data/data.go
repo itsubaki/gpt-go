@@ -22,7 +22,7 @@ var (
 	pretrainedTokens string
 )
 
-func Data(numPretrainedTokens int) ([]float64, int) {
+func Tokenize(numPretrainedTokens int) ([]float64, int) {
 	tokenToID = make(map[string]int)
 	idToToken = make(map[int]string)
 
