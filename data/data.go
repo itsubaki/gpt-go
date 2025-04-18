@@ -1,9 +1,9 @@
-package main
+package data
 
 import (
+	_ "embed"
 	"fmt"
 	"math/rand"
-	"os"
 	"sort"
 	"strings"
 
@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	limitVocab = 3000
+	subwordTokensLimit = 0 // On top of per-character token we can load pretrained tokens
 )
 
 var (
@@ -22,32 +22,26 @@ var (
 	tokenStoi    map[string]int
 	tokenItos    map[int]string
 	sortedTokens []string
+
+	//go:embed jules_verne.txt
+	data string
+
+	//go:embed tokens.txt
+	subwordTokens string
 )
 
 func Data() (*variable.Variable, int) {
 	rand.Seed(42)
 
-	filePath := "jules_verne.txt"
+	fmt.Printf("Length of text: %d characters\n", len(data))
+	fmt.Printf("First 100 characters: %s\n", data[:100])
 
-	if _, err := os.Stat(filePath); os.IsNotExist(err) {
-		panic("Missing Jules Verne dataset...")
-	}
-
-	data, err := os.ReadFile(filePath)
-	if err != nil {
-		panic("Error reading Jules Verne dataset...")
-	}
-
-	text := string(data)
-	fmt.Printf("Length of text: %d characters\n", len(text))
-	fmt.Printf("First 100 characters: %s\n", text[:100])
-
-	AddCharactersToVocabulary(text)
+	AddCharactersToVocabulary(data)
 	AddSubwordTokensToVocabulary("tokens.json")
 
 	fmt.Printf("Vocabulary: %s\n", string(chars[:min(100, len(chars))]))
 
-	encodedText := Encode(text)
+	encodedText := Encode(data)
 
 	return encodedText, VocabSize()
 }
@@ -152,37 +146,27 @@ func AddSubwordTokensToVocabulary(filepath string) {
 	tokenItos = make(map[int]string)
 	sortedTokens = make([]string, 0)
 
-	data, err := os.ReadFile(filepath)
-	if err != nil {
-		fmt.Printf("Warning: Could not read tokens file: %v\n", err)
-		return
-	}
+	tokens := strings.Split(strings.TrimSpace(subwordTokens), "\n")
 
-	// Split file contents by newlines to get tokens
-	tokensArray := strings.Split(strings.TrimSpace(string(data)), "\n")
-
-	// Filter out any empty lines
 	var filteredTokens []string
-	for _, token := range tokensArray {
+	for _, token := range tokens {
 		if token != "" {
 			filteredTokens = append(filteredTokens, token)
 		}
 	}
-	tokensArray = filteredTokens
+	tokens = filteredTokens
 
-	// Apply vocabulary size limit if needed
-	tokensArray = tokensArray[:min(limitVocab, len(tokensArray))]
+	tokens = tokens[:min(subwordTokensLimit, len(tokens))]
 
 	baseVocabSize := len(chars)
-
-	for i, token := range tokensArray {
+	for i, token := range tokens {
 		tokenID := baseVocabSize + i
 		tokenStoi[token] = tokenID
 		tokenItos[tokenID] = token
 	}
 
-	sortedTokens = make([]string, len(tokensArray))
-	copy(sortedTokens, tokensArray)
+	sortedTokens = make([]string, len(tokens))
+	copy(sortedTokens, tokens)
 	sort.Slice(sortedTokens, func(i, j int) bool {
 		return len(sortedTokens[i]) > len(sortedTokens[j])
 	})
