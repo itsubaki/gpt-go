@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	limitVocab = 1000
+	limitVocab = 3000
 )
 
 var (
@@ -44,7 +44,7 @@ func Data() (*variable.Variable, int) {
 	fmt.Printf("First 100 characters: %s\n", text[:100])
 
 	CreateAlphabet(text)
-	//LoadTokensFromJSON("tokens.json")
+	LoadTokensFromJSON("tokens.json")
 
 	fmt.Printf("Vocabulary size: %d\n", VocabSize())
 	fmt.Printf("Vocabulary: %s\n", string(chars[:min(100, len(chars))]))
@@ -108,31 +108,7 @@ func VocabSize() int {
 	return len(chars) + len(tokenStoi)
 }
 
-func SampleVocabulary(count int) map[string]int {
-	result := make(map[string]int)
-
-	i := 0
-	for ch, id := range stoi {
-		if i >= count/2 {
-			break
-		}
-		result[string(ch)] = id
-		i++
-	}
-
-	i = 0
-	for token, id := range tokenStoi {
-		if i >= count/2 {
-			break
-		}
-		result[token] = id
-		i++
-	}
-
-	return result
-}
-
-func TrainingSequence(data []float64, blockSize int) (*variable.Variable, *variable.Variable) {
+func Sample(data []float64, blockSize int) (*variable.Variable, *variable.Variable) {
 	dataLen := len(data) - blockSize
 	if dataLen <= 0 {
 		panic("Not enough Data for the given block size")
