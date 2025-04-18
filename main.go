@@ -41,6 +41,7 @@ func main() {
 	rand.Seed(42)
 	dataset, vocabSize := data.Data()
 
+	// Basic transformer components
 	embeds := pkg.RandKaiming(vocabSize, embedSize)
 	posEmbeds := pkg.RandKaiming(blockSize, embedSize)
 	var blocks []*Block
@@ -50,6 +51,7 @@ func main() {
 	norm := pkg.NewLayerNorm(embedSize)
 	lmHead := NewLinear(embedSize, vocabSize)
 
+	// Collecting all the parameters
 	params := pkg.NewParams()
 	params.Add(embeds, posEmbeds)
 	for _, block := range blocks {
@@ -115,13 +117,10 @@ func main() {
 
 		// We only care about the prediction for the next token, which is the last position
 		lastTokenOutput := variable.GetItem([]int{len(contextTokens) - 1})(logits)
-
 		probs := Softmax(lastTokenOutput)
 		nextToken := pkg.Sample(probs)
-
 		decodedToken := data.Decode(nextToken)
 		fmt.Printf(decodedToken)
-
 		contextTokens = append(contextTokens, nextToken)
 	}
 }
