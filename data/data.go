@@ -24,7 +24,7 @@ var (
 
 	//go:embed fairy_tales.txt
 	data string
-	//go:embed tokens.txt
+	//go:embed fairy_tokens.txt
 	tokens string
 )
 
