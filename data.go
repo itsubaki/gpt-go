@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	limitVocab = 2800
+	limitVocab = 0
 )
 
 var (
@@ -52,6 +52,8 @@ func Data() (*variable.Variable, int) {
 
 	// Print total vocabulary size after loading tokens
 	fmt.Printf("Vocabulary size: %d\n", VocabSize())
+	fmt.Printf("Vocabulary: %s\n", string(chars[:min(100, len(chars))]))
+	return nil, 0
 
 	encodedText := Encode(text)
 
