@@ -7,7 +7,7 @@ import (
 	"github.com/itsubaki/autograd/function"
 	"github.com/itsubaki/autograd/variable"
 
-	data2 "gptgo/data"
+	"gptgo/data"
 	"gptgo/pkg"
 )
 
@@ -21,7 +21,7 @@ const (
 	learningRate = 0.001
 	evalIters    = 1000
 	dropout      = 0
-	lossScale    = 0.5
+	lossScale    = 1.0
 )
 
 var (
@@ -39,7 +39,7 @@ var (
 // What if we code-generate files for different tensors/linear layers
 func main() {
 	rand.Seed(42)
-	data, vocabSize := data2.Data()
+	dataset, vocabSize := data.Data()
 
 	embeds := pkg.RandKaiming(vocabSize, embedSize)
 	posEmbeds := pkg.RandKaiming(blockSize, embedSize)
@@ -69,7 +69,7 @@ func main() {
 	fmt.Printf("bs=%d, es=%d, lr=%.4f, ls=%.2f, vs=%d, epochs=%d\n", blockSize, embedSize, learningRate, lossScale, vocabSize, epochs)
 	for i := 0; i < epochs; i++ {
 		// Inputs are indexes for embeds table
-		inputs, targets := data2.Sample(data.Data[0], blockSize)
+		inputs, targets := data.Sample(dataset, blockSize)
 
 		// Forward pass
 		inputEmbeds := pkg.Rows(embeds, inputs.Data[0]...) // Get embed for every input token
@@ -97,7 +97,7 @@ func main() {
 	variable.Config.Train = false // Prevent dropout
 	context := "Mysterious Island"
 	maxTokens := 500
-	contextTokens := data2.Encode(context).Data[0]
+	contextTokens := data.Encode(context)
 	fmt.Printf(context)
 	for i := 0; i < maxTokens; i++ {
 		if len(contextTokens) > blockSize {
@@ -119,7 +119,7 @@ func main() {
 		probs := Softmax(lastTokenOutput)
 		nextToken := pkg.Sample(probs)
 
-		decodedToken := data2.Decode(nextToken)
+		decodedToken := data.Decode(nextToken)
 		fmt.Printf(decodedToken)
 
 		contextTokens = append(contextTokens, nextToken)

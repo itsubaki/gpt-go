@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	subwordTokensLimit = 0 // On top of per-character token we can load pretrained tokens
+	subwordTokensLimit = 3000 // On top of per-character token we can load pretrained tokens
 )
 
 var (
@@ -30,14 +30,14 @@ var (
 	subwordTokens string
 )
 
-func Data() (*variable.Variable, int) {
+func Data() ([]float64, int) {
 	rand.Seed(42)
 
 	fmt.Printf("Length of text: %d characters\n", len(data))
 	fmt.Printf("First 100 characters: %s\n", data[:100])
 
 	AddCharactersToVocabulary(data)
-	AddSubwordTokensToVocabulary("tokens.json")
+	AddSubwordTokensToVocabulary()
 
 	fmt.Printf("Vocabulary: %s\n", string(chars[:min(100, len(chars))]))
 
@@ -46,8 +46,8 @@ func Data() (*variable.Variable, int) {
 	return encodedText, VocabSize()
 }
 
-func Encode(s string) *variable.Variable {
-	result := make([]float64, 0)
+func Encode(s string) []float64 {
+	encoded := make([]float64, 0)
 	i := 0
 
 	for _, ch := range s {
@@ -57,7 +57,7 @@ func Encode(s string) *variable.Variable {
 			for _, token := range sortedTokens {
 				if i+len(token) <= len(s) && s[i:i+len(token)] == token {
 					if tokenID, ok := tokenStoi[token]; ok {
-						result = append(result, float64(tokenID))
+						encoded = append(encoded, float64(tokenID))
 						i += len(token)
 						matched = true
 						break
@@ -68,7 +68,7 @@ func Encode(s string) *variable.Variable {
 
 		if !matched {
 			if idx, ok := stoi[ch]; ok {
-				result = append(result, float64(idx))
+				encoded = append(encoded, float64(idx))
 			} else {
 				msg := fmt.Sprintf("Warning: Character '%c' (code %d) not in vocabulary\n", ch, ch)
 				panic(msg)
@@ -77,7 +77,7 @@ func Encode(s string) *variable.Variable {
 		}
 	}
 
-	return variable.New(result...)
+	return encoded
 }
 
 func Decode(indices ...float64) string {
@@ -141,7 +141,7 @@ func AddCharactersToVocabulary(text string) {
 	}
 }
 
-func AddSubwordTokensToVocabulary(filepath string) {
+func AddSubwordTokensToVocabulary() {
 	tokenStoi = make(map[string]int)
 	tokenItos = make(map[int]string)
 	sortedTokens = make([]string, 0)
@@ -155,7 +155,6 @@ func AddSubwordTokensToVocabulary(filepath string) {
 		}
 	}
 	tokens = filteredTokens
-
 	tokens = tokens[:min(subwordTokensLimit, len(tokens))]
 
 	baseVocabSize := len(chars)
