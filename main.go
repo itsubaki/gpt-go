@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"math/rand"
 
 	"github.com/itsubaki/autograd/function"
 	"github.com/itsubaki/autograd/variable"
@@ -38,8 +37,12 @@ var (
 // Embeddings are basically tensors under the hood
 // What if we code-generate files for different tensors/linear layers
 func main() {
-	rand.Seed(42)
 	dataset, vocabSize := data.Data()
+
+	fmt.Println(data.Encode("I have a dog"))
+	fmt.Println(data.Encode("Cyrus"))
+
+	return
 
 	// Basic transformer components
 	embeds := pkg.RandKaiming(vocabSize, embedSize)

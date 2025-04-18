@@ -19,25 +19,22 @@ var (
 	stoi  map[rune]int
 	itos  map[int]rune
 
-	tokenStoi    map[string]int
-	tokenItos    map[int]string
-	sortedTokens []string
+	tokenStoi     map[string]int
+	tokenItos     map[int]string
+	longestTokens []string
 
 	//go:embed jules_verne.txt
 	data string
-
 	//go:embed tokens.txt
-	subwordTokens string
+	tokens string
 )
 
 func Data() ([]float64, int) {
-	rand.Seed(42)
-
 	fmt.Printf("Length of text: %d characters\n", len(data))
 	fmt.Printf("First 100 characters: %s\n", data[:100])
 
 	AddCharactersToVocabulary(data)
-	AddSubwordTokensToVocabulary()
+	AddSubwordTokensToVocabulary(tokens)
 
 	fmt.Printf("Vocabulary: %s\n", string(chars[:min(100, len(chars))]))
 
@@ -50,12 +47,19 @@ func Encode(s string) []float64 {
 	encoded := make([]float64, 0)
 	i := 0
 
-	for _, ch := range s {
+	runes := []rune(s)
+	for i < len(runes) {
 		matched := false
 
-		if len(sortedTokens) > 0 {
-			for _, token := range sortedTokens {
-				if i+len(token) <= len(s) && s[i:i+len(token)] == token {
+		for _, token := range longestTokens {
+			tokenRunes := []rune(token)
+			tokenRuneLength := len(tokenRunes)
+
+			// Check if we have enough runes left and if the slices match
+			if i+tokenRuneLength <= len(runes) {
+				matchCandidate := runes[i : i+tokenRuneLength]
+
+				if string(matchCandidate) == token {
 					if tokenID, ok := tokenStoi[token]; ok {
 						encoded = append(encoded, float64(tokenID))
 						i += len(token)
@@ -66,7 +70,9 @@ func Encode(s string) []float64 {
 			}
 		}
 
+		// If no token matches, fall back to character encoding
 		if !matched {
+			ch := runes[i]
 			if idx, ok := stoi[ch]; ok {
 				encoded = append(encoded, float64(idx))
 			} else {
@@ -141,32 +147,30 @@ func AddCharactersToVocabulary(text string) {
 	}
 }
 
-func AddSubwordTokensToVocabulary() {
+func AddSubwordTokensToVocabulary(subwordTokens string) {
 	tokenStoi = make(map[string]int)
 	tokenItos = make(map[int]string)
-	sortedTokens = make([]string, 0)
+	longestTokens = make([]string, 0)
 
-	tokens := strings.Split(strings.TrimSpace(subwordTokens), "\n")
-
+	splitTokens := strings.Split(strings.TrimSpace(subwordTokens), "\n")
 	var filteredTokens []string
-	for _, token := range tokens {
+	for _, token := range splitTokens {
 		if token != "" {
 			filteredTokens = append(filteredTokens, token)
 		}
 	}
-	tokens = filteredTokens
-	tokens = tokens[:min(subwordTokensLimit, len(tokens))]
+	filteredTokens = filteredTokens[:min(subwordTokensLimit, len(filteredTokens))]
 
 	baseVocabSize := len(chars)
-	for i, token := range tokens {
+	for i, token := range filteredTokens {
 		tokenID := baseVocabSize + i
 		tokenStoi[token] = tokenID
 		tokenItos[tokenID] = token
 	}
 
-	sortedTokens = make([]string, len(tokens))
-	copy(sortedTokens, tokens)
-	sort.Slice(sortedTokens, func(i, j int) bool {
-		return len(sortedTokens[i]) > len(sortedTokens[j])
+	longestTokens = make([]string, len(filteredTokens))
+	copy(longestTokens, filteredTokens)
+	sort.Slice(longestTokens, func(i, j int) bool {
+		return len(longestTokens[i]) > len(longestTokens[j])
 	})
 }
