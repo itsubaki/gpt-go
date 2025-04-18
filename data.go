@@ -44,7 +44,7 @@ func Data() (*variable.Variable, int) {
 	fmt.Printf("First 100 characters: %s\n", text[:100])
 
 	CreateAlphabet(text)
-	LoadTokensFromJSON("tokens.json")
+	//LoadTokensFromJSON("tokens.json")
 
 	fmt.Printf("Vocabulary size: %d\n", VocabSize())
 	fmt.Printf("Vocabulary: %s\n", string(chars[:min(100, len(chars))]))
