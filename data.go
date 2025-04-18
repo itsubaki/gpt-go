@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	limitVocab = 0
+	limitVocab = 100
 )
 
 var (
@@ -58,7 +58,7 @@ func Encode(s string) *variable.Variable {
 	result := make([]float64, 0)
 	i := 0
 
-	for i < len(s) {
+	for _, ch := range s {
 		matched := false
 
 		if len(sortedTokens) > 0 {
@@ -75,7 +75,6 @@ func Encode(s string) *variable.Variable {
 		}
 
 		if !matched {
-			ch := rune(s[i])
 			if idx, ok := stoi[ch]; ok {
 				result = append(result, float64(idx))
 			} else {
