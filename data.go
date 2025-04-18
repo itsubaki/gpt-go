@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	limitVocab = 100
+	limitVocab = 1000
 )
 
 var (

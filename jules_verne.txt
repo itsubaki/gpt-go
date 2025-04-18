@@ -25499,8 +25499,8 @@ by the closeness of its rivets, and the homogenity of its construction,
 due to the perfect union of the materials, enables it to defy the
 roughest seas.
 
-These two hulls are composed of steel plates, whose density is from .number
-to .number that of water. The first is not less than two inches and a half
+These two hulls are composed of steel plates, whose density is from number
+to number that of water. The first is not less than two inches and a half
 thick and weighs number tons. The second envelope, the keel, twenty inches
 high and ten thick, weighs alone sixty two tons. The engine, the
 ballast, the several accessories and apparatus appendages, the
@@ -25538,7 +25538,7 @@ That is evident.
 
 Now, if water is not absolutely incompressible, it is at least capable
 of very slight compression. Indeed, after the most recent calculations
-this reduction is only .yearnumber of an atmosphere for each thirty feet of
+this reduction is only year of an atmosphere for each thirty feet of
 depth. If we want to sink year feet, I should keep account of the
 reduction of bulk under a pressure equal to that of a column of water
 of a thousand feet. The calculation is easily verified. Now, I have
@@ -34158,7 +34158,7 @@ with the remains of shells, bristling with foraminiferae, was encrusted
 with a strong coating which served as a protection against all boring
 molluscs. It lay quietly sheltered from the motions of the sea, and
 under a favourable pressure for the transmission of the electric spark
-which passes from Europe to America in .number of a second. Doubtless this
+which passes from Europe to America in number of a second. Doubtless this
 cable will last for a great length of time, for they find that the
 gutta percha covering is improved by the sea water. Besides, on this
 level, so well chosen, the cable is never so deeply submerged as to
@@ -34867,13 +34867,6 @@ far off and exceeding deep, who can find it out? two men alone of all
 now living have the right to give an answer
 
 CAPTAIN NEMO AND MYSELF.
-
-This ebook is for the use of anyone anywhere in the United States and
-most other parts of the world at no cost and with almost no restrictions
-whatsoever. You may copy it, give it away or re use it under the terms
-
-you will have to check the laws of the country where you are located
-before using this eBook.
 
 ROBUR THE CONQUEROR
 By Jules Verne
@@ -40999,28 +40992,6 @@ not the aerostat.
 It is to the Albatross that the conquest of the air will assuredly
 fall.
 
-—End of Voyage Extraordinaire—Robur the Conqueror—
-
-This ebook is for the use of anyone anywhere in the United States and
-most other parts of the world at no cost and with almost no restrictions
-whatsoever. You may copy it, give it away or re use it under the terms
-
-you will have to check the laws of the country where you are located
-before using this eBook.
-
-Title A Journey to the Centre of the Earth
-
-Author Jules Verne
-
-Release date July number, year eBook yearnumber
-Most recently updated December number, year
-
-Language English
-
-Original publication Griffith and Farran,, year
-
-Credits Produced by Norm Wolcott
-
 A JOURNEY TO THE CENTRE OF THE EARTH
 By Jules Verne
 
@@ -42640,7 +42611,7 @@ number. Two Ruhmkorff coils, which, by means of a current of electricity,
 would ensure us a very excellent, easily carried, and certain means of
 obtaining light.
 
-number. A voltaic battery on the newest principle.number
+number. A voltaic battery on the newest principlenumber
 
 number Thermometer thermos, and metron, measure, an instrument for
 measuring the temperature of the air.Manometer manos,and metron,
@@ -49287,7 +49258,7 @@ incontestably Caucasian. It is of the white race, that is, of our own.
 The skull of this fossil being is a perfect ovoid without any remarkable
 or prominent development of the cheekbones, and without any projection
 of the jaw. It presents no indication of the prognathism which modifies
-the facial angle.number Measure the angle for yourselves, and you will find
+the facial anglenumber Measure the angle for yourselves, and you will find
 that it is just ninety degrees. But I will advance still farther on the
 road of inquiry and deduction, and I dare venture to say that this human
 sample or specimen belongs to the Japhetic family, which spread over the
@@ -51545,22 +51516,6 @@ Hardwigg, corresponding member of all the scientific, geographical,
 mineralogical, and geological societies of the five parts of the globe.
 
 End of the Voyage Extraordinaire
-
-This ebook is for the use of anyone anywhere in the United States and
-most other parts of the world at no cost and with almost no restrictions
-whatsoever. You may copy it, give it away or re use it under the terms
-
-you will have to check the laws of the country where you are located
-before using this eBook.
-
-Title Around the World in Eighty Days
-
-Author Jules Verne
-
-Release date January number, year eBook number
-Most recently updated October number, year
-
-Language English
 
 Around the World in Eighty Days
 by Jules Verne
@@ -58760,7 +58715,7 @@ faithful servant.
 It was necessary to make the journey in five hours and a half, and this
 would have been easy on a clear road throughout. But there were forced
 delays, and when Mr. Fogg stepped from the train at the terminus, all
-the clocks in London were striking ten minutes before nine.number
+the clocks in London were striking ten minutes before ninenumber
 
 Having made the tour of the world, he was behind hand five minutes. He
 had lost the wager!
@@ -59254,26 +59209,6 @@ Nothing, say you? Perhaps so, nothing but a charming woman, who,
 strange as it may appear, made him the happiest of men!
 
 Truly, would you not for less than that make the tour around the world?
-
-This ebook is for the use of anyone anywhere in the United States and
-most other parts of the world at no cost and with almost no restrictions
-whatsoever. You may copy it, give it away or re use it under the terms
-
-you will have to check the laws of the country where you are located
-before using this eBook.
-
-Title Five Weeks in a Balloon
-
-Author Jules Verne
-
-Release date November number, year eBook year
-Most recently updated July number, year
-
-Language English
-
-Original publication New York Appleton Co, year
-
-Credits Judy Boss and David Widger
 
 FIVE WEEKS IN A BALLOON
 By Jules Verne,
@@ -60386,7 +60321,7 @@ learned men, and M. de Heuglin set out from Massowah, in the month of
 June. While engaged in looking for Vogel, he is also to explore all the
 country between the Nile and Lake Tchad, that is to say, to knit
 together the operations of Captain Speke and those of Dr. Barth, and
-then Africa will have been traversed from east to west.number
+then Africa will have been traversed from east to westnumber
 
 number After the departure of Dr. Ferguson, it was ascertained that M. de
 Heuglin, owing to some disagreement, took a route different from the
@@ -67168,7 +67103,7 @@ Baron de Neimans was about starting for the Wadai country when he died
 at Cairo, in year, and we now know that De Heuglin has set out on
 Vogel’s track with the expedition sent from Leipsic, so that we shall
 soon be accurately informed as to the fate of that young and
-interesting explorer.number
+interesting explorernumber
 
 number Since the doctor’s departure, letters written from El’Obeid by Mr.
 Muntzinger, the newly appointed head of the expedition, unfortunately
@@ -70729,17 +70664,8 @@ verify, in turn, the discoveries of Dr. Ferguson in that vast region
 comprised between the fourteenth and thirty third degrees of east
 longitude.
 
-This ebook is for the use of anyone anywhere in the United States and
-most other parts of the world at no cost and with almost no restrictions
-whatsoever. You may copy it, give it away or re use it under the terms
-
-you will have to check the laws of the country where you are located
-before using this eBook.
-
-In Search of the Castaways
-Jules Verne
-
 IN SEARCH OF THE CASTAWAYS.
+Jules Verne
 
 THE SHARK.
 

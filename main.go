@@ -17,10 +17,10 @@ const (
 	numHeads     = 4
 	numLayers    = 4
 	epochs       = 20000
-	learningRate = 0.005
+	learningRate = 0.001
 	evalIters    = 1000
 	dropout      = 0
-	lossScale    = 1.0
+	lossScale    = 0.5
 )
 
 var (
