@@ -11,7 +11,8 @@ import (
 )
 
 const (
-	subwordTokensLimit = 3000 // On top of per-character token we can load pretrained tokens
+	// On top of per-character token we can load pretrained tokens
+	subwordTokensLimit = 3000
 )
 
 var (
@@ -31,7 +32,7 @@ var (
 
 func Data() ([]float64, int) {
 	fmt.Printf("Length of text: %d characters\n", len(data))
-	fmt.Printf("First 100 characters: %s\n", data[:100])
+	fmt.Printf("First 100 characters:\n%s\n", strings.TrimSpace(data[:100]))
 
 	AddCharactersToVocabulary(data)
 	AddSubwordTokensToVocabulary(tokens)

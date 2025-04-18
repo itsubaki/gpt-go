@@ -12,15 +12,15 @@ import (
 
 // Hyperparameters
 const (
-	blockSize    = 32 // We don't have batches, so we increase blockSize for convergence
+	blockSize    = 32
 	embedSize    = 64
 	numHeads     = 4
 	numLayers    = 4
-	epochs       = 20000
-	learningRate = 0.001
+	epochs       = 1000
+	learningRate = 0.0001
 	evalIters    = 1000
 	dropout      = 0
-	lossScale    = 1.0
+	lossScale    = 0.5
 )
 
 var (
@@ -98,7 +98,7 @@ func main() {
 	context := "Mysterious Island"
 	maxTokens := 500
 	contextTokens := data.Encode(context)
-	fmt.Printf(context)
+	fmt.Printf("\n%s", context)
 	for i := 0; i < maxTokens; i++ {
 		if len(contextTokens) > blockSize {
 			contextTokens = contextTokens[len(contextTokens)-blockSize:]
