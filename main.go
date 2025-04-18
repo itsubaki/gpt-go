@@ -20,7 +20,7 @@ const (
 	learningRate  = 0.005
 	evalIters     = 1000
 	dropout       = 0
-	lossScale     = 0.5
+	lossScale     = 0.05
 	subwordTokens = 3000
 )
 
