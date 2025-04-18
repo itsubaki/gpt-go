@@ -12,15 +12,16 @@ import (
 
 // Hyperparameters
 const (
-	blockSize    = 32
-	embedSize    = 64
-	numHeads     = 4
-	numLayers    = 4
-	epochs       = 1000
-	learningRate = 0.0001
-	evalIters    = 1000
-	dropout      = 0
-	lossScale    = 0.5
+	blockSize     = 32
+	embedSize     = 64
+	numHeads      = 4
+	numLayers     = 4
+	epochs        = 20000
+	learningRate  = 0.005
+	evalIters     = 1000
+	dropout       = 0
+	lossScale     = 0.5
+	subwordTokens = 3000
 )
 
 var (
@@ -37,7 +38,7 @@ var (
 // Embeddings are basically tensors under the hood
 // What if we code-generate files for different tensors/linear layers
 func main() {
-	dataset, vocabSize := data.Data()
+	dataset, vocabSize := data.Data(subwordTokens)
 
 	// Basic transformer components
 	embeds := pkg.RandKaiming(vocabSize, embedSize)

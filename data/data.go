@@ -10,12 +10,10 @@ import (
 	"github.com/itsubaki/autograd/variable"
 )
 
-const (
-	// On top of per-character token we can load pretrained tokens
-	subwordTokensLimit = 3000
-)
-
 var (
+	// On top of per-character token we can load pretrained tokens
+	numSubwordTokens int
+
 	chars []rune
 	stoi  map[rune]int
 	itos  map[int]rune
@@ -30,7 +28,8 @@ var (
 	tokens string
 )
 
-func Data() ([]float64, int) {
+func Data(subwordTokens int) ([]float64, int) {
+	numSubwordTokens = subwordTokens
 	fmt.Printf("Length of text: %d characters\n", len(data))
 	fmt.Printf("First 100 characters:\n%s\n", strings.TrimSpace(data[:100]))
 
@@ -160,7 +159,7 @@ func AddSubwordTokensToVocabulary(subwordTokens string) {
 			filteredTokens = append(filteredTokens, token)
 		}
 	}
-	filteredTokens = filteredTokens[:min(subwordTokensLimit, len(filteredTokens))]
+	filteredTokens = filteredTokens[:min(numSubwordTokens, len(filteredTokens))]
 
 	baseVocabSize := len(chars)
 	for i, token := range filteredTokens {
