@@ -1,6 +1,7 @@
 package data
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -130,43 +131,44 @@ func TestVocabSize(t *testing.T) {
 	}
 
 	size := VocabSize()
-	r.Equal(5, size, "Vocabulary size should be sum of character and token vocabularies")
+	r.Equal(5, size)
 }
 
-//func TestSample(t *testing.T) {
-//	r := require.New(t)
-//
-//	testData := []float64{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
-//	blockSize := 3
-//
-//	x, y := Sample(testData, blockSize)
-//
-//	// Test the shapes of returned variables
-//	r.Equal(blockSize, len(x.Data), "x should have length equal to blockSize")
-//	r.Equal(blockSize, len(y.Data), "y should have length equal to blockSize")
-//
-//	// Test that y is shifted by one from x
-//	for i := 0; i < blockSize; i++ {
-//		idx := -1
-//		for j := 0; j < len(testData)-blockSize; j++ {
-//			if testData[j] == x.Data[0] &&
-//				testData[j+1] == x.Data[1] &&
-//				testData[j+2] == x.Data[2] {
-//				idx = j
-//				break
-//			}
-//		}
-//
-//		r.NotEqual(-1, idx, "Should find the sampled sequence in original data")
-//		if idx != -1 {
-//			r.Equal(testData[idx+1], y.Data[0], "First element of y should be the second element of the sequence")
-//			r.Equal(testData[idx+2], y.Data[1], "Second element of y should be the third element of the sequence")
-//			r.Equal(testData[idx+3], y.Data[2], "Third element of y should be the fourth element of the sequence")
-//		}
-//	}
-//
-//	// Test panic condition
-//	r.Panics(func() {
-//		Sample([]float64{1, 2}, 3)
-//	}, "Should panic when data is smaller than blockSize+1")
-//}
+func TestSample(t *testing.T) {
+	r := require.New(t)
+
+	testData := []float64{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+	blockSize := 3
+
+	x, y := Sample(testData, blockSize)
+	fmt.Println(x, y)
+
+	// Test the shapes of returned variables
+	r.Equal(blockSize, len(x.Data[0]))
+	r.Equal(blockSize, len(y.Data[0]))
+
+	// Test that y is shifted by one from x
+	for i := 0; i < blockSize; i++ {
+		idx := -1
+		for j := 0; j < len(testData)-blockSize; j++ {
+			if testData[j] == x.Data[0][0] &&
+				testData[j+1] == x.Data[0][1] &&
+				testData[j+2] == x.Data[0][2] {
+				idx = j
+				break
+			}
+		}
+
+		r.NotEqual(-1, idx)
+		if idx != -1 {
+			r.Equal(testData[idx+1], y.Data[0][0])
+			r.Equal(testData[idx+2], y.Data[0][1])
+			r.Equal(testData[idx+3], y.Data[0][2])
+		}
+	}
+
+	// Test panic condition
+	r.Panics(func() {
+		Sample([]float64{1, 2}, 3)
+	}, "Should panic when data is smaller than blockSize+1")
+}
