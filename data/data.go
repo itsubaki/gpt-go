@@ -22,7 +22,7 @@ var (
 	tokenItos     map[int]string
 	longestTokens []string
 
-	//go:embed jules_verne.txt
+	//go:embed fairy_tales.txt
 	data string
 	//go:embed tokens.txt
 	tokens string
