@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"math/rand"
 	"os"
@@ -43,10 +42,9 @@ func Data() (*variable.Variable, int) {
 	fmt.Printf("Length of text: %d characters\n", len(text))
 	fmt.Printf("First 100 characters: %s\n", text[:100])
 
-	CreateAlphabet(text)
-	LoadTokensFromJSON("tokens.json")
+	AddCharactersToVocabulary(text)
+	AddSubwordTokensToVocabulary("tokens.json")
 
-	fmt.Printf("Vocabulary size: %d\n", VocabSize())
 	fmt.Printf("Vocabulary: %s\n", string(chars[:min(100, len(chars))]))
 
 	encodedText := Encode(text)
@@ -127,7 +125,7 @@ func Sample(data []float64, blockSize int) (*variable.Variable, *variable.Variab
 	return variable.New(x...), variable.New(y...)
 }
 
-func CreateAlphabet(text string) {
+func AddCharactersToVocabulary(text string) {
 	charMap := make(map[rune]bool)
 	for _, ch := range text {
 		charMap[ch] = true
@@ -147,26 +145,32 @@ func CreateAlphabet(text string) {
 		stoi[ch] = i
 		itos[i] = ch
 	}
+}
 
+func AddSubwordTokensToVocabulary(filepath string) {
 	tokenStoi = make(map[string]int)
 	tokenItos = make(map[int]string)
 	sortedTokens = make([]string, 0)
-}
 
-func LoadTokensFromJSON(filepath string) {
 	data, err := os.ReadFile(filepath)
 	if err != nil {
 		fmt.Printf("Warning: Could not read tokens file: %v\n", err)
 		return
 	}
 
-	var tokensArray []string
-	err = json.Unmarshal(data, &tokensArray)
-	if err != nil {
-		fmt.Printf("Warning: Could not parse tokens JSON: %v\n", err)
-		return
-	}
+	// Split file contents by newlines to get tokens
+	tokensArray := strings.Split(strings.TrimSpace(string(data)), "\n")
 
+	// Filter out any empty lines
+	var filteredTokens []string
+	for _, token := range tokensArray {
+		if token != "" {
+			filteredTokens = append(filteredTokens, token)
+		}
+	}
+	tokensArray = filteredTokens
+
+	// Apply vocabulary size limit if needed
 	tokensArray = tokensArray[:min(limitVocab, len(tokensArray))]
 
 	baseVocabSize := len(chars)
