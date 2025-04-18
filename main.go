@@ -68,7 +68,7 @@ func main() {
 	fmt.Printf("bs=%d, es=%d, lr=%.4f, ls=%.2f, epochs=%d\n", blockSize, embedSize, learningRate, lossScale, epochs)
 	for i := 0; i < epochs; i++ {
 		// Inputs are indexes for embeds table
-		inputs, targets := GetSequence(data.Data[0], blockSize)
+		inputs, targets := TrainingSequence(data.Data[0], blockSize)
 
 		// Forward pass
 		inputEmbeds := pkg.Rows(embeds, inputs.Data[0]...) // Get embed for every input token
