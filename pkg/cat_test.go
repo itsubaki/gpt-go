@@ -1,138 +1,151 @@
 package pkg
 
 import (
-	"testing"
-
-	"github.com/itsubaki/autograd/variable"
-	"github.com/stretchr/testify/require"
+	"fmt"
 )
 
-func TestCatBasic(t *testing.T) {
-	r := require.New(t)
+func ExampleCat_basic() {
+	a := M{
+		{1, 2},
+		{3, 4},
+	}.Var()
 
-	a := variable.NewOf([]float64{1, 2}, []float64{3, 4})
-	b := variable.NewOf([]float64{5, 6}, []float64{7, 8})
+	b := M{
+		{5, 6},
+		{7, 8},
+	}.Var()
 
 	result := Cat(a, b)
+	fmt.Println(result.Data)
 
-	expected := [][]float64{
-		{1, 2, 5, 6},
-		{3, 4, 7, 8},
-	}
-
-	r.Equal(expected, result.Data, "Cat failed to concatenate columns correctly")
+	// Output: [[1 2 5 6] [3 4 7 8]]
 }
 
-func TestCatSingleInput(t *testing.T) {
-	r := require.New(t)
-
-	a := variable.NewOf([]float64{1, 2}, []float64{3, 4})
+func ExampleCat_singleInput() {
+	a := M{
+		{1, 2},
+		{3, 4},
+	}.Var()
 
 	result := Cat(a)
+	fmt.Println(result.Data)
 
-	r.Equal(a.Data, result.Data, "Single input should return unchanged")
+	// Output: [[1 2] [3 4]]
 }
 
-func TestCatThreeTensors(t *testing.T) {
-	r := require.New(t)
+func ExampleCat_threeMatrices() {
+	a := M{
+		{1, 2},
+		{3, 4},
+	}.Var()
 
-	a := variable.NewOf([]float64{1, 2}, []float64{3, 4})
-	b := variable.NewOf([]float64{5, 6}, []float64{7, 8})
-	c := variable.NewOf([]float64{9, 10}, []float64{11, 12})
+	b := M{
+		{5, 6},
+		{7, 8},
+	}.Var()
+
+	c := M{
+		{9, 10},
+		{11, 12},
+	}.Var()
 
 	result := Cat(a, b, c)
+	fmt.Println(result.Data)
 
-	expected := [][]float64{
-		{1, 2, 5, 6, 9, 10},
-		{3, 4, 7, 8, 11, 12},
-	}
-
-	r.Equal(expected, result.Data, "Cat failed to concatenate three tensors")
+	// Output: [[1 2 5 6 9 10] [3 4 7 8 11 12]]
 }
 
-func TestCatGradient(t *testing.T) {
-	r := require.New(t)
+func ExampleCat_gradient() {
+	a := M{
+		{1, 2},
+		{3, 4},
+	}.Var()
 
-	a := variable.NewOf([]float64{1, 2}, []float64{3, 4})
-	b := variable.NewOf([]float64{5, 6}, []float64{7, 8})
+	b := M{
+		{5, 6},
+		{7, 8},
+	}.Var()
 
 	result := Cat(a, b)
+	result.Grad = M{
+		{0.1, 0.2, 0.3, 0.4},
+		{0.5, 0.6, 0.7, 0.8},
+	}.Var()
 
-	result.Grad = variable.NewOf([]float64{0.1, 0.2, 0.3, 0.4}, []float64{0.5, 0.6, 0.7, 0.8})
 	result.Backward()
 
-	r.NotNil(a.Grad, "Gradient for a should not be nil")
-	r.NotNil(b.Grad, "Gradient for b should not be nil")
+	fmt.Println(a.Grad.Data)
+	fmt.Println(b.Grad.Data)
 
-	expectedGradA := [][]float64{{0.1, 0.2}, {0.5, 0.6}}
-	expectedGradB := [][]float64{{0.3, 0.4}, {0.7, 0.8}}
-
-	r.Equal(expectedGradA, a.Grad.Data, "Incorrect gradient for a")
-	r.Equal(expectedGradB, b.Grad.Data, "Incorrect gradient for b")
+	// Output:
+	// [[0.1 0.2] [0.5 0.6]]
+	// [[0.3 0.4] [0.7 0.8]]
 }
 
-func TestCatWithThreeDifferentMatrices(t *testing.T) {
-	r := require.New(t)
+func ExampleCat_withThreeDifferentMatrices() {
+	a := M{
+		{1, 2},
+		{3, 4},
+	}.Var()
 
-	a := variable.NewOf([]float64{1, 2}, []float64{3, 4})
-	b := variable.NewOf([]float64{5, 6}, []float64{7, 8})
-	c := variable.NewOf([]float64{9, 10}, []float64{11, 12})
+	b := M{
+		{5, 6},
+		{7, 8},
+	}.Var()
+
+	c := M{
+		{9, 10},
+		{11, 12},
+	}.Var()
 
 	result := Cat(a, b, c)
+	result.Grad = M{
+		{0.1, 0.2, 0.3, 0.4, 0.5, 0.6},
+		{0.7, 0.8, 0.9, 1.0, 1.1, 1.2},
+	}.Var()
 
-	// Set gradient for the 2x6 result
-	result.Grad = variable.NewOf(
-		[]float64{0.1, 0.2, 0.3, 0.4, 0.5, 0.6},
-		[]float64{0.7, 0.8, 0.9, 1.0, 1.1, 1.2},
-	)
 	result.Backward()
 
-	// Check gradients
-	expectedGradA := [][]float64{
-		{0.1, 0.2},
-		{0.7, 0.8},
-	}
-	expectedGradB := [][]float64{
-		{0.3, 0.4},
-		{0.9, 1.0},
-	}
-	expectedGradC := [][]float64{
-		{0.5, 0.6},
-		{1.1, 1.2},
-	}
+	fmt.Println(a.Grad.Data)
+	fmt.Println(b.Grad.Data)
+	fmt.Println(c.Grad.Data)
 
-	r.Equal(expectedGradA, a.Grad.Data, "Incorrect gradient for a")
-	r.Equal(expectedGradB, b.Grad.Data, "Incorrect gradient for b")
-	r.Equal(expectedGradC, c.Grad.Data, "Incorrect gradient for c")
+	// Output:
+	// [[0.1 0.2] [0.7 0.8]]
+	// [[0.3 0.4] [0.9 1]]
+	// [[0.5 0.6] [1.1 1.2]]
 }
 
-func TestMatrixMultiplicationWithCat(t *testing.T) {
-	r := require.New(t)
+func ExampleCat_matrixMultiplicationWith() {
+	a := M{
+		{1, 2},
+		{3, 4},
+	}.Var()
 
-	a := variable.NewOf([]float64{1, 2}, []float64{3, 4})
-	b := variable.NewOf([]float64{5, 6}, []float64{7, 8})
-	c := Cat(a, b) // This will be a 2x4 matrix
-	d := variable.NewOf([]float64{0.1}, []float64{0.2}, []float64{0.3}, []float64{0.4})
+	b := M{
+		{5, 6},
+		{7, 8},
+	}.Var()
+
+	c := Cat(a, b)
+
+	d := M{
+		{0.1},
+		{0.2},
+		{0.3},
+		{0.4},
+	}.Var()
 
 	result := MatMul(c, d)
-
-	expected := [][]float64{
-		{4.4},
-		{6.4},
-	}
-	r.Equal(expected, result.Data, "Matrix multiplication failed")
+	fmt.Println(result.Data)
 
 	result.Backward()
 
-	expectedGradA := [][]float64{
-		{0.1, 0.2},
-		{0.1, 0.2},
-	}
-	expectedGradB := [][]float64{
-		{0.3, 0.4},
-		{0.3, 0.4},
-	}
+	fmt.Println(a.Grad.Data)
+	fmt.Println(b.Grad.Data)
 
-	r.Equal(expectedGradA, a.Grad.Data, "Incorrect gradient for a")
-	r.Equal(expectedGradB, b.Grad.Data, "Incorrect gradient for b")
+	// Output:
+	// [[4.4] [6.4]]
+	// [[0.1 0.2] [0.1 0.2]]
+	// [[0.3 0.4] [0.3 0.4]]
 }

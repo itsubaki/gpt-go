@@ -4,7 +4,7 @@ import (
 	"github.com/itsubaki/autograd/variable"
 )
 
-// Cat concatenates variables along the columns
+// Cat concatenates matrices horizontally
 func Cat(x ...*variable.Variable) *variable.Variable {
 	return (&variable.Function{Forwarder: &CatT{NumInputs: len(x)}}).First(x...)
 }

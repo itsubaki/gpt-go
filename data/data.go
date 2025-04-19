@@ -20,6 +20,8 @@ var (
 	dataset string
 	//go:embed fairy_tokens.txt
 	pretrainedTokens string
+
+	randInt = rand.Intn
 )
 
 func Tokenize(numPretrainedTokens int) ([]float64, int) {
@@ -88,14 +90,14 @@ func Sample(data []float64, blockSize int) (*variable.Variable, *variable.Variab
 		panic("Not enough Data for the given block size")
 	}
 
-	idx := rand.Intn(dataLen)
+	offset := randInt(dataLen)
 
 	x := make([]float64, blockSize)
 	y := make([]float64, blockSize)
 
-	for j := 0; j < blockSize; j++ {
-		x[j] = data[idx+j]
-		y[j] = data[idx+j+1]
+	for i := 0; i < blockSize; i++ {
+		x[i] = data[i+offset]
+		y[i] = data[i+offset+1]
 	}
 
 	return variable.New(x...), variable.New(y...)
