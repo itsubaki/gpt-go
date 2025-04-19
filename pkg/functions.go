@@ -110,3 +110,7 @@ func MaskedInfFill(m, mask *variable.Variable) *variable.Variable {
 func PrintShape(v *variable.Variable) {
 	fmt.Printf("(%d, %d)\n", len(v.Data), len(v.Data[0]))
 }
+
+func DisableDropout() {
+	variable.Config.Train = false // Prevent dropout
+}

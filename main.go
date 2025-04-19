@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/itsubaki/autograd/variable"
-
 	"gptgo/data"
 	"gptgo/pkg"
 )
@@ -98,7 +96,7 @@ func main() {
 	}
 
 	// Generate text
-	variable.Config.Train = false // Prevent dropout
+	pkg.DisableDropout()
 	context := "Magic forest"
 	maxTokens := 500
 	contextTokens := data.Encode(context)
