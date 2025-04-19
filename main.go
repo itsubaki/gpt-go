@@ -12,12 +12,12 @@ import (
 
 // Hyperparameters
 const (
-	blockSize        = 32
+	blockSize        = 64
 	embedSize        = 64
 	heads            = 4
 	layers           = 4
 	epochs           = 40000
-	learningRate     = 0.0005
+	learningRate     = 0.0001
 	evalIters        = 1000
 	dropout          = 0.2  // disable some % of our neurons to prevent overfitting, model is likely to generalize
 	lossScale        = 1.00 // we don't use batches, so scaling loss down may help better convergence
@@ -82,7 +82,7 @@ func main() {
 
 		// Loss calculation, how much our predicted targets differ from the actual targets?
 		loss := CrossEntropy(logits, targets)
-		loss = variable.MulC(lossScale, loss)
+		loss = MulC(lossScale, loss)
 		if (i % evalIters) == 0 {
 			fmt.Printf("epoch: %5d, loss: %.5f\n", i, loss.Data[0][0])
 		}
@@ -118,7 +118,7 @@ func main() {
 		logits := lmHead.Forward(input) // Get a list of final logits for the next token
 
 		// We only care about the prediction for the next token, which is the last position
-		lastTokenOutput := variable.GetItem([]int{len(contextTokens) - 1})(logits)
+		lastTokenOutput := GetItem([]int{len(contextTokens) - 1})(logits)
 		probs := Softmax(lastTokenOutput)
 		nextToken := pkg.Sample(probs)
 		decodedToken := data.Decode(nextToken)

@@ -15,6 +15,8 @@ var (
 	Dropout      = function.DropoutSimple
 	MatMul       = pkg.MatMul
 	Add          = variable.Add
+	MulC         = variable.MulC
+	GetItem      = variable.GetItem
 	Softmax      = function.Softmax
 	CrossEntropy = function.SoftmaxCrossEntropy
 )
