@@ -10,5 +10,4 @@ var (
 	Zeros   = variable.Zero
 	OneLike = variable.OneLike
 	Pow     = variable.Pow
-	MatMul  = variable.MatMul
 )

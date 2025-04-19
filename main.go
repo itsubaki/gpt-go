@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/itsubaki/autograd/function"
-	"github.com/itsubaki/autograd/matrix"
 	"github.com/itsubaki/autograd/variable"
 
 	"gptgo/data"
@@ -24,6 +23,7 @@ const (
 	dropout          = 0    // disable some % of our neurons to prevent overfitting, model is likely to generalize
 	lossScale        = 1.00 // we don't use batches, so scaling loss down may help better convergence
 	pretrainedTokens = 4000
+	maxGoroutines    = 0 // all available CPUs will be used if zero
 )
 
 var (
@@ -33,6 +33,8 @@ var (
 )
 
 func main() {
+	pkg.SetMaxGoroutines(maxGoroutines)
+
 	fmt.Println("Loading dataset...")
 	dataset, vocabSize := data.Tokenize(pretrainedTokens)
 	fmt.Printf("First 100 characters:\n%s\n", strings.TrimSpace(data.Decode(dataset[:100]...)))
@@ -93,18 +95,6 @@ func main() {
 		optimize.Update(params)
 		params.ZeroGrad()
 	}
-	// Print the profiling statistics
-	matrix.PrintProfileStats()
-
-	// Print statistics sorted by total time (most time-consuming functions first)
-	matrix.PrintSortedProfileStats("totalTime")
-
-	// Print statistics sorted by call count (most frequently called functions first)
-	matrix.PrintSortedProfileStats("callCount")
-
-	// Print statistics sorted by average time per call
-	matrix.PrintSortedProfileStats("avgTime")
-	return
 
 	// Generate text
 	variable.Config.Train = false // Prevent dropout

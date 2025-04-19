@@ -13,7 +13,7 @@ var (
 	OneLike = variable.OneLike
 	ReLU    = function.ReLU
 	Dropout = function.DropoutSimple
-	MatMul  = variable.MatMul
+	MatMul  = pkg.MatMul
 )
 
 type Block struct {

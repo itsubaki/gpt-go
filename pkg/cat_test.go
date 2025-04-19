@@ -114,7 +114,7 @@ func TestMatrixMultiplicationWithCat(t *testing.T) {
 	c := Cat(a, b) // This will be a 2x4 matrix
 	d := variable.NewOf([]float64{0.1}, []float64{0.2}, []float64{0.3}, []float64{0.4})
 
-	result := variable.MatMul(c, d)
+	result := MatMul(c, d)
 
 	expected := [][]float64{
 		{4.4},
