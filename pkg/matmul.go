@@ -1,4 +1,6 @@
-// Parallelized matrix multiplication
+// MatMul performs parallelized matrix multiplication that optimizes
+// CPU cache misses. It divides the computation into sequential chunks
+// processed by multiple goroutines.
 package pkg
 
 import (
@@ -35,7 +37,6 @@ func (f *MatMulT) Backward(gy ...*variable.Variable) []*variable.Variable {
 	}
 }
 
-// TODO add tests
 func matmul(m, n matrix.Matrix) *variable.Variable {
 	mRows, mCols := len(m), len(m[0])
 	_, nCols := len(n), len(n[0])

@@ -31,7 +31,7 @@ func main() {
 	fmt.Printf("Vocabulary: %s\n", data.Characters())
 
 	// Basic transformer components
-	embeds := pkg.RandKaiming(vocabSize, embedSize)
+	tokEmbeds := pkg.RandKaiming(vocabSize, embedSize)
 	posEmbeds := pkg.RandKaiming(blockSize, embedSize)
 	var blocks []*Block
 	for range layers {
@@ -42,7 +42,7 @@ func main() {
 
 	// Collecting all the parameters
 	params := pkg.NewParams()
-	params.Add(embeds, posEmbeds)
+	params.Add(tokEmbeds, posEmbeds)
 	for _, block := range blocks {
 		params.Add(block.Params()...)
 	}
@@ -60,17 +60,32 @@ func main() {
 	// Main training loop
 	fmt.Printf("bs=%d, es=%d, lr=%.4f, ls=%.2f, vs=%d, epochs=%d \n", blockSize, embedSize, learningRate, lossScale, vocabSize, epochs)
 	for i := 0; i < epochs; i++ {
-		// Inputs are indexes for embeds table
-		inputs, targets := data.Sample(dataset, blockSize)
+		// Input contains blockSize consecutive tokens.
+		// Targets contains the target for each input token.
+		// Example: for input=[0,1], targets=[1,2], meaning
+		// that next token after 0 is 1, next after 1 is 2.
+		input, targets := data.Sample(dataset, blockSize)
 
-		// Forward pass
-		inputEmbeds := pkg.Rows(embeds, inputs.Data[0]...) // Get embed for every input token
-		input := Add(inputEmbeds, posEmbeds)               // Add positional embedding, (blockSize, embedSize)
+		// Forward pass, calculate predictions for every input token.
+		// embeds is:
+		// [
+		//   [vector for tok=1],
+		//   [vector for tok=2],
+		//   ...
+		// ]
+		embeds := pkg.Rows(tokEmbeds, input.Data[0]...) // Get embed for every input token
+		embeds = Add(embeds, posEmbeds)                 // Add positional embedding
 		for _, block := range blocks {
-			input = block.Forward(input)
+			embeds = block.Forward(embeds)
 		}
-		input = norm.Forward(input)     // Normalize inputs
-		logits := lmHead.Forward(input) // Get a list of final logits for the next token
+		embeds = norm.Forward(embeds) // Normalize embeds
+		// logits is:
+		// [
+		//   [score for tok=0, ..., score for tok=3], // for input tok=0
+		//   [score for tok=0, ..., score for tok=4], // for input tok=1
+		//   ...
+		// ]
+		logits := lmHead.Forward(embeds)
 
 		// Loss calculation
 		loss := CrossEntropy(logits, targets)
@@ -99,7 +114,7 @@ func main() {
 		}
 
 		// Get embeddings for all tokens in context
-		inputEmbeds := pkg.Rows(embeds, contextTokens...)
+		inputEmbeds := pkg.Rows(tokEmbeds, contextTokens...)
 		input := Add(inputEmbeds, posEmbeds)
 		for _, block := range blocks {
 			input = block.Forward(input)

@@ -41,18 +41,18 @@ func Example_addPretrainedTokens() {
 
 	addPretrainedTokens("test\ntoken\nlongest_token", 3)
 
-	fmt.Println("Number of tokens:", len(tokenToID))
+	fmt.Println("number of tokens:", len(tokenToID))
 	fmt.Println("test ID:", tokenToID["test"])
 	fmt.Println("token ID:", tokenToID["token"])
 	fmt.Println("longest_token ID:", tokenToID["longest_token"])
-	fmt.Println("Longest token:", longestTokens[0])
+	fmt.Println("longest token:", longestTokens[0])
 
 	// Output:
-	// Number of tokens: 6
+	// number of tokens: 6
 	// test ID: 3
 	// token ID: 4
 	// longest_token ID: 5
-	// Longest token: longest_token
+	// longest token: longest_token
 }
 
 func ExampleEncode() {
