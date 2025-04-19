@@ -149,5 +149,5 @@ func TestSample(t *testing.T) {
 	// Test panic condition
 	r.Panics(func() {
 		Sample([]float64{1, 2}, 3)
-	}, "Should panic when text is smaller than blockSize+1")
+	}, "Should panic when dataset is smaller than blockSize+1")
 }

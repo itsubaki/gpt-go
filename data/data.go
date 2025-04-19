@@ -17,7 +17,7 @@ var (
 	longestTokens []string
 
 	//go:embed fairy_tales.txt
-	text string
+	dataset string
 	//go:embed fairy_tokens.txt
 	pretrainedTokens string
 )
@@ -26,10 +26,10 @@ func Tokenize(numPretrainedTokens int) ([]float64, int) {
 	tokenToID = make(map[string]int)
 	idToToken = make(map[int]string)
 
-	addTokensFromText(text)
+	addTokensFromText(dataset)
 	addPretrainedTokens(pretrainedTokens, numPretrainedTokens)
 
-	return Encode(text), VocabSize()
+	return Encode(dataset), VocabSize()
 }
 
 func Encode(s string) []float64 {

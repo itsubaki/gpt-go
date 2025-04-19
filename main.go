@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/itsubaki/autograd/function"
+	"github.com/itsubaki/autograd/matrix"
 	"github.com/itsubaki/autograd/variable"
 
 	"gptgo/data"
@@ -17,11 +18,11 @@ const (
 	embedSize        = 64
 	heads            = 4
 	layers           = 4
-	epochs           = 50000
+	epochs           = 5000
 	learningRate     = 0.0001
 	evalIters        = 1000
-	dropout          = 0
-	lossScale        = 1.00
+	dropout          = 0    // disable some % of our neurons to prevent overfitting, model is likely to generalize
+	lossScale        = 1.00 // we don't use batches, so scaling loss down may help better convergence
 	pretrainedTokens = 4000
 )
 
@@ -92,6 +93,18 @@ func main() {
 		optimize.Update(params)
 		params.ZeroGrad()
 	}
+	// Print the profiling statistics
+	matrix.PrintProfileStats()
+
+	// Print statistics sorted by total time (most time-consuming functions first)
+	matrix.PrintSortedProfileStats("totalTime")
+
+	// Print statistics sorted by call count (most frequently called functions first)
+	matrix.PrintSortedProfileStats("callCount")
+
+	// Print statistics sorted by average time per call
+	matrix.PrintSortedProfileStats("avgTime")
+	return
 
 	// Generate text
 	variable.Config.Train = false // Prevent dropout

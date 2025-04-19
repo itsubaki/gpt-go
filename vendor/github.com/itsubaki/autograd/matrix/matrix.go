@@ -2,20 +2,176 @@ package matrix
 
 import (
 	"math"
+	"time"
+	"sort"
 	randv2 "math/rand/v2"
+	"strings"
+	"fmt"
+	"sync"
 
 	"github.com/itsubaki/autograd/rand"
 )
 
 type Matrix [][]float64
 
+
+// ProfileStats stores the profiling statistics
+type ProfileStats struct {
+	TotalTime  time.Duration
+	CallCount  int
+	MaxTime    time.Duration
+	MinTime    time.Duration
+}
+
+// ProfileData is a global map that stores profiling data for all functions
+var ProfileData = struct {
+	sync.RWMutex
+	Stats map[string]*ProfileStats
+}{
+	Stats: make(map[string]*ProfileStats),
+}
+
+// RecordFunctionCall profiles a function call and records statistics
+func RecordFunctionCall(funcName string, startTime time.Time) {
+	elapsed := time.Since(startTime)
+
+	ProfileData.Lock()
+	defer ProfileData.Unlock()
+
+	stats, exists := ProfileData.Stats[funcName]
+	if !exists {
+		ProfileData.Stats[funcName] = &ProfileStats{
+			TotalTime: elapsed,
+			CallCount: 1,
+			MaxTime:   elapsed,
+			MinTime:   elapsed,
+		}
+		return
+	}
+
+	stats.TotalTime += elapsed
+	stats.CallCount++
+
+	if elapsed > stats.MaxTime {
+		stats.MaxTime = elapsed
+	}
+
+	if elapsed < stats.MinTime {
+		stats.MinTime = elapsed
+	}
+}
+
+// PrintProfileStats prints the recorded profiling statistics
+func PrintProfileStats() {
+	ProfileData.RLock()
+	defer ProfileData.RUnlock()
+
+	fmt.Println("\n--- Matrix Package Profiling Statistics ---")
+	fmt.Printf("%-15s %-15s %-15s %-15s %-15s %-15s\n",
+		"Function", "Total Time", "Calls", "Avg Time", "Min Time", "Max Time")
+	fmt.Println(strings.Repeat("-", 90))
+
+	for funcName, stats := range ProfileData.Stats {
+		avgTime := stats.TotalTime / time.Duration(stats.CallCount)
+		fmt.Printf("%-15s %-15s %-15d %-15s %-15s %-15s\n",
+			funcName,
+			stats.TotalTime.String(),
+			stats.CallCount,
+			avgTime.String(),
+			stats.MinTime.String(),
+			stats.MaxTime.String())
+	}
+	fmt.Println(strings.Repeat("-", 90))
+}
+
+// GetSortedProfileStats returns the profiling statistics sorted by the specified field
+func GetSortedProfileStats(sortBy string) []struct {
+	FuncName string
+	Stats    ProfileStats
+} {
+	ProfileData.RLock()
+	defer ProfileData.RUnlock()
+
+	result := make([]struct {
+		FuncName string
+		Stats    ProfileStats
+	}, 0, len(ProfileData.Stats))
+
+	for funcName, stats := range ProfileData.Stats {
+		result = append(result, struct {
+			FuncName string
+			Stats    ProfileStats
+		}{
+			FuncName: funcName,
+			Stats:    *stats,
+		})
+	}
+
+	switch sortBy {
+	case "totalTime":
+		sort.Slice(result, func(i, j int) bool {
+			return result[i].Stats.TotalTime > result[j].Stats.TotalTime
+		})
+	case "callCount":
+		sort.Slice(result, func(i, j int) bool {
+			return result[i].Stats.CallCount > result[j].Stats.CallCount
+		})
+	case "avgTime":
+		sort.Slice(result, func(i, j int) bool {
+			return result[i].Stats.TotalTime/time.Duration(result[i].Stats.CallCount) >
+				result[j].Stats.TotalTime/time.Duration(result[j].Stats.CallCount)
+		})
+	case "maxTime":
+		sort.Slice(result, func(i, j int) bool {
+			return result[i].Stats.MaxTime > result[j].Stats.MaxTime
+		})
+	default:
+		// Default sort by total time
+		sort.Slice(result, func(i, j int) bool {
+			return result[i].Stats.TotalTime > result[j].Stats.TotalTime
+		})
+	}
+
+	return result
+}
+
+// PrintSortedProfileStats prints the profiling statistics sorted by the specified field
+func PrintSortedProfileStats(sortBy string) {
+	sortedStats := GetSortedProfileStats(sortBy)
+
+	fmt.Println("\n--- Matrix Package Profiling Statistics (Sorted by " + sortBy + ") ---")
+	fmt.Printf("%-15s %-15s %-15s %-15s %-15s %-15s\n",
+		"Function", "Total Time", "Calls", "Avg Time", "Min Time", "Max Time")
+	fmt.Println(strings.Repeat("-", 90))
+
+	for _, item := range sortedStats {
+		avgTime := item.Stats.TotalTime / time.Duration(item.Stats.CallCount)
+		fmt.Printf("%-15s %-15s %-15d %-15s %-15s %-15s\n",
+			item.FuncName,
+			item.Stats.TotalTime.String(),
+			item.Stats.CallCount,
+			avgTime.String(),
+			item.Stats.MinTime.String(),
+			item.Stats.MaxTime.String())
+	}
+	fmt.Println(strings.Repeat("-", 90))
+}
+
+// Now wrap all of the original matrix functions with profiling
+
 func New(v ...[]float64) Matrix {
+	startTime := time.Now()
+	defer RecordFunctionCall("New", startTime)
+
 	out := make(Matrix, len(v))
 	copy(out, v)
 	return out
 }
 
 func Zero(m, n int) Matrix {
+	startTime := time.Now()
+	defer RecordFunctionCall("Zero", startTime)
+
 	out := make(Matrix, m)
 	for i := range m {
 		out[i] = make([]float64, n)
@@ -25,14 +181,23 @@ func Zero(m, n int) Matrix {
 }
 
 func ZeroLike(m Matrix) Matrix {
+	startTime := time.Now()
+	defer RecordFunctionCall("ZeroLike", startTime)
+
 	return Zero(Dim(m))
 }
 
 func OneLike(m Matrix) Matrix {
+	startTime := time.Now()
+	defer RecordFunctionCall("OneLike", startTime)
+
 	return AddC(1.0, ZeroLike(m))
 }
 
 func From(x [][]int) Matrix {
+	startTime := time.Now()
+	defer RecordFunctionCall("From", startTime)
+
 	out := Zero(len(x), len(x[0]))
 	for i := range x {
 		for j := range x[i] {
@@ -52,21 +217,24 @@ func rnd(s ...randv2.Source) *randv2.Rand {
 	return randv2.New(s[0])
 }
 
-// Rand returns a matrix with elements that pseudo-random number in the half-open interval [0.0,1.0).
-// m, n is the dimension of the matrix.
-// s is the source of the pseudo-random number.
 func Rand(m, n int, s ...randv2.Source) Matrix {
+	startTime := time.Now()
+	defer RecordFunctionCall("Rand", startTime)
+
 	return F(Zero(m, n), func(_ float64) float64 { return rnd(s...).Float64() })
 }
 
-// Randn returns a matrix with elements that normally distributed float64 in the range [-math.MaxFloat64, +math.MaxFloat64] with standard normal distribution.
-// m, n is the dimension of the matrix.
-// s is the source of the pseudo-random number.
 func Randn(m, n int, s ...randv2.Source) Matrix {
+	startTime := time.Now()
+	defer RecordFunctionCall("Randn", startTime)
+
 	return F(Zero(m, n), func(_ float64) float64 { return rnd(s...).NormFloat64() })
 }
 
 func Size(m Matrix) int {
+	startTime := time.Now()
+	defer RecordFunctionCall("Size", startTime)
+
 	s := 1
 	for _, v := range Shape(m) {
 		s = s * v
@@ -76,72 +244,122 @@ func Size(m Matrix) int {
 }
 
 func Shape(m Matrix) []int {
+	startTime := time.Now()
+	defer RecordFunctionCall("Shape", startTime)
+
 	a, b := Dim(m)
 	return []int{a, b}
 }
 
 func Dim(m Matrix) (int, int) {
+	startTime := time.Now()
+	defer RecordFunctionCall("Dim", startTime)
+
 	return len(m), len(m[0])
 }
 
 func AddC(c float64, m Matrix) Matrix {
+	startTime := time.Now()
+	defer RecordFunctionCall("AddC", startTime)
+
 	return F(m, func(v float64) float64 { return c + v })
 }
 
-// SubC returns c - m
 func SubC(c float64, m Matrix) Matrix {
+	startTime := time.Now()
+	defer RecordFunctionCall("SubC", startTime)
+
 	return F(m, func(v float64) float64 { return c - v })
 }
 
 func MulC(c float64, m Matrix) Matrix {
+	startTime := time.Now()
+	defer RecordFunctionCall("MulC", startTime)
+
 	return F(m, func(v float64) float64 { return c * v })
 }
 
 func Exp(m Matrix) Matrix {
+	startTime := time.Now()
+	defer RecordFunctionCall("Exp", startTime)
+
 	return F(m, func(v float64) float64 { return math.Exp(v) })
 }
 
 func Log(m Matrix) Matrix {
+	startTime := time.Now()
+	defer RecordFunctionCall("Log", startTime)
+
 	return F(m, func(v float64) float64 { return math.Log(v) })
 }
 
 func Sin(m Matrix) Matrix {
+	startTime := time.Now()
+	defer RecordFunctionCall("Sin", startTime)
+
 	return F(m, func(v float64) float64 { return math.Sin(v) })
 }
 
 func Cos(m Matrix) Matrix {
+	startTime := time.Now()
+	defer RecordFunctionCall("Cos", startTime)
+
 	return F(m, func(v float64) float64 { return math.Cos(v) })
 }
 
 func Tanh(m Matrix) Matrix {
+	startTime := time.Now()
+	defer RecordFunctionCall("Tanh", startTime)
+
 	return F(m, func(v float64) float64 { return math.Tanh(v) })
 }
 
 func Pow(c float64, m Matrix) Matrix {
+	startTime := time.Now()
+	defer RecordFunctionCall("Pow", startTime)
+
 	return F(m, func(v float64) float64 { return math.Pow(v, c) })
 }
 
 func Add(m, n Matrix) Matrix {
+	startTime := time.Now()
+	defer RecordFunctionCall("Add", startTime)
+
 	return F2(m, n, func(a, b float64) float64 { return a + b })
 }
 
 func Sub(m, n Matrix) Matrix {
+	startTime := time.Now()
+	defer RecordFunctionCall("Sub", startTime)
+
 	return F2(m, n, func(a, b float64) float64 { return a - b })
 }
 
 func Mul(m, n Matrix) Matrix {
+	startTime := time.Now()
+	defer RecordFunctionCall("Mul", startTime)
+
 	return F2(m, n, func(a, b float64) float64 { return a * b })
 }
 
 func Div(m, n Matrix) Matrix {
+	startTime := time.Now()
+	defer RecordFunctionCall("Div", startTime)
+
 	return F2(m, n, func(a, b float64) float64 { return a / b })
 }
 
 func Mean(m Matrix) float64 {
+	startTime := time.Now()
+	defer RecordFunctionCall("Mean", startTime)
+
 	return Sum(m) / float64(Size(m))
 }
 
 func Sum(m Matrix) float64 {
+	startTime := time.Now()
+	defer RecordFunctionCall("Sum", startTime)
+
 	var sum float64
 	for _, v := range Flatten(m) {
 		sum = sum + v
@@ -151,6 +369,9 @@ func Sum(m Matrix) float64 {
 }
 
 func Max(m Matrix) float64 {
+	startTime := time.Now()
+	defer RecordFunctionCall("Max", startTime)
+
 	max := m[0][0]
 	for _, v := range Flatten(m) {
 		if v > max {
@@ -162,6 +383,9 @@ func Max(m Matrix) float64 {
 }
 
 func Min(m Matrix) float64 {
+	startTime := time.Now()
+	defer RecordFunctionCall("Min", startTime)
+
 	min := m[0][0]
 	for _, v := range Flatten(m) {
 		if v < min {
@@ -173,6 +397,9 @@ func Min(m Matrix) float64 {
 }
 
 func Argmax(m Matrix) []int {
+	startTime := time.Now()
+	defer RecordFunctionCall("Argmax", startTime)
+
 	p, q := Dim(m)
 
 	out := make([]int, p)
@@ -188,8 +415,10 @@ func Argmax(m Matrix) []int {
 	return out
 }
 
-// Dot returns the dot product of m and n.
 func Dot(m, n Matrix) Matrix {
+	startTime := time.Now()
+	defer RecordFunctionCall("Dot", startTime)
+
 	a, b := Dim(m)
 	_, p := Dim(n)
 
@@ -206,6 +435,9 @@ func Dot(m, n Matrix) Matrix {
 }
 
 func Clip(m Matrix, min, max float64) Matrix {
+	startTime := time.Now()
+	defer RecordFunctionCall("Clip", startTime)
+
 	return F(m, func(v float64) float64 {
 		if v < min {
 			return min
@@ -219,8 +451,10 @@ func Clip(m Matrix, min, max float64) Matrix {
 	})
 }
 
-// Mask returns a matrix with elements that 1 if f() is true and 0 otherwise.
 func Mask(m Matrix, f func(x float64) bool) Matrix {
+	startTime := time.Now()
+	defer RecordFunctionCall("Mask", startTime)
+
 	return F(m, func(v float64) float64 {
 		if f(v) {
 			return 1
@@ -231,10 +465,16 @@ func Mask(m Matrix, f func(x float64) bool) Matrix {
 }
 
 func Broadcast(m, n Matrix) (Matrix, Matrix) {
+	startTime := time.Now()
+	defer RecordFunctionCall("Broadcast", startTime)
+
 	return BroadcastTo(Shape(n), m), BroadcastTo(Shape(m), n)
 }
 
 func BroadcastTo(shape []int, m Matrix) Matrix {
+	startTime := time.Now()
+	defer RecordFunctionCall("BroadcastTo", startTime)
+
 	a, b := shape[0], shape[1]
 
 	if len(m) == 1 && len(m[0]) == 1 {
@@ -272,6 +512,9 @@ func BroadcastTo(shape []int, m Matrix) Matrix {
 }
 
 func SumTo(shape []int, m Matrix) Matrix {
+	startTime := time.Now()
+	defer RecordFunctionCall("SumTo", startTime)
+
 	if shape[0] == 1 && shape[1] == 1 {
 		return New([]float64{Sum(m)})
 	}
@@ -287,8 +530,10 @@ func SumTo(shape []int, m Matrix) Matrix {
 	return m
 }
 
-// SumAxis0 returns the sum of each column.
 func SumAxis0(m Matrix) Matrix {
+	startTime := time.Now()
+	defer RecordFunctionCall("SumAxis0", startTime)
+
 	p, q := Dim(m)
 
 	v := make([]float64, 0, q)
@@ -304,8 +549,10 @@ func SumAxis0(m Matrix) Matrix {
 	return New(v)
 }
 
-// SumAxis1 returns the sum of each row.
 func SumAxis1(m Matrix) Matrix {
+	startTime := time.Now()
+	defer RecordFunctionCall("SumAxis1", startTime)
+
 	p, q := Dim(m)
 
 	v := make([]float64, 0, p)
@@ -322,6 +569,9 @@ func SumAxis1(m Matrix) Matrix {
 }
 
 func MaxAxis1(m Matrix) Matrix {
+	startTime := time.Now()
+	defer RecordFunctionCall("MaxAxis1", startTime)
+
 	p, q := Dim(m)
 
 	v := make([]float64, 0, p)
@@ -340,6 +590,9 @@ func MaxAxis1(m Matrix) Matrix {
 }
 
 func Transpose(m Matrix) Matrix {
+	startTime := time.Now()
+	defer RecordFunctionCall("Transpose", startTime)
+
 	p, q := Dim(m)
 
 	out := Zero(q, p)
@@ -352,8 +605,10 @@ func Transpose(m Matrix) Matrix {
 	return out
 }
 
-// Reshape returns the matrix with the given shape.
 func Reshape(shape []int, m Matrix) Matrix {
+	startTime := time.Now()
+	defer RecordFunctionCall("Reshape", startTime)
+
 	p, q := Dim(m)
 	a, b := shape[0], shape[1]
 
@@ -375,6 +630,9 @@ func Reshape(shape []int, m Matrix) Matrix {
 }
 
 func Flatten(m Matrix) []float64 {
+	startTime := time.Now()
+	defer RecordFunctionCall("Flatten", startTime)
+
 	out := make([]float64, 0, Size(m))
 	for _, r := range m {
 		out = append(out, r...)
@@ -384,6 +642,9 @@ func Flatten(m Matrix) []float64 {
 }
 
 func F(m Matrix, f func(a float64) float64) Matrix {
+	startTime := time.Now()
+	defer RecordFunctionCall("F", startTime)
+
 	p, q := Dim(m)
 
 	out := Zero(p, q)
@@ -397,6 +658,9 @@ func F(m Matrix, f func(a float64) float64) Matrix {
 }
 
 func F2(m, n Matrix, f func(a, b float64) float64) Matrix {
+	startTime := time.Now()
+	defer RecordFunctionCall("F2", startTime)
+
 	x, y := Broadcast(m, n)
 	p, q := Dim(x)
 
