@@ -18,6 +18,10 @@ type AdamW struct {
 	ms, vs      map[*variable.Variable]matrix.Matrix
 }
 
+func NewAdamW(learningRate float64) AdamW {
+	return AdamW{Alpha: learningRate, Beta1: 0.9, Beta2: 0.999, WeightDecay: 0.01}
+}
+
 func (o *AdamW) Update(model optimizer.Model) {
 	params := optimizer.Params(model, o.Hook)
 

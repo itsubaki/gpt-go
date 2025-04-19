@@ -30,7 +30,7 @@ func main() {
 	fmt.Printf("First 100 characters:\n%s\n", strings.TrimSpace(data.Decode(dataset[:100]...)))
 	fmt.Printf("Vocabulary: %s\n", data.Characters())
 
-	// Basic transformer components
+	// Basic transformer components.
 	tokEmbeds := pkg.RandKaiming(vocabSize, embedSize)
 	posEmbeds := pkg.RandKaiming(blockSize, embedSize)
 	var blocks []*Block
@@ -40,7 +40,7 @@ func main() {
 	norm := pkg.NewLayerNorm(embedSize)
 	lmHead := NewLinear(embedSize, vocabSize)
 
-	// Collecting all the parameters
+	// Collecting all the parameters.
 	params := pkg.NewParams()
 	params.Add(tokEmbeds, posEmbeds)
 	for _, block := range blocks {
@@ -50,14 +50,9 @@ func main() {
 	params.Add(lmHead.Weight, lmHead.Bias)
 	fmt.Println(params)
 
-	optimize := pkg.AdamW{
-		Alpha:       learningRate,
-		Beta1:       0.9,
-		Beta2:       0.999,
-		WeightDecay: 0.01,
-	}
+	optimizer := pkg.NewAdamW(learningRate)
 
-	// Main training loop
+	// Main training loop.
 	fmt.Printf("bs=%d, es=%d, lr=%.4f, ls=%.2f, vs=%d, epochs=%d \n", blockSize, embedSize, learningRate, lossScale, vocabSize, epochs)
 	for i := 0; i < epochs; i++ {
 		// Input contains blockSize consecutive tokens.
@@ -67,38 +62,38 @@ func main() {
 		input, targets := data.Sample(dataset, blockSize)
 
 		// Forward pass, calculate predictions for every input token.
-		// embeds is:
 		// [
 		//   [vector for tok=1],
 		//   [vector for tok=2],
-		//   ...
+		//   ... other embeds
 		// ]
-		embeds := pkg.Rows(tokEmbeds, input.Data[0]...) // Get embed for every input token
-		embeds = Add(embeds, posEmbeds)                 // Add positional embedding
+		embeds := pkg.Rows(tokEmbeds, input.Data[0]...) // get embed for every input token
+		embeds = Add(embeds, posEmbeds)                 // add positional embedding
 		for _, block := range blocks {
 			embeds = block.Forward(embeds)
 		}
-		embeds = norm.Forward(embeds) // Normalize embeds
-		// logits is:
+		embeds = norm.Forward(embeds)
 		// [
-		//   [score for tok=0, ..., score for tok=3], // for input tok=0
+		//   [score for tok=0, ..., score for tok=4], // for input tok=0
 		//   [score for tok=0, ..., score for tok=4], // for input tok=1
-		//   ...
+		//   ... other logits
 		// ]
 		logits := lmHead.Forward(embeds)
 
-		// Loss calculation
+		// Loss calculation, how much our predicted targets differ from the actual targets?
 		loss := CrossEntropy(logits, targets)
-		scaledLoss := variable.MulC(lossScale, loss)
+		loss = variable.MulC(lossScale, loss)
 		if (i % evalIters) == 0 {
 			fmt.Printf("epoch: %5d, loss: %.5f\n", i, loss.Data[0][0])
 		}
 
-		// Backward pass
-		scaledLoss.Backward()
+		// Backward pass, calculate gradients (how much each parameter contributes to the loss)
+		// for all the parameters (weights, biases, embeds). Loss is the tail of a computation graph.
+		loss.Backward()
 
-		// Weights update
-		optimize.Update(params)
+		// Update the values of parameters according to calculated gradients.
+		// I.e. nudge them in the direction of the gradients.
+		optimizer.Update(params)
 		params.ZeroGrad()
 	}
 
