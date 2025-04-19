@@ -92,7 +92,7 @@ func main() {
 		loss.Backward()
 
 		// Update the values of parameters according to calculated gradients.
-		// I.e. nudge them in the direction of the gradients.
+		// I.e. nudge them in the direction of the gradients, to minimize the loss.
 		optimizer.Update(params)
 		params.ZeroGrad()
 	}
