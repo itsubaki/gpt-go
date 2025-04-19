@@ -17,7 +17,6 @@ const (
 	heads            = 4
 	layers           = 4
 	epochs           = 20000
-	decay            = 0.1 // The longer we learn, the less we push the weights
 	learningRate     = 0.0001
 	evalIters        = 1000
 	dropout          = 0    // disable some % of our neurons to prevent overfitting, model is likely to generalize
@@ -58,11 +57,11 @@ func main() {
 		Alpha:       learningRate,
 		Beta1:       0.9,
 		Beta2:       0.999,
-		WeightDecay: decay,
+		WeightDecay: 0.01,
 	}
 
 	// Main training loop
-	fmt.Printf("bs=%d, es=%d, lr=%.4f, ls=%.2f, vs=%d, decay=%.2f epochs=%d \n", blockSize, embedSize, learningRate, lossScale, vocabSize, decay, epochs)
+	fmt.Printf("bs=%d, es=%d, lr=%.4f, ls=%.2f, vs=%d, epochs=%d \n", blockSize, embedSize, learningRate, lossScale, vocabSize, epochs)
 	for i := 0; i < epochs; i++ {
 		// Inputs are indexes for embeds table
 		inputs, targets := data.Sample(dataset, blockSize)
