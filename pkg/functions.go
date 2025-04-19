@@ -7,7 +7,6 @@ import (
 
 	"github.com/itsubaki/autograd/matrix"
 	"github.com/itsubaki/autograd/variable"
-	"gonum.org/v1/gonum/stat/distuv"
 )
 
 var (
@@ -47,9 +46,17 @@ func Rows(x *variable.Variable, indexes ...float64) *variable.Variable {
 
 // Add tests
 func RandKaiming(dims ...int) *variable.Variable {
+	// Calculate the standard deviation based on Kaiming/He formula
+	// For ReLU activation, we use a factor of 2.0 divided by fan-in (input dimensions)
 	sigma := math.Sqrt(2.0 / float64(dims[1]))
-	dist := distuv.Normal{Mu: 0, Sigma: sigma}
-	result := matrix.F(matrix.Zero(dims[0], dims[1]), func(_ float64) float64 { return dist.Rand() })
+
+	// Define a transformation function that samples from a normal distribution
+	// and scales values by the calculated standard deviation
+	rnd := func(_ float64) float64 {
+		return rand.NormFloat64() * sigma
+	}
+
+	result := matrix.F(matrix.Zero(dims[0], dims[1]), rnd)
 
 	return variable.NewOf(result...)
 }
