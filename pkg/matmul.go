@@ -3,10 +3,10 @@ package pkg
 
 import (
 	"runtime"
+	"sync"
 
 	"github.com/itsubaki/autograd/matrix"
 	"github.com/itsubaki/autograd/variable"
-	"gonum.org/v1/gonum/mat"
 )
 
 const (
@@ -66,49 +66,66 @@ func (f *MatMulT) Backward(gy ...*variable.Variable) []*variable.Variable {
 	}
 }
 
-func matmul(m, n matrix.Matrix) matrix.Matrix {
-	mRows, mCols := matrix.Dim(m)
-	nRows, nCols := matrix.Dim(n)
+// Implementation 5: Hybrid parallel blocked (more goroutines than CPUs)
+func matmul(a, b matrix.Matrix) matrix.Matrix {
+	aRows, aCols := len(a), len(a[0])
+	bRows, bCols := len(b), len(b[0])
 
-	if mCols != nRows {
+	if aCols != bRows {
 		panic("Incompatible matrix dimensions")
 	}
 
-	// Prepare flat slices for the Gonum matrices
-	mFlat := make([]float64, mRows*mCols)
-	nFlat := make([]float64, nRows*nCols)
+	c := ZeroMatrix(aRows, bCols)
 
-	// Copy data to flat slices in one pass
-	for i := 0; i < mRows; i++ {
-		for j := 0; j < mCols; j++ {
-			mFlat[i*mCols+j] = m[i][j]
-		}
+	var wg sync.WaitGroup
+
+	// Number of available CPU cores
+	numCPU := runtime.NumCPU()
+
+	// Create more chunks than CPUs for better load balancing
+	// Adjust the multiplier to find the optimal balance
+	chunkSize := max(1, aRows/(numCPU*4))
+
+	for startRow := 0; startRow < aRows; startRow += chunkSize {
+		wg.Add(1)
+
+		go func(firstRow, lastRow int) {
+			defer wg.Done()
+
+			// Process this chunk of rows with blocking for better cache utilization
+			const BLOCK_SIZE = 32
+
+			for ii := firstRow; ii < lastRow; ii += BLOCK_SIZE {
+				for kk := 0; kk < aCols; kk += BLOCK_SIZE {
+					for jj := 0; jj < bCols; jj += BLOCK_SIZE {
+						// Calculate bounds for current block
+						iEnd := min(ii+BLOCK_SIZE, lastRow)
+						kEnd := min(kk+BLOCK_SIZE, aCols)
+						jEnd := min(jj+BLOCK_SIZE, bCols)
+
+						// Process the current block with cache-friendly access
+						for i := ii; i < iEnd; i++ {
+							for k := kk; k < kEnd; k++ {
+								aik := a[i][k]
+								for j := jj; j < jEnd; j++ {
+									c[i][j] += aik * b[k][j]
+								}
+							}
+						}
+					}
+				}
+			}
+		}(startRow, min(startRow+chunkSize, aRows))
 	}
 
-	for i := 0; i < nRows; i++ {
-		for j := 0; j < nCols; j++ {
-			nFlat[i*nCols+j] = n[i][j]
-		}
+	wg.Wait()
+	return c
+}
+
+func ZeroMatrix(rows, cols int) matrix.Matrix {
+	m := make(matrix.Matrix, rows)
+	for i := range m {
+		m[i] = make([]float64, cols)
 	}
-
-	// Create Gonum matrices with pre-filled data
-	mDense := mat.NewDense(mRows, mCols, mFlat)
-	nDense := mat.NewDense(nRows, nCols, nFlat)
-
-	// Perform multiplication
-	result := mat.NewDense(mRows, nCols, nil)
-	result.Mul(mDense, nDense)
-
-	// Extract result data in one pass
-	resultFlat := result.RawMatrix().Data
-
-	// Convert back to our matrix format
-	out := matrix.Zero(mRows, nCols)
-	for i := 0; i < mRows; i++ {
-		for j := 0; j < nCols; j++ {
-			out[i][j] = resultFlat[i*nCols+j]
-		}
-	}
-
-	return out
+	return m
 }
