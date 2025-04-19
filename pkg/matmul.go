@@ -2,7 +2,6 @@
 package pkg
 
 import (
-	"fmt"
 	"runtime"
 	"sync"
 
@@ -75,7 +74,6 @@ func Dot(m, n matrix.Matrix) matrix.Matrix {
 
 	shouldParallel := mRows*mCols >= minSizeForParallel || nRows*nCols >= minSizeForParallel
 	if shouldParallel {
-		fmt.Println("parallell...")
 		var wg sync.WaitGroup
 
 		for i := range mRows {

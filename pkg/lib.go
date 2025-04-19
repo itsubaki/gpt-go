@@ -3,6 +3,7 @@ package pkg
 import (
 	"fmt"
 	"math"
+	"math/rand/v2"
 
 	"github.com/itsubaki/autograd/layer"
 	"github.com/itsubaki/autograd/matrix"
@@ -42,6 +43,32 @@ func (p *Params) String() string {
 
 func (p *Params) ZeroGrad() {
 	p.params.Cleargrads()
+}
+
+var (
+	Add     = variable.Add
+	Sub     = variable.Sub
+	Mul     = variable.Mul
+	Div     = variable.Div
+	Zeros   = variable.Zero
+	OneLike = variable.OneLike
+	Pow     = variable.Pow
+)
+
+func Sample(probs *variable.Variable) float64 {
+	r := rand.Float64()
+
+	// Find the first index where cumulative probability exceeds r
+	cumulativeProb := 0.0
+	for i, p := range probs.Data[0] {
+		cumulativeProb += p
+		if r < cumulativeProb {
+			return float64(i)
+		}
+	}
+
+	// Fallback (should rarely happen due to floating point precision)
+	return float64(len(probs.Data)) - 1
 }
 
 func Rows(x *variable.Variable, indexes ...float64) *variable.Variable {
@@ -88,25 +115,6 @@ func MaskedInfFill(m, mask *variable.Variable) *variable.Variable {
 	mMasked := Add(variable.Mul(m, mask), variable.NewOf(negInfMaskedData...))
 
 	return mMasked
-}
-
-// Arange creates a new slice containing a sequence of values from start to end (exclusive) with the given step.
-// If step is not provided, it defaults to 1.
-func Arange(end int) []float64 {
-	step := 1.0
-
-	// Calculate the number of elements
-	n := int(math.Ceil((float64(end)) / step))
-	if n <= 0 {
-		return []float64{}
-	}
-
-	result := make([]float64, n)
-	for i := 0; i < n; i++ {
-		result[i] = float64(i) * step
-	}
-
-	return result
 }
 
 func PrintShape(v *variable.Variable) {
