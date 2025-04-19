@@ -3,10 +3,10 @@ package pkg
 
 import (
 	"runtime"
-	"sync"
 
 	"github.com/itsubaki/autograd/matrix"
 	"github.com/itsubaki/autograd/variable"
+	"gonum.org/v1/gonum/mat"
 )
 
 const (
@@ -53,7 +53,7 @@ type MatMulT struct {
 func (f *MatMulT) Forward(x ...*variable.Variable) []*variable.Variable {
 	f.x, f.w = x[0], x[1]
 
-	y := Dot(x[0].Data, x[1].Data)
+	y := matmul(x[0].Data, x[1].Data)
 	return []*variable.Variable{
 		variable.NewOf(y...),
 	}
@@ -66,88 +66,47 @@ func (f *MatMulT) Backward(gy ...*variable.Variable) []*variable.Variable {
 	}
 }
 
-func Dot(m, n matrix.Matrix) matrix.Matrix {
+func matmul(m, n matrix.Matrix) matrix.Matrix {
 	mRows, mCols := matrix.Dim(m)
 	nRows, nCols := matrix.Dim(n)
-	out := matrix.Zero(mRows, nCols)
 
-	// Number of available CPU cores
-	numCPU := runtime.NumCPU()
+	if mCols != nRows {
+		panic("Incompatible matrix dimensions")
+	}
 
-	// Only parallelize if matrices are large enough
-	shouldParallel := mRows*mCols >= minSizeForParallel || nRows*nCols >= minSizeForParallel
+	// Prepare flat slices for the Gonum matrices
+	mFlat := make([]float64, mRows*mCols)
+	nFlat := make([]float64, nRows*nCols)
 
-	if shouldParallel {
-		var wg sync.WaitGroup
-
-		// Divide work by rows based on CPU count
-		rowsPerWorker := (mRows + numCPU - 1) / numCPU // Ceiling division
-
-		// Launch one goroutine per CPU core
-		for workerID := 0; workerID < numCPU; workerID++ {
-			wg.Add(1)
-
-			go func(id int) {
-				defer wg.Done()
-
-				// Calculate row range for this worker
-				startRow := id * rowsPerWorker
-				endRow := min((id+1)*rowsPerWorker, mRows)
-
-				// Skip if no work for this worker
-				if startRow >= mRows {
-					return
-				}
-
-				// Block size for tiling (cache optimization)
-				const BLOCK_SIZE = 32
-
-				// Process assigned chunk using blocking algorithm
-				for ii := startRow; ii < endRow; ii += BLOCK_SIZE {
-					for kk := 0; kk < mCols; kk += BLOCK_SIZE {
-						for jj := 0; jj < nCols; jj += BLOCK_SIZE {
-							// Calculate bounds for current block
-							iEnd := min(ii+BLOCK_SIZE, endRow)
-							kEnd := min(kk+BLOCK_SIZE, mCols)
-							jEnd := min(jj+BLOCK_SIZE, nCols)
-
-							// Process the current block with cache-friendly access
-							for i := ii; i < iEnd; i++ {
-								for k := kk; k < kEnd; k++ {
-									mik := m[i][k]
-									for j := jj; j < jEnd; j++ {
-										out[i][j] += mik * n[k][j]
-									}
-								}
-							}
-						}
-					}
-				}
-			}(workerID)
+	// Copy data to flat slices in one pass
+	for i := 0; i < mRows; i++ {
+		for j := 0; j < mCols; j++ {
+			mFlat[i*mCols+j] = m[i][j]
 		}
+	}
 
-		wg.Wait()
-	} else {
-		// Sequential version with blocking for small matrices
-		const BLOCK_SIZE = 32
+	for i := 0; i < nRows; i++ {
+		for j := 0; j < nCols; j++ {
+			nFlat[i*nCols+j] = n[i][j]
+		}
+	}
 
-		for ii := 0; ii < mRows; ii += BLOCK_SIZE {
-			for kk := 0; kk < mCols; kk += BLOCK_SIZE {
-				for jj := 0; jj < nCols; jj += BLOCK_SIZE {
-					iEnd := min(ii+BLOCK_SIZE, mRows)
-					kEnd := min(kk+BLOCK_SIZE, mCols)
-					jEnd := min(jj+BLOCK_SIZE, nCols)
+	// Create Gonum matrices with pre-filled data
+	mDense := mat.NewDense(mRows, mCols, mFlat)
+	nDense := mat.NewDense(nRows, nCols, nFlat)
 
-					for i := ii; i < iEnd; i++ {
-						for k := kk; k < kEnd; k++ {
-							mik := m[i][k]
-							for j := jj; j < jEnd; j++ {
-								out[i][j] += mik * n[k][j]
-							}
-						}
-					}
-				}
-			}
+	// Perform multiplication
+	result := mat.NewDense(mRows, nCols, nil)
+	result.Mul(mDense, nDense)
+
+	// Extract result data in one pass
+	resultFlat := result.RawMatrix().Data
+
+	// Convert back to our matrix format
+	out := matrix.Zero(mRows, nCols)
+	for i := 0; i < mRows; i++ {
+		for j := 0; j < nCols; j++ {
+			out[i][j] = resultFlat[i*nCols+j]
 		}
 	}
 
