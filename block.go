@@ -9,11 +9,14 @@ import (
 )
 
 var (
-	Zeros   = variable.Zero
-	OneLike = variable.OneLike
-	ReLU    = function.ReLU
-	Dropout = function.DropoutSimple
-	MatMul  = pkg.MatMul
+	Zeros        = variable.Zero
+	OneLike      = variable.OneLike
+	ReLU         = function.ReLU
+	Dropout      = function.DropoutSimple
+	MatMul       = pkg.MatMul
+	Add          = variable.Add
+	Softmax      = function.Softmax
+	CrossEntropy = function.SoftmaxCrossEntropy
 )
 
 type Block struct {

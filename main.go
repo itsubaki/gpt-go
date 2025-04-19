@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/itsubaki/autograd/function"
 	"github.com/itsubaki/autograd/variable"
 
 	"gptgo/data"
@@ -18,18 +17,13 @@ const (
 	heads            = 4
 	layers           = 4
 	epochs           = 20000
+	decay            = 0.1 // The longer we learn, the less we push the weights
 	learningRate     = 0.0001
 	evalIters        = 1000
 	dropout          = 0    // disable some % of our neurons to prevent overfitting, model is likely to generalize
 	lossScale        = 1.00 // we don't use batches, so scaling loss down may help better convergence
 	pretrainedTokens = 4000
 	maxGoroutines    = 0 // all available CPUs will be used if zero
-)
-
-var (
-	Add          = variable.Add
-	Softmax      = function.Softmax
-	CrossEntropy = function.SoftmaxCrossEntropy
 )
 
 func main() {
@@ -61,13 +55,14 @@ func main() {
 	fmt.Println(params)
 
 	optimize := pkg.AdamW{
-		Alpha: learningRate,
-		Beta1: 0.9,
-		Beta2: 0.999,
+		Alpha:       learningRate,
+		Beta1:       0.9,
+		Beta2:       0.999,
+		WeightDecay: decay,
 	}
 
 	// Main training loop
-	fmt.Printf("bs=%d, es=%d, lr=%.4f, ls=%.2f, vs=%d, epochs=%d\n", blockSize, embedSize, learningRate, lossScale, vocabSize, epochs)
+	fmt.Printf("bs=%d, es=%d, lr=%.4f, ls=%.2f, vs=%d, decay=%.2f epochs=%d \n", blockSize, embedSize, learningRate, lossScale, vocabSize, decay, epochs)
 	for i := 0; i < epochs; i++ {
 		// Inputs are indexes for embeds table
 		inputs, targets := data.Sample(dataset, blockSize)
