@@ -69,34 +69,83 @@ func (f *MatMulT) Backward(gy ...*variable.Variable) []*variable.Variable {
 func Dot(m, n matrix.Matrix) matrix.Matrix {
 	mRows, mCols := matrix.Dim(m)
 	nRows, nCols := matrix.Dim(n)
-
 	out := matrix.Zero(mRows, nCols)
 
+	// Number of available CPU cores
+	numCPU := runtime.NumCPU()
+
+	// Only parallelize if matrices are large enough
 	shouldParallel := mRows*mCols >= minSizeForParallel || nRows*nCols >= minSizeForParallel
+
 	if shouldParallel {
 		var wg sync.WaitGroup
 
-		for i := range mRows {
-			wg.Add(1)
-			worker := <-pool
-			go func(row int) {
-				defer wg.Done()
-				defer func() { pool <- worker }() // Return worker to pool when done
+		// Divide work by rows based on CPU count
+		rowsPerWorker := (mRows + numCPU - 1) / numCPU // Ceiling division
 
-				for j := range nCols {
-					for k := 0; k < mCols; k++ {
-						out[row][j] += m[row][k] * n[k][j]
+		// Launch one goroutine per CPU core
+		for workerID := 0; workerID < numCPU; workerID++ {
+			wg.Add(1)
+
+			go func(id int) {
+				defer wg.Done()
+
+				// Calculate row range for this worker
+				startRow := id * rowsPerWorker
+				endRow := min((id+1)*rowsPerWorker, mRows)
+
+				// Skip if no work for this worker
+				if startRow >= mRows {
+					return
+				}
+
+				// Block size for tiling (cache optimization)
+				const BLOCK_SIZE = 32
+
+				// Process assigned chunk using blocking algorithm
+				for ii := startRow; ii < endRow; ii += BLOCK_SIZE {
+					for kk := 0; kk < mCols; kk += BLOCK_SIZE {
+						for jj := 0; jj < nCols; jj += BLOCK_SIZE {
+							// Calculate bounds for current block
+							iEnd := min(ii+BLOCK_SIZE, endRow)
+							kEnd := min(kk+BLOCK_SIZE, mCols)
+							jEnd := min(jj+BLOCK_SIZE, nCols)
+
+							// Process the current block with cache-friendly access
+							for i := ii; i < iEnd; i++ {
+								for k := kk; k < kEnd; k++ {
+									mik := m[i][k]
+									for j := jj; j < jEnd; j++ {
+										out[i][j] += mik * n[k][j]
+									}
+								}
+							}
+						}
 					}
 				}
-			}(i)
+			}(workerID)
 		}
 
 		wg.Wait()
 	} else {
-		for i := range mRows {
-			for j := range nCols {
-				for k := 0; k < mCols; k++ {
-					out[i][j] += m[i][k] * n[k][j]
+		// Sequential version with blocking for small matrices
+		const BLOCK_SIZE = 32
+
+		for ii := 0; ii < mRows; ii += BLOCK_SIZE {
+			for kk := 0; kk < mCols; kk += BLOCK_SIZE {
+				for jj := 0; jj < nCols; jj += BLOCK_SIZE {
+					iEnd := min(ii+BLOCK_SIZE, mRows)
+					kEnd := min(kk+BLOCK_SIZE, mCols)
+					jEnd := min(jj+BLOCK_SIZE, nCols)
+
+					for i := ii; i < iEnd; i++ {
+						for k := kk; k < kEnd; k++ {
+							mik := m[i][k]
+							for j := jj; j < jEnd; j++ {
+								out[i][j] += mik * n[k][j]
+							}
+						}
+					}
 				}
 			}
 		}

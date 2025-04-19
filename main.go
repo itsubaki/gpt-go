@@ -16,8 +16,8 @@ const (
 	embedSize        = 64
 	heads            = 4
 	layers           = 4
-	epochs           = 20000
-	learningRate     = 0.0005
+	epochs           = 40000
+	learningRate     = 0.0003
 	evalIters        = 1000
 	dropout          = 0    // disable some % of our neurons to prevent overfitting, model is likely to generalize
 	lossScale        = 1.00 // we don't use batches, so scaling loss down may help better convergence
