@@ -18,5 +18,9 @@ for j := 0; j < len(embedGrad.Data); j++ {
 // Same for shape. Don't forget that currently slices refer to same data
 append([]int{}, t.Shape...), // copying
 
-### ADR
-- I decided to go without batches. I have Apple M3, not much profit using batches in terms of CPU speed. I'll give up complexity of batches for the sake of better understanding. Transformer's architecture allows me to do so, layer norm works fine without batches.
+### WHYs
+Decided to go without batches.
+I have an  Apple M3, not much profit using batches in terms of CPU speed. I'll give up complexity of batches for the sake of better understanding. Transformer's architecture allows me to do so, layer norm works fine without batches.
+
+Removed gonum dependency.
+The gonum.matmul gave us ~30% performance boost, but it brought additional complexity. We're not striving for maximum efficiency here, rather for radical simplicity. Current matmul implementation is quite effective, and it's only 40 lines of readable plain code.

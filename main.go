@@ -22,12 +22,9 @@ const (
 	dropout          = 0.2  // disable some % of our neurons to prevent overfitting, model is likely to generalize
 	lossScale        = 1.00 // we don't use batches, so scaling loss down may help better convergence
 	pretrainedTokens = 3500
-	maxGoroutines    = 0 // all available CPUs will be used if zero
 )
 
 func main() {
-	pkg.SetMaxGoroutines(maxGoroutines)
-
 	fmt.Println("Loading dataset...")
 	dataset, vocabSize := data.Tokenize(pretrainedTokens)
 	fmt.Printf("First 100 characters:\n%s\n", strings.TrimSpace(data.Decode(dataset[:100]...)))

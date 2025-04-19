@@ -7,37 +7,11 @@ import (
 
 	"github.com/itsubaki/autograd/matrix"
 	"github.com/itsubaki/autograd/variable"
-	"gonum.org/v1/gonum/mat"
 )
 
-var numWorkers = 1
-var pool chan struct{}
-
-func init() {
-	pool = make(chan struct{}, numWorkers)
-	for i := 0; i < numWorkers; i++ {
-		pool <- struct{}{}
-	}
-}
-
-func SetMaxGoroutines(size int) {
-	numWorkers = size
-
-	// Drain the existing pool
-	oldSize := cap(pool)
-	for i := 0; i < oldSize; i++ {
-		<-pool
-	}
-
-	if size <= 0 {
-		size = runtime.NumCPU()
-	}
-
-	pool = make(chan struct{}, size)
-	for i := 0; i < size; i++ {
-		pool <- struct{}{}
-	}
-}
+const (
+	blockSize = 32 // Group calculations by blocks for better CPU cache utilization
+)
 
 func MatMul(x ...*variable.Variable) *variable.Variable {
 	return (&variable.Function{Forwarder: &MatMulT{}}).First(x...)
@@ -51,9 +25,7 @@ func (f *MatMulT) Forward(x ...*variable.Variable) []*variable.Variable {
 	f.x, f.w = x[0], x[1]
 
 	y := matmul(x[0].Data, x[1].Data)
-	return []*variable.Variable{
-		variable.NewOf(y...),
-	}
+	return []*variable.Variable{y}
 }
 
 func (f *MatMulT) Backward(gy ...*variable.Variable) []*variable.Variable {
@@ -63,113 +35,47 @@ func (f *MatMulT) Backward(gy ...*variable.Variable) []*variable.Variable {
 	}
 }
 
-func matmul(m, n matrix.Matrix) matrix.Matrix {
-	mRows, mCols := matrix.Dim(m)
-	nRows, nCols := matrix.Dim(n)
+// TODO add tests
+func matmul(m, n matrix.Matrix) *variable.Variable {
+	mRows, mCols := len(m), len(m[0])
+	_, nCols := len(n), len(n[0])
 
-	if mCols != nRows {
-		panic("Incompatible matrix dimensions")
-	}
-
-	// Prepare flat slices for the Gonum matrices
-	mFlat := make([]float64, mRows*mCols)
-	nFlat := make([]float64, nRows*nCols)
-
-	// Copy data to flat slices in one pass
-	for i := 0; i < mRows; i++ {
-		for j := 0; j < mCols; j++ {
-			mFlat[i*mCols+j] = m[i][j]
-		}
-	}
-
-	for i := 0; i < nRows; i++ {
-		for j := 0; j < nCols; j++ {
-			nFlat[i*nCols+j] = n[i][j]
-		}
-	}
-
-	// Create Gonum matrices with pre-filled data
-	mDense := mat.NewDense(mRows, mCols, mFlat)
-	nDense := mat.NewDense(nRows, nCols, nFlat)
-
-	// Perform multiplication
-	result := mat.NewDense(mRows, nCols, nil)
-	result.Mul(mDense, nDense)
-
-	// Extract result data in one pass
-	resultFlat := result.RawMatrix().Data
-
-	// Convert back to our matrix format
-	out := matrix.Zero(mRows, nCols)
-	for i := 0; i < mRows; i++ {
-		for j := 0; j < nCols; j++ {
-			out[i][j] = resultFlat[i*nCols+j]
-		}
-	}
-
-	return out
-}
-
-// Implementation 5: Hybrid parallel blocked (more goroutines than CPUs)
-func matmulOwn(a, b matrix.Matrix) matrix.Matrix {
-	aRows, aCols := len(a), len(a[0])
-	bRows, bCols := len(b), len(b[0])
-
-	if aCols != bRows {
-		panic("Incompatible matrix dimensions")
-	}
-
-	c := ZeroMatrix(aRows, bCols)
-
+	result := Zeros(mRows, nCols)
 	var wg sync.WaitGroup
-
-	// Number of available CPU cores
 	numCPU := runtime.NumCPU()
-
 	// Create more chunks than CPUs for better load balancing
 	// Adjust the multiplier to find the optimal balance
-	chunkSize := max(1, aRows/(numCPU*4))
-
-	for startRow := 0; startRow < aRows; startRow += chunkSize {
+	chunkSize := max(1, mRows/(numCPU*4))
+	for startRow := 0; startRow < mRows; startRow += chunkSize {
 		wg.Add(1)
 
 		go func(firstRow, lastRow int) {
 			defer wg.Done()
 
 			// Process this chunk of rows with blocking for better cache utilization
-			const BLOCK_SIZE = 32
-
-			for ii := firstRow; ii < lastRow; ii += BLOCK_SIZE {
-				for kk := 0; kk < aCols; kk += BLOCK_SIZE {
-					for jj := 0; jj < bCols; jj += BLOCK_SIZE {
+			for ii := firstRow; ii < lastRow; ii += blockSize {
+				for kk := 0; kk < mCols; kk += blockSize {
+					for jj := 0; jj < nCols; jj += blockSize {
 						// Calculate bounds for current block
-						iEnd := min(ii+BLOCK_SIZE, lastRow)
-						kEnd := min(kk+BLOCK_SIZE, aCols)
-						jEnd := min(jj+BLOCK_SIZE, bCols)
+						iEnd := min(ii+blockSize, lastRow)
+						kEnd := min(kk+blockSize, mCols)
+						jEnd := min(jj+blockSize, nCols)
 
 						// Process the current block with cache-friendly access
 						for i := ii; i < iEnd; i++ {
 							for k := kk; k < kEnd; k++ {
-								aik := a[i][k]
+								aik := m[i][k]
 								for j := jj; j < jEnd; j++ {
-									c[i][j] += aik * b[k][j]
+									result.Data[i][j] += aik * n[k][j]
 								}
 							}
 						}
 					}
 				}
 			}
-		}(startRow, min(startRow+chunkSize, aRows))
+		}(startRow, min(startRow+chunkSize, mRows))
 	}
-
 	wg.Wait()
-	return c
-}
 
-func ZeroMatrix(rows, cols int) matrix.Matrix {
-	m := make(matrix.Matrix, rows)
-	for i := range m {
-		m[i] = make([]float64, cols)
-	}
-	return m
+	return result
 }
