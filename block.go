@@ -19,6 +19,7 @@ var (
 	GetItem      = variable.GetItem
 	Softmax      = function.Softmax
 	CrossEntropy = function.SoftmaxCrossEntropy
+	RandEmbeds   = pkg.RandKaiming
 )
 
 type Block struct {

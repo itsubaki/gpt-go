@@ -29,8 +29,8 @@ func main() {
 	fmt.Printf("Vocabulary: %s\n", data.Characters())
 
 	// Basic transformer components.
-	tokEmbeds := pkg.RandKaiming(vocabSize, embedSize)
-	posEmbeds := pkg.RandKaiming(blockSize, embedSize)
+	tokEmbeds := RandEmbeds(vocabSize, embedSize)
+	posEmbeds := RandEmbeds(blockSize, embedSize)
 	var blocks []*Block
 	for range layers {
 		blocks = append(blocks, NewBlock(embedSize, heads))

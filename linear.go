@@ -18,6 +18,8 @@ type Linear struct {
 	BiasGrad *variable.Variable
 }
 
+var randWeights = xavier
+
 type LinearOption func(*Linear)
 
 // TODO rename from new Linear to something other?
@@ -25,7 +27,7 @@ func NewLinear(in, out int, opts ...LinearOption) *Linear {
 	l := &Linear{
 		In:     in,
 		Out:    out,
-		Weight: xavier(in, out),
+		Weight: randWeights(in, out),
 		Biased: true,
 		Bias:   variable.Zero(1, out),
 	}
