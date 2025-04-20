@@ -204,7 +204,7 @@ func decodeUnicode(s string) string {
 		hexStr := match[2:] // Skip the \u prefix
 		val, err := strconv.ParseInt(hexStr, 16, 32)
 		if err != nil {
-			panic("can't decode unicode")
+			return match // literal value
 		}
 
 		return string(rune(val))
