@@ -2,7 +2,10 @@ package data
 
 import (
 	"fmt"
+	"math/rand"
 	"testing"
+
+	"gptgo/pkg"
 )
 
 func TestTokenize(t *testing.T) {
@@ -34,6 +37,21 @@ func TestEncode(t *testing.T) {
 	// XdXac
 	encoded := Encode("aaabdaaabac")
 	areSlicesEqual(t, []float64{6, 3, 6, 0, 2}, encoded)
+}
+
+func TestDecode(t *testing.T) {
+	dataset = func() string {
+		return "abcd"
+	}
+	vocab = func() string {
+		return "[a][a] -> [aa]\n[a][b] -> [ab]\n[aa][ab] -> [aaab]"
+	}
+
+	Tokenize(3)
+
+	decoded := Decode([]float64{6, 3, 6, 0, 2}...)
+
+	areEqual(t, "aaabdaaabac", decoded)
 }
 
 func TestZipUnzip(t *testing.T) {
@@ -68,91 +86,28 @@ func Example_addTokensFromText() {
 	// true
 }
 
-//
-//func ExampleEncode() {
-//	// Setup vocabulary
-//	longestTokens = []string{"hello", "world", "h", "e", "l", "o", " ", "w", "r", "d"}
-//	tokenToID = map[string]int{
-//		"h": 0, "e": 1, "l": 2, "o": 3, " ": 4, "w": 5, "r": 6, "d": 7, "hello": 8, "world": 9,
-//	}
-//	idToToken = map[int]string{
-//		0: "h", 1: "e", 2: "l", 3: "o", 4: " ", 5: "w", 6: "r", 7: "d", 8: "hello", 9: "world",
-//	}
-//
-//	// Test encoding with subword tokens
-//	encoded := Encode("hello world")
-//	fmt.Println(encoded)
-//
-//	// Test encoding with single characters
-//	encoded = Encode("he world")
-//	fmt.Println(encoded)
-//
-//	// Output:
-//	// [8 4 9]
-//	// [0 1 4 9]
-//}
-//
-//func ExampleDecode() {
-//	// Setup vocabulary
-//	longestTokens = []string{"hello", "world", "h", "e", "l", "o", " ", "w", "r", "d"}
-//	tokenToID = map[string]int{
-//		"h": 0, "e": 1, "l": 2, "o": 3, " ": 4, "w": 5, "r": 6, "d": 7, "hello": 8, "world": 9,
-//	}
-//	idToToken = map[int]string{
-//		0: "h", 1: "e", 2: "l", 3: "o", 4: " ", 5: "w", 6: "r", 7: "d", 8: "hello", 9: "world",
-//	}
-//
-//	// Test decoding with subword tokens and characters
-//	decoded := Decode(8.0, 4.0, 9.0)
-//	fmt.Println(decoded)
-//
-//	// Test decoding with only characters
-//	decoded = Decode(0.0, 1.0, 2.0, 2.0, 3.0)
-//	fmt.Println(decoded)
-//
-//	// Output:
-//	// hello world
-//	// hello
-//}
-//
-//func ExampleVocabSize() {
-//	// Setup vocabulary
-//	longestTokens = []string{"hello", "world", "h", "e", "l", "o", " ", "w", "r", "d"}
-//	tokenToID = map[string]int{
-//		"h": 0, "e": 1, "l": 2, "o": 3, " ": 4, "w": 5, "r": 6, "d": 7, "hello": 8, "world": 9,
-//	}
-//	idToToken = map[int]string{
-//		0: "h", 1: "e", 2: "l", 3: "o", 4: " ", 5: "w", 6: "r", 7: "d", 8: "hello", 9: "world",
-//	}
-//
-//	size := VocabSize()
-//	fmt.Println(size)
-//
-//	// Output: 10
-//}
-//
-//func ExampleSample() {
-//	// Setup data
-//	testData := pkg.V{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
-//	blockSize := 3
-//
-//	randInt = func(_ int) int { return 0 }
-//	defer func() {
-//		randInt = rand.Intn
-//	}()
-//
-//	x, y := Sample(testData, blockSize)
-//	fmt.Println(len(x.Data), len(x.Data[0]))
-//	fmt.Println(len(y.Data), len(y.Data[0]))
-//	fmt.Println(x.Data)
-//	fmt.Println(y.Data)
-//
-//	// Output:
-//	// 1 3
-//	// 1 3
-//	// [[0 1 2]]
-//	// [[1 2 3]]
-//}
+func ExampleSample() {
+	// Setup data
+	testData := pkg.V{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+	blockSize := 3
+
+	randInt = func(_ int) int { return 0 }
+	defer func() {
+		randInt = rand.Intn
+	}()
+
+	x, y := Sample(testData, blockSize)
+	fmt.Println(len(x.Data), len(x.Data[0]))
+	fmt.Println(len(y.Data), len(y.Data[0]))
+	fmt.Println(x.Data)
+	fmt.Println(y.Data)
+
+	// Output:
+	// 1 3
+	// 1 3
+	// [[0 1 2]]
+	// [[1 2 3]]
+}
 
 func areEqual[V comparable](t *testing.T, want, got V) {
 	t.Helper()
