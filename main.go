@@ -10,7 +10,7 @@ import (
 
 // Hyperparameters
 const (
-	blockSize        = 64
+	blockSize        = 34
 	embedSize        = 64
 	heads            = 4
 	layers           = 4

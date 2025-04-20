@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/rand"
 	"regexp"
+	"slices"
 	"strings"
 
 	"github.com/itsubaki/autograd/variable"
@@ -116,14 +117,15 @@ func Sample(data []float64, blockSize int) (*variable.Variable, *variable.Variab
 }
 
 func Characters() string {
-	var result strings.Builder
+	var tokens []string
 	for token := range tokenToID {
 		if len(token) == 1 {
-			result.WriteString(token)
+			tokens = append(tokens, token)
 		}
 	}
+	slices.Sort(tokens)
 
-	return result.String()
+	return strings.Join(tokens, "")
 }
 
 func addCharsToVocab(text string) {
