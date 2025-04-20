@@ -14,12 +14,12 @@ const (
 	embedSize        = 64
 	heads            = 4
 	layers           = 4
-	epochs           = 40000
+	epochs           = 80000
 	learningRate     = 0.0001
 	evalIters        = 1000
 	dropout          = 0.2  // disable some % of our neurons to prevent overfitting, model is likely to generalize
 	lossScale        = 1.00 // we don't use batches, so scaling loss down may help better convergence
-	pretrainedTokens = 3500
+	pretrainedTokens = 5000
 )
 
 func main() {

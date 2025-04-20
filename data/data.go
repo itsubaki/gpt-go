@@ -4,64 +4,75 @@ import (
 	_ "embed"
 	"fmt"
 	"math/rand"
-	"slices"
-	"sort"
+	"regexp"
 	"strings"
 
 	"github.com/itsubaki/autograd/variable"
 )
 
 var (
-	tokenToID     map[string]int
-	idToToken     map[int]string
-	longestTokens []string
+	tokenToID  map[string]int
+	idToToken  map[int]string
+	mergeRules map[int64]int
+	rulesOrder []int64
 
 	//go:embed fairy_tales.txt
-	dataset string
+	datasetFile string
 	//go:embed fairy_tokens.txt
-	pretrainedTokens string
+	vocabFile string
 
 	randInt = rand.Intn
 )
 
-func Tokenize(numPretrainedTokens int) ([]float64, int) {
+var dataset = func() string {
+	return datasetFile
+}
+
+var vocab = func() string {
+	return vocabFile
+}
+
+func Tokenize(numMerges int) ([]float64, int) {
 	tokenToID = make(map[string]int)
 	idToToken = make(map[int]string)
+	mergeRules = make(map[int64]int)
+	rulesOrder = nil
 
-	addTokensFromText(dataset)
-	addPretrainedTokens(pretrainedTokens, numPretrainedTokens)
+	addCharsToVocab(dataset())
+	createMergeRules(vocab(), numMerges)
 
-	return Encode(dataset), VocabSize()
+	return Encode(dataset()), VocabSize()
 }
 
 func Encode(s string) []float64 {
-	encoded := make([]float64, 0)
-
-	runes := []rune(s)
-	for len(runes) > 0 {
-		found := false
-		for _, token := range longestTokens {
-			tokenRunes := []rune(token)
-			canTokenFit := len(runes) >= len(tokenRunes)
-			if !canTokenFit {
-				continue
-			}
-
-			if slices.Equal(runes[:len(tokenRunes)], tokenRunes) {
-				encoded = append(encoded, float64(tokenToID[token]))
-				runes = runes[len([]rune(token)):]
-				found = true
-				break
-			}
+	var tokens []float64
+	for _, ch := range s {
+		tok, ok := tokenToID[string(ch)]
+		if !ok {
+			panic(fmt.Sprintf("Char '%s' is missing from vocabulary", string(ch)))
 		}
-
-		if !found {
-			msg := fmt.Sprintf("Can't encode token=%s", string(runes[0]))
-			panic(msg)
-		}
+		tokens = append(tokens, float64(tok))
 	}
 
-	return encoded
+	for _, rule := range rulesOrder {
+		var newTokens []float64
+		tok1, tok2 := unzip(rule)
+		// Try to apply rule on every token pair
+		for i := 0; i < len(tokens); {
+			hasNextToken := i+1 < len(tokens)
+			shouldMerge := hasNextToken && int(tokens[i]) == tok1 && int(tokens[i+1]) == tok2
+			if shouldMerge {
+				newTokens = append(newTokens, float64(mergeRules[rule]))
+				i += 2 // eat two tokens
+			} else {
+				newTokens = append(newTokens, tokens[i])
+				i++ // eat one token
+			}
+		}
+		tokens = newTokens
+	}
+
+	return tokens
 }
 
 func Decode(indices ...float64) string {
@@ -105,7 +116,7 @@ func Sample(data []float64, blockSize int) (*variable.Variable, *variable.Variab
 
 func Characters() string {
 	var result strings.Builder
-	for _, token := range longestTokens {
+	for token := range tokenToID {
 		if len(token) == 1 {
 			result.WriteString(token)
 		}
@@ -114,22 +125,32 @@ func Characters() string {
 	return result.String()
 }
 
-func addTokensFromText(text string) {
+func addCharsToVocab(text string) {
 	var chars []string
 	for _, ch := range text {
 		chars = append(chars, string(ch))
 	}
-	addTokens(chars)
+	addTokensToVocab(chars...)
 }
 
-func addPretrainedTokens(tokens string, numPretrainedTokens int) {
-	splitTokens := strings.Split(strings.TrimSpace(tokens), "\n")
-	splitTokens = splitTokens[:min(numPretrainedTokens, len(splitTokens))]
+func createMergeRules(tokens string, numMerges int) {
+	merges := strings.Split(strings.TrimSpace(tokens), "\n")
+	merges = merges[:min(numMerges, len(merges))]
 
-	addTokens(splitTokens)
+	// Mint new tokens, create merging mergingRules
+	for _, m := range merges {
+		re := regexp.MustCompile(`\[(.*?)\]\[(.*?)\] -> \[(.*?)\]`)
+		matches := re.FindStringSubmatch(m)
+		if len(matches) != 4 {
+			panic("invalid vocabulary")
+		}
+
+		addTokensToVocab(matches[3])
+		addRule(tokenToID[matches[1]], tokenToID[matches[2]], tokenToID[matches[3]])
+	}
 }
 
-func addTokens(tokens []string) {
+func addTokensToVocab(tokens ...string) {
 	for _, token := range tokens {
 		if _, ok := tokenToID[token]; ok {
 			continue
@@ -138,14 +159,21 @@ func addTokens(tokens []string) {
 		tokenID := len(tokenToID)
 		tokenToID[token] = tokenID
 		idToToken[tokenID] = token
-		longestTokens = append(longestTokens, token)
 	}
+}
 
-	sort.Slice(longestTokens, func(i, j int) bool {
-		if len(longestTokens[i]) == len(longestTokens[j]) {
-			return longestTokens[i] < longestTokens[j]
-		}
+func addRule(tok1, tok2, mergedTok int) {
+	key := zip(tok1, tok2)
+	mergeRules[key] = mergedTok
+	rulesOrder = append(rulesOrder, key)
+}
 
-		return len(longestTokens[i]) > len(longestTokens[j])
-	})
+func zip(tok1, tok2 int) int64 {
+	return int64(tok1)<<32 | int64(tok2&0xFFFFFFFF)
+}
+
+func unzip(tok int64) (int, int) {
+	tok1 := int(tok >> 32)
+	tok2 := int(tok & 0xFFFFFFFF)
+	return tok1, tok2
 }
