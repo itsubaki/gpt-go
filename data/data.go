@@ -19,7 +19,7 @@ var (
 
 	//go:embed fairy_tales.txt
 	datasetFile string
-	//go:embed vocab
+	//go:embed fairy_vocab
 	vocabFile string
 
 	randInt = rand.Intn
