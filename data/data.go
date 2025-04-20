@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"regexp"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/itsubaki/autograd/variable"
@@ -153,8 +154,13 @@ func createMergeRules(rules string, numMerges int) {
 			panic(fmt.Sprintf("Invalid vocab format: %s", m))
 		}
 
-		addTokensToVocab(matches[3])
-		addRule(tokenToID[matches[1]], tokenToID[matches[2]], tokenToID[matches[3]])
+		// Process Unicode escape sequences in all tokens
+		first := decodeUnicode(matches[1])
+		second := decodeUnicode(matches[2])
+		result := decodeUnicode(matches[3])
+
+		addTokensToVocab(result)
+		addRule(tokenToID[first], tokenToID[second], tokenToID[result])
 	}
 }
 
@@ -189,4 +195,20 @@ func unzip(tok int64) (int, int) {
 func normNewLines(text string) string {
 	text = strings.Replace(text, "\r\n", "\n", -1) // replace Windows line endings
 	return strings.Replace(text, "\r", "\n", -1)   // replace remaining Mac line endings
+}
+
+// Decodes Python-style \uFFFF format
+func decodeUnicode(s string) string {
+	re := regexp.MustCompile(`\\u([0-9a-fA-F]{4})`)
+	result := re.ReplaceAllStringFunc(s, func(match string) string {
+		hexStr := match[2:] // Skip the \u prefix
+		val, err := strconv.ParseInt(hexStr, 16, 32)
+		if err != nil {
+			panic("can't decode unicode")
+		}
+
+		return string(rune(val))
+	})
+
+	return result
 }
