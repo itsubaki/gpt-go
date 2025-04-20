@@ -54,6 +54,21 @@ func TestDecode(t *testing.T) {
 	areEqual(t, "aaabdaaabac", decoded)
 }
 
+func TestEncodeDecodeNewLines(t *testing.T) {
+	dataset = func() string {
+		return "a\nb\r\nc"
+	}
+	vocab = func() string {
+		return ""
+	}
+
+	encoded, _ := Tokenize(3)
+	areSlicesEqual(t, []float64{0, 1, 2, 1, 3}, encoded)
+
+	decoded := Decode([]float64{0, 1, 2, 1, 3}...)
+	areEqual(t, "a\nb\nc", decoded)
+}
+
 func TestZipUnzip(t *testing.T) {
 	zipped := zip(1, 2)
 	expected := int64(4294967298)
@@ -107,6 +122,55 @@ func ExampleSample() {
 	// 1 3
 	// [[0 1 2]]
 	// [[1 2 3]]
+}
+
+func TestNormNewLinesEmptyString(t *testing.T) {
+	input := ""
+	expected := ""
+	result := normNewLines(input)
+	areEqual(t, expected, result)
+}
+
+func TestNormNewLinesSingleLine(t *testing.T) {
+	input := "hello world"
+	expected := "hello world"
+	result := normNewLines(input)
+	areEqual(t, expected, result)
+}
+
+func TestNormNewLinesLinuxLineEndings(t *testing.T) {
+	input := "line1\nline2\nline3"
+	expected := "line1\nline2\nline3"
+	result := normNewLines(input)
+	areEqual(t, expected, result)
+}
+
+func TestNormNewLinesMixedContent(t *testing.T) {
+	input := "title\n\nsome content\nmore content\n\nfooter"
+	expected := "title\n\nsome content\nmore content\n\nfooter"
+	result := normNewLines(input)
+	areEqual(t, expected, result)
+}
+
+func TestNormNewLinesWindowsLineEndings(t *testing.T) {
+	input := "line1\r\nline2\r\nline3"
+	expected := "line1\nline2\nline3"
+	result := normNewLines(input)
+	areEqual(t, expected, result)
+}
+
+func TestNormNewLinesOldMacLineEndings(t *testing.T) {
+	input := "line1\rline2\rline3"
+	expected := "line1\nline2\nline3"
+	result := normNewLines(input)
+	areEqual(t, expected, result)
+}
+
+func TestNormNewLinesMixedLineEndings(t *testing.T) {
+	input := "line1\nline2\r\nline3\rline4"
+	expected := "line1\nline2\nline3\nline4"
+	result := normNewLines(input)
+	areEqual(t, expected, result)
 }
 
 func areEqual[V comparable](t *testing.T, want, got V) {

@@ -38,10 +38,11 @@ func Tokenize(numMerges int) ([]float64, int) {
 	mergeRules = make(map[int64]int)
 	rulesOrder = nil
 
-	addCharsToVocab(dataset())
+	normDataset := normNewLines(dataset())
+	addCharsToVocab(normDataset)
 	createMergeRules(vocab(), numMerges)
 
-	return Encode(dataset()), VocabSize()
+	return Encode(normDataset), VocabSize()
 }
 
 func Encode(s string) []float64 {
@@ -133,16 +134,21 @@ func addCharsToVocab(text string) {
 	addTokensToVocab(chars...)
 }
 
-func createMergeRules(tokens string, numMerges int) {
-	merges := strings.Split(strings.TrimSpace(tokens), "\n")
+func createMergeRules(rules string, numMerges int) {
+	rules = strings.TrimSpace(rules)
+	if len(rules) == 0 {
+		return
+	}
+
+	merges := strings.Split(rules, "\n")
 	merges = merges[:min(numMerges, len(merges))]
 
-	// Mint new tokens, create merging mergingRules
+	// Mint new rules, create merging mergingRules
 	for _, m := range merges {
 		re := regexp.MustCompile(`\[(.*?)\]\[(.*?)\] -> \[(.*?)\]`)
 		matches := re.FindStringSubmatch(m)
 		if len(matches) != 4 {
-			panic("invalid vocabulary")
+			panic(fmt.Sprintf("Invalid vocab format: %s", m))
 		}
 
 		addTokensToVocab(matches[3])
@@ -176,4 +182,9 @@ func unzip(tok int64) (int, int) {
 	tok1 := int(tok >> 32)
 	tok2 := int(tok & 0xFFFFFFFF)
 	return tok1, tok2
+}
+
+func normNewLines(text string) string {
+	text = strings.Replace(text, "\r\n", "\n", -1) // replace Windows line endings
+	return strings.Replace(text, "\r", "\n", -1)   // replace remaining Mac line endings
 }
