@@ -10,16 +10,16 @@ import (
 
 // Hyperparameters
 const (
-	blockSize        = 34
-	embedSize        = 64
+	blockSize        = 64
+	embedSize        = 128
 	heads            = 4
 	layers           = 4
-	epochs           = 20000
-	learningRate     = 0.0001
+	epochs           = 5000
+	learningRate     = 0.0005
 	evalIters        = 1000
-	dropout          = 0.2  // disable some % of our neurons to prevent overfitting, model is likely to generalize
+	dropout          = 0.0  // disable some % of our neurons to prevent overfitting, model is likely to generalize
 	lossScale        = 1.00 // we don't use batches, so scaling loss down may help better convergence
-	pretrainedTokens = 5000
+	pretrainedTokens = 1000
 )
 
 func main() {
