@@ -18,7 +18,7 @@ type Linear struct {
 	BiasGrad *variable.Variable
 }
 
-var randWeights = xavier
+var RandWeights = xavier
 
 type LinearOption func(*Linear)
 
@@ -27,7 +27,7 @@ func NewLinear(in, out int, opts ...LinearOption) *Linear {
 	l := &Linear{
 		In:     in,
 		Out:    out,
-		Weight: randWeights(in, out),
+		Weight: RandWeights(in, out),
 		Biased: true,
 		Bias:   variable.Zero(1, out),
 	}

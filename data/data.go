@@ -26,11 +26,11 @@ var (
 	randInt = rand.Intn
 )
 
-var dataset = func() string {
+var Dataset = func() string {
 	return datasetFile
 }
 
-var vocab = func() string {
+var Vocab = func() string {
 	return vocabFile
 }
 
@@ -40,9 +40,9 @@ func Tokenize(numMerges int) ([]float64, int) {
 	mergeRules = make(map[int64]int)
 	rulesOrder = nil
 
-	normDataset := normNewLines(dataset())
+	normDataset := normNewLines(Dataset())
 	addCharsToVocab(normDataset)
-	createMergeRules(vocab(), numMerges)
+	createMergeRules(Vocab(), numMerges)
 
 	return Encode(normDataset), VocabSize()
 }
@@ -151,7 +151,7 @@ func createMergeRules(rules string, numMerges int) {
 		re := regexp.MustCompile(`\[(.*?)\]\[(.*?)\] -> \[(.*?)\]`)
 		matches := re.FindStringSubmatch(m)
 		if len(matches) != 4 {
-			panic(fmt.Sprintf("Invalid vocab format: %s", m))
+			panic(fmt.Sprintf("Invalid Vocab format: %s", m))
 		}
 
 		// Process Unicode escape sequences in all tokens

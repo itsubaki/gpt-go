@@ -9,10 +9,10 @@ import (
 )
 
 func TestTokenize(t *testing.T) {
-	dataset = func() string {
+	Dataset = func() string {
 		return "abc"
 	}
-	vocab = func() string {
+	Vocab = func() string {
 		return "[a][b] -> [z]"
 	}
 	encoded, vocabSize := Tokenize(1)
@@ -22,10 +22,10 @@ func TestTokenize(t *testing.T) {
 }
 
 func TestTokenizeWithUnicode(t *testing.T) {
-	dataset = func() string {
+	Dataset = func() string {
 		return "a\n\n"
 	}
-	vocab = func() string {
+	Vocab = func() string {
 		return "[\\u000a][\\u000a] -> [\\u000a\\u000a]"
 	}
 	encoded, vocabSize := Tokenize(1)
@@ -37,10 +37,10 @@ func TestTokenizeWithUnicode(t *testing.T) {
 }
 
 func TestEncode(t *testing.T) {
-	dataset = func() string {
+	Dataset = func() string {
 		return "abcd"
 	}
-	vocab = func() string {
+	Vocab = func() string {
 		return "[a][a] -> [Z]\n[a][b] -> [Y]\n[Z][Y] -> [X]"
 	}
 
@@ -55,10 +55,10 @@ func TestEncode(t *testing.T) {
 }
 
 func TestDecode(t *testing.T) {
-	dataset = func() string {
+	Dataset = func() string {
 		return "abcd"
 	}
-	vocab = func() string {
+	Vocab = func() string {
 		return "[a][a] -> [aa]\n[a][b] -> [ab]\n[aa][ab] -> [aaab]"
 	}
 
@@ -70,10 +70,10 @@ func TestDecode(t *testing.T) {
 }
 
 func TestEncodeDecodeNewLines(t *testing.T) {
-	dataset = func() string {
+	Dataset = func() string {
 		return "a\nb\r\nc"
 	}
-	vocab = func() string {
+	Vocab = func() string {
 		return ""
 	}
 

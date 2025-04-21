@@ -14,12 +14,12 @@ const (
 	embedSize        = 128
 	heads            = 4
 	layers           = 4
-	epochs           = 5000
-	learningRate     = 0.0005
+	epochs           = 40000
+	learningRate     = 0.0002
 	evalIters        = 1000
 	dropout          = 0.0  // disable some % of our neurons to prevent overfitting, model is likely to generalize
 	lossScale        = 1.00 // we don't use batches, so scaling loss down may help better convergence
-	pretrainedTokens = 1000
+	pretrainedTokens = 7000
 )
 
 func main() {
@@ -76,7 +76,7 @@ func main() {
 		//   [score for tok=0, ..., score for tok=4], // for input tok=1
 		//   ... other logits
 		// ]
-		logits := lmHead.Forward(embeds)
+		logits := lmHead.Forward(embeds) // converts contextual embeddings to next-token predictions
 
 		// Loss calculation, how much our predicted targets differ from the actual targets?
 		loss := CrossEntropy(logits, targets)
@@ -95,12 +95,12 @@ func main() {
 		params.ZeroGrad()
 	}
 
-	// Generate text
+	// Generate text by prompt
 	pkg.DisableDropout()
-	context := "Magic forest"
+	prompt := "Magic forest"
 	maxTokens := 500
-	contextTokens := data.Encode(context)
-	fmt.Printf("\n%s", context)
+	contextTokens := data.Encode(prompt)
+	fmt.Printf("\n%s", prompt)
 	for i := 0; i < maxTokens; i++ {
 		if len(contextTokens) > blockSize {
 			contextTokens = contextTokens[len(contextTokens)-blockSize:]
