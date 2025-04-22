@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"math"
 	"testing"
 
@@ -13,14 +12,34 @@ func TestNeuron(t *testing.T) {
 	// Its goal is to predict next number in the sequence.
 	input := V{1, 2}.Var()
 	weights := M{
-		{1}, // how much first input coordinate contributes to the output
-		{2}, // how much second input coordinate contributes to the output
+		{0}, // how much first input (1) contributes to the output
+		{1}, // how much second input (2) contributes to the output
 	}.Var()
 
-	// We calculate the output by multiplying the input vector with the weights matrix.
+	// We calculate the output by multiplying the input vector with the weight matrix.
 	output := MatMul(input, weights)
-	fmt.Println(output)
-	areEqual(t, V{5}, output)
+	// output[0] = 1*2 + 2*2 = 6
+	areEqual(t, V{6}, output)
+
+	// That's a bad prediction (!=3), so we have to adjust the weights.
+	weights = M{
+		{-1},
+		{2},
+	}.Var()
+
+	output = MatMul(input, weights)
+	// output[0] = 1*-1 + 2*2 = 3
+	// Now our neuron's prediction matches the target, so we can keep the weights.
+	// What we did now is "manual learning". How we know how to adjust the weights?
+	areEqual(t, V{3}, output)
+}
+
+func TestLoss(t *testing.T) {
+
+}
+
+func TestGradientDescent(t *testing.T) {
+
 }
 
 func TestTrainingLoop(t *testing.T) {

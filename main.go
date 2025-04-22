@@ -11,14 +11,14 @@ import (
 // Hyperparameters
 const (
 	blockSize        = 64
-	embedSize        = 128
+	embedSize        = 256
 	heads            = 4
 	layers           = 4
 	epochs           = 40000
-	learningRate     = 0.0002
+	learningRate     = 0.0005
 	evalIters        = 1000
 	dropout          = 0.0  // disable some % of our neurons to prevent overfitting, model is likely to generalize
-	lossScale        = 1.00 // we don't use batches, so scaling loss down may help better convergence
+	lossScale        = 0.05 // we don't use batches, so scaling loss down may help better convergence
 	pretrainedTokens = 7000
 )
 
@@ -82,7 +82,7 @@ func main() {
 		loss := CrossEntropy(logits, targets)
 		loss = MulC(lossScale, loss)
 		if (i % evalIters) == 0 {
-			fmt.Printf("epoch: %5d, loss: %.5f\n", i, loss.Data[0][0])
+			fmt.Printf("epoch: %5d, loss: %.5f\n", i, loss.Data[0][0]/lossScale)
 		}
 
 		// Backward pass, calculate gradients (how much each parameter contributes to the loss)
