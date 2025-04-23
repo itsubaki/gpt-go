@@ -21,7 +21,7 @@ var (
 	Softmax      = function.Softmax
 	CrossEntropy = function.SoftmaxCrossEntropy
 	RandEmbeds   = pkg.RandKaiming
-	Scalar       = pkg.Scalar
+	Scalar       = pkg.Val
 )
 
 type Block struct {

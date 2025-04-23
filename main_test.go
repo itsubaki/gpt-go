@@ -67,10 +67,41 @@ func TestLoss(t *testing.T) {
 	// We calculate how much each weight contributes to the predicted value.
 	// So that we know in which direction to nudge the weight to minimize the loss.
 	loss.Backward()
-	areEqual(t, V{1, 2}, weight.Grad)
+	areEqual(t, M{{1}, {2}}, weight.Grad) // derivatives also called gradients
 }
 
 func TestGradientDescent(t *testing.T) {
+	input := V{1, 2} // {x1, x2}
+	weight := M{
+		{2}, // w1
+		{3}, // w2
+	}
+
+	// Now we know in which direction we should nudge the weights to minimize the loss.
+	// Gradient for w1 is 1, it means that w1 contributes to loss proportionally.
+	// Gradient for w2 is 2, it means that w2 contributes to loss twice as strongly.
+	// I.e. if we nudge w2 by some tiny value 0.1, the loss will change by 0.2.
+	// If we want to minimize the loss, we nudge the weights in the opposite direction.
+	learningRate := 0.5
+	weightGrad := V{1, 2}
+	weight[0][0] -= learningRate * weightGrad[0] // w1 -= w1 * learningRate * w1Grad
+	weight[1][0] -= learningRate * weightGrad[1] // w2 -= w2 * learningRate * w2Grad
+
+	output := MatMul(input.Var(), weight.Var())
+	// Previously the neuron predicted 8, now it predicts 5.5.
+	areEqual(t, V{5.5}, output)
+	// Previously the loss was 5, now it is 2.5, so the model has learned something.
+	loss := Sub(output, V{3}.Var())
+	areEqual(t, V{2.5}, loss)
+
+	// Repeat the process.
+	weight[0][0] -= learningRate * weightGrad[0]
+	weight[1][0] -= learningRate * weightGrad[1]
+
+	output = MatMul(input.Var(), weight.Var())
+	areEqual(t, V{3}, output)
+	loss = Sub(output, V{3}.Var())
+	areEqual(t, V{0}, loss)
 }
 
 // TODO add more in-between explanations
