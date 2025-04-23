@@ -7,6 +7,14 @@ import (
 	"gptgo/pkg"
 )
 
+var (
+	Mean     = pkg.Mean
+	Variance = pkg.Variance
+	Div      = pkg.Div
+	Mul      = variable.Mul
+	Pow      = variable.Pow
+)
+
 type LayerNorm struct {
 	Scale *variable.Variable
 	Shift *variable.Variable
@@ -16,17 +24,18 @@ type LayerNorm struct {
 func NewLayerNorm(dim int) *LayerNorm {
 	return &LayerNorm{
 		eps:   1e-05,
-		Scale: pkg.Ones(1, dim),
-		Shift: pkg.Zeros(1, dim),
+		Scale: Ones(1, dim),
+		Shift: Zeros(1, dim),
 	}
 }
 
 // It is implemented using existing primitives, so backprop will work
 func (ln *LayerNorm) Forward(x *variable.Variable) *variable.Variable {
-	xmean := pkg.Mean(x)
-	xvar := pkg.Variance(x)
-	xhat := pkg.Div(pkg.Sub(x, xmean), pkg.Pow(0.5)(pkg.Add(xvar, variable.New(ln.eps))))
-	out := pkg.Add(pkg.Mul(ln.Scale, xhat), ln.Shift)
+	xmean := Mean(x)
+	xvar := Variance(x)
+	eps := variable.New(ln.eps)
+	xhat := Div(Sub(x, xmean), Pow(0.5)(Add(xvar, eps)))
+	out := Add(Mul(ln.Scale, xhat), ln.Shift)
 
 	return out
 }

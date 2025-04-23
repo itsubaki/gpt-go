@@ -21,7 +21,7 @@ func TestNeuron(t *testing.T) {
 	// We calculate the output by multiplying the input vector with the weight matrix.
 	output := MatMul(input.Var(), weight.Var())
 	// output[0] = 1*2 + 2*3 = 8
-	areEqual(t, V{8}, output)
+	areEqual(t, 8, output)
 
 	// That's a bad prediction (not equal to 3), so we have to adjust the weight.
 	weight = M{
@@ -33,7 +33,7 @@ func TestNeuron(t *testing.T) {
 	// output = 1*-1 + 2*2 = 3
 	// Now our neuron's prediction matches the target, so the weight are correct.
 	// In reality, though, we don't tune the weight manually.
-	areEqual(t, V{3}, output)
+	areEqual(t, 3, output)
 }
 
 func TestLoss(t *testing.T) {
@@ -51,7 +51,7 @@ func TestLoss(t *testing.T) {
 	// loss = prediction - target
 	loss := Sub(output, target)
 	// 8 - 3 = 5
-	areEqual(t, V{5}, loss)
+	areEqual(t, 5, loss)
 	// So the loss is 5, which is a bad loss (we should strive to 0).
 
 	// Both input (x1, x2) and weights (w1, w2) values contribute to the loss.
@@ -69,7 +69,7 @@ func TestLoss(t *testing.T) {
 	// We calculate how much each weight contributes to the predicted value.
 	// So that we know in which direction to nudge the weight to minimize the loss.
 	loss.Backward()
-	areEqual(t, M{{1}, {2}}, weight.Grad) // derivatives also called gradients
+	areMatricesEqual(t, M{{1}, {2}}, weight.Grad) // derivatives also called gradients
 }
 
 func TestGradientDescent(t *testing.T) {
@@ -91,10 +91,10 @@ func TestGradientDescent(t *testing.T) {
 
 	output := MatMul(input, weight.Var())
 	// Previously the neuron predicted 8, now it predicts 5.5.
-	areEqual(t, V{5.5}, output)
+	areEqual(t, 5.5, output)
 	// Previously the loss was 5, now it is 2.5, so the model has learned something.
 	loss := Sub(output, V{3}.Var())
-	areEqual(t, V{2.5}, loss)
+	areEqual(t, 2.5, loss)
 
 	// Repeat the process.
 	weight[0][0] -= learningRate * weightGrad[0]
@@ -102,15 +102,15 @@ func TestGradientDescent(t *testing.T) {
 	output = MatMul(input, weight.Var()) // MatMul({1, 2}, weights) = 3
 
 	// The neuron predicts 3 now, which is exactly what follows after 1 and 2!
-	areEqual(t, V{3}, output)
+	areEqual(t, 3, output)
 	loss = Sub(output, V{3}.Var())
 	// The loss should be 0 now, because the neuron predicts the target value.
-	areEqual(t, V{0}, loss)
+	areEqual(t, 0, loss)
 
 	// Our simple model is now trained.
 	// If the input is {1, 2}, the output is 3.
 	// Our learning weights are:
-	areEqual(t, M{{1}, {1}}, weight.Var()) // w1 = 1, w2 = 2
+	areMatricesEqual(t, M{{1}, {1}}, weight.Var()) // w1 = 1, w2 = 2
 }
 
 func TestLinear(t *testing.T) {
@@ -118,7 +118,7 @@ func TestLinear(t *testing.T) {
 	layer := NewLinear(2, 1)
 	layer.Weight = Ones(2, 1)
 	output := layer.Forward(V{1, 2}.Var())
-	areEqual(t, V{3}, output)
+	areEqual(t, 3, output)
 }
 
 // TODO add more in-between explanations
@@ -155,47 +155,53 @@ func TestTransformer(t *testing.T) {
 
 	loss := CrossEntropy(logits, targets)
 
-	areEqual(t, V{2.302585092994046}, loss)
+	areEqual(t, 2.302585092994046, loss)
 }
 
-// Move to pkg
-func areEqual[T V | M](t *testing.T, want T, got *variable.Variable) {
+func areEqual(t *testing.T, want float64, got *variable.Variable) {
 	t.Helper()
+	gotValue := Val(got)
 
-	// Convert want to a 2D slice of float64
-	var wantData [][]float64
-	switch v := any(want).(type) {
-	case V:
-		// Convert V (vector) to 1xN matrix
-		wantData = make([][]float64, 1)
-		wantData[0] = make([]float64, len(v))
-		copy(wantData[0], v)
-	case M:
-		// Convert M (matrix) to [][]float64
-		wantData = make([][]float64, len(v))
-		for i, row := range v {
-			wantData[i] = make([]float64, len(row))
-			copy(wantData[i], row)
-		}
-	default:
-		t.Fatalf("unexpected type %T", want)
+	if math.Abs(want-gotValue) > 1e-9 {
+		t.Errorf("value mismatch: want %v, got %v", want, gotValue)
 	}
+}
 
-	if len(wantData) != len(got.Data) {
-		t.Errorf("dimension mismatch: want rows=%d, got rows=%d", len(wantData), len(got.Data))
+func areVectorsEqual(t *testing.T, want V, got *variable.Variable) {
+	t.Helper()
+	gotVector := got.Data[0]
+
+	if len(want) != len(gotVector) {
+		t.Errorf("vector length mismatch: want length=%d, got lector=%d", len(want), len(gotVector))
 		return
 	}
 
-	for i := range wantData {
-		if len(wantData[i]) != len(got.Data[i]) {
-			t.Errorf("dimension mismatch at row %d: want cols=%d, got cols=%d", i, len(wantData[i]), len(got.Data[i]))
-			return
+	for i := range want {
+		epsilon := 1e-9
+		if math.Abs(want[i]-gotVector[i]) > epsilon {
+			t.Errorf("vector mismatch at index %d: want %v, got %v", i, want[i], gotVector[i])
 		}
-		for j := range wantData[i] {
-			// Use a small epsilon for floating point comparison
+	}
+}
+
+func areMatricesEqual(t *testing.T, want M, got *variable.Variable) {
+	t.Helper()
+	gotMatrix := got.Data
+
+	if len(want) != len(gotMatrix) {
+		t.Errorf("matrix length mismatch: want length=%d, got length=%d", len(want), len(gotMatrix))
+		return
+	}
+
+	for i := range want {
+		if len(want[i]) != len(gotMatrix[i]) {
+			t.Errorf("matrix row length mismatch at row %d: want length=%d, got length=%d", i, len(want[i]), len(gotMatrix[i]))
+			continue
+		}
+		for j := range want[i] {
 			epsilon := 1e-9
-			if math.Abs(wantData[i][j]-got.Data[i][j]) > epsilon {
-				t.Errorf("value mismatch at [%d][%d]: want=%f, got=%f", i, j, wantData[i][j], got.Data[i][j])
+			if math.Abs(want[i][j]-gotMatrix[i][j]) > epsilon {
+				t.Errorf("matrix mismatch at row %d, column %d: want %v, got %v", i, j, want[i][j], gotMatrix[i][j])
 			}
 		}
 	}
