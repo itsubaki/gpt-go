@@ -10,7 +10,7 @@ import (
 
 var (
 	Zeros        = variable.Zero
-	OneLike      = variable.OneLike
+	Ones         = pkg.Ones
 	ReLU         = function.ReLU
 	Dropout      = function.DropoutSimple
 	MatMul       = pkg.MatMul

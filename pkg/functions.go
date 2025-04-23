@@ -111,6 +111,18 @@ func PrintShape(v *variable.Variable) {
 	fmt.Printf("(%d, %d)\n", len(v.Data), len(v.Data[0]))
 }
 
+func Ones(m, n int) *variable.Variable {
+	out := make([][]float64, m)
+	for i := range m {
+		out[i] = make([]float64, n)
+		for j := range n {
+			out[i][j] = 1.0
+		}
+	}
+
+	return variable.NewOf(out...)
+}
+
 func DisableDropout() {
 	variable.Config.Train = false // Prevent dropout
 }

@@ -14,7 +14,7 @@ type LayerNorm struct {
 func NewLayerNorm(dim int) *LayerNorm {
 	return &LayerNorm{
 		eps:   1e-05,
-		Scale: OneLike(Zeros(1, dim)),
+		Scale: Ones(1, dim),
 		Shift: Zeros(1, dim),
 	}
 }

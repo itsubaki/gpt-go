@@ -80,7 +80,7 @@ func (h *Head) Forward(input *variable.Variable) *variable.Variable {
 	query := variable.Transpose(h.Query.Forward(input))
 	wei := MatMul(key, query)
 
-	tril := pkg.Tril(OneLike(Zeros(T, T)))
+	tril := pkg.Tril(Ones(T, T))
 	wei = pkg.MaskedInfFill(wei, tril)
 	wei = function.Softmax(wei)
 	wei = Dropout(dropout)(wei)

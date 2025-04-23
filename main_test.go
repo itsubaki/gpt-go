@@ -71,7 +71,7 @@ func TestLoss(t *testing.T) {
 }
 
 func TestGradientDescent(t *testing.T) {
-	input := V{1, 2} // {x1, x2}
+	input := V{1, 2}.Var() // {x1, x2}
 	weight := M{
 		{2}, // w1
 		{3}, // w2
@@ -87,7 +87,7 @@ func TestGradientDescent(t *testing.T) {
 	weight[0][0] -= learningRate * weightGrad[0] // w1 -= w1 * learningRate * w1Grad
 	weight[1][0] -= learningRate * weightGrad[1] // w2 -= w2 * learningRate * w2Grad
 
-	output := MatMul(input.Var(), weight.Var())
+	output := MatMul(input, weight.Var())
 	// Previously the neuron predicted 8, now it predicts 5.5.
 	areEqual(t, V{5.5}, output)
 	// Previously the loss was 5, now it is 2.5, so the model has learned something.
@@ -97,11 +97,26 @@ func TestGradientDescent(t *testing.T) {
 	// Repeat the process.
 	weight[0][0] -= learningRate * weightGrad[0]
 	weight[1][0] -= learningRate * weightGrad[1]
+	output = MatMul(input, weight.Var()) // MatMul({1, 2}, weights) = 3
 
-	output = MatMul(input.Var(), weight.Var())
+	// The neuron predicts 3 now, which is exactly what follows after 1 and 2!
 	areEqual(t, V{3}, output)
 	loss = Sub(output, V{3}.Var())
+	// The loss should be 0 now, because the neuron predicts the target value.
 	areEqual(t, V{0}, loss)
+
+	// Our simple model is now trained.
+	// If the input is {1, 2}, the output is 3.
+	// Our learning weights are:
+	areEqual(t, M{{1}, {1}}, weight.Var()) // w1 = 1, w2 = 2
+}
+
+func TestLinear(t *testing.T) {
+	// Linear layer is a collection of neurons.
+	layer := NewLinear(2, 1)
+	layer.Weight = Ones(2, 1)
+	output := layer.Forward(V{1, 2}.Var())
+	areEqual(t, V{3}, output)
 }
 
 // TODO add more in-between explanations
@@ -115,159 +130,6 @@ func TestTrainingLoop(t *testing.T) {
 		return Zeros(rows, cols)
 	}
 }
-
-//func mockDataset() string {
-//	return "a\n\n"
-//}
-//
-//func mockVocab() string {
-//	return "[\\u000a][\\u000a] -> [\\u000a\\u000a]"
-//}
-//
-//// Mock random initialization to deterministic values
-//func mockRandEmbeds(rows, cols int) *variable.Variable {
-//	// Create a simple pattern: [[1,2],[3,4],[5,6],...] for testing
-//	data := make([][]float64, rows)
-//	for i := 0; i < rows; i++ {
-//		data[i] = make([]float64, cols)
-//		for j := 0; j < cols; j++ {
-//			data[i][j] = float64(i*cols + j + 1)
-//		}
-//	}
-//	return variable.NewOf(data...)
-//}
-//
-//func mockRandWeights(rows, cols int) *variable.Variable {
-//	// Return all ones for simple multiplication
-//	data := make([][]float64, rows)
-//	for i := 0; i < rows; i++ {
-//		data[i] = make([]float64, cols)
-//		for j := 0; j < cols; j++ {
-//			data[i][j] = 1.0
-//		}
-//	}
-//	return variable.NewOf(data...)
-//}
-//
-//func TestTransformerTrainingLoop(t *testing.T) {
-//	// Test hyperparameters
-//	const (
-//		blockSize    = 2    // Just enough for our test input
-//		embedSize    = 2    // Small embedding size for simplicity
-//		heads        = 1    // Minimum attention heads
-//		layers       = 1    // Just one transformer layer
-//		epochs       = 1    // Run just one epoch for testing
-//		learningRate = 0.01 // Higher learning rate for visible movement
-//		lossScale    = 1.0  // No scaling
-//	)
-//
-//	// Mock functions
-//	origRandEmbeds := RandEmbeds
-//	origRandWeights := RandWeights
-//	origDataset := data.Dataset
-//	origVocab := data.Vocab
-//
-//	defer func() {
-//		// Restore original functions after test
-//		RandEmbeds = origRandEmbeds
-//		RandWeights = origRandWeights
-//		data.Dataset = origDataset
-//		data.Vocab = origVocab
-//	}()
-//
-//	// Set mocks
-//	RandEmbeds = mockRandEmbeds
-//	RandWeights = mockRandWeights
-//	data.Dataset = mockDataset
-//	data.Vocab = mockVocab
-//
-//	// Initial setup
-//	dataset, vocabSize := data.Tokenize(100) // Number doesn't matter for our mock
-//
-//	// Print test data for verification
-//	fmt.Printf("Test dataset: %v\n", dataset)
-//	fmt.Printf("Scalar characters: %s\n", data.Decode(dataset[:2]...))
-//	fmt.Printf("Vocabulary: %s\n", data.Characters())
-//
-//	// Initialize model components with manually created values
-//	// Token embeddings: create distinct, intuitive vectors for each token
-//	// - Token 0 ('a'): [1, 0] - points right, representing a standard character
-//	// - Token 1 ('\n'): [0, 1] - points up, representing a line break
-//	// - Token 2 ('\n\n'): [2, 2] - points up and right with larger magnitude, representing a paragraph break
-//	tokEmbeds := pkg.M{
-//		{1, 0}, // 'a' - horizontal direction
-//		{0, 1}, // '\n' - vertical direction
-//		{2, 2}, // '\n\n' - diagonal with larger magnitude (stronger signal)
-//	}.Var()
-//
-//	// Position embeddings: create vectors that emphasize position in sequence
-//	// - Position 0 (first token): [0.5, 0.1] - small values as base position
-//	// - Position 1 (second token): [0.1, 0.9] - larger vertical component to emphasize it's later in sequence
-//	posEmbeds := pkg.M{
-//		{0.5, 0.1}, // first position - mostly horizontal
-//		{0.1, 0.9}, // second position - mostly vertical, larger magnitude in second dimension
-//	}.Var()
-//	fmt.Printf("Token embeddings:\n%v\n", tokEmbeds.Data)
-//	fmt.Printf("Position embeddings:\n%v\n", posEmbeds.Data)
-//
-//	var blocks []*Block
-//	for range layers {
-//		blocks = append(blocks, NewBlock(embedSize, heads))
-//	}
-//	norm := pkg.NewLayerNorm(embedSize)
-//	lmHead := NewLinear(embedSize, vocabSize)
-//
-//	// Collecting parameters
-//	params := pkg.NewParams()
-//	params.Add(tokEmbeds, posEmbeds)
-//	for _, block := range blocks {
-//		params.Add(block.Params()...)
-//	}
-//	params.Add(norm.Scale, norm.Shift)
-//	params.Add(lmHead.Weight, lmHead.Bias)
-//
-//	optimizer := pkg.NewAdamW(learningRate)
-//
-//	// Run a single training iteration for testing
-//	input, targets := data.Sample(dataset, blockSize)
-//	fmt.Printf("Input tokens: %v\n", input.Data)
-//	fmt.Printf("Target tokens: %v\n", targets.Data)
-//
-//	// Forward pass with debugging
-//	embeds := pkg.Rows(tokEmbeds, input.Data[0]...) // get embed for every input token
-//	fmt.Printf("Initial token embeddings:\n%v\n", embeds.Data)
-//
-//	embeds = Add(embeds, posEmbeds) // add positional embedding
-//	fmt.Printf("After adding positional embeddings:\n%v\n", embeds.Data)
-//
-//	for i, block := range blocks {
-//		embeds = block.Forward(embeds)
-//		fmt.Printf("After transformer block %d:\n%v\n", i, embeds.Data)
-//	}
-//
-//	embeds = norm.Forward(embeds)
-//	fmt.Printf("After layer normalization:\n%v\n", embeds.Data)
-//
-//	logits := lmHead.Forward(embeds) // converts contextual embeddings to next-token predictions
-//	fmt.Printf("Final logits (next token predictions):\n%v\n", logits.Data)
-//
-//	// Loss calculation
-//	loss := CrossEntropy(logits, targets)
-//	loss = MulC(lossScale, loss)
-//	fmt.Printf("Initial loss: %.5f\n", loss.Data[0][0])
-//
-//	// Capture the initial logits for comparison
-//	initialLogits := make([][]float64, len(logits.Data))
-//	for i := range logits.Data {
-//		initialLogits[i] = make([]float64, len(logits.Data[i]))
-//		copy(initialLogits[i], logits.Data[i])
-//	}
-//
-//	// Backward pass and parameter update
-//	loss.Backward()
-//	optimizer.Update(params)
-//	params.ZeroGrad()
-//}
 
 func areEqual[T V | M](t *testing.T, want T, got *variable.Variable) {
 	t.Helper()
