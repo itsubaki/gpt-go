@@ -1,8 +1,10 @@
-package pkg
+package main
 
 import (
 	"github.com/itsubaki/autograd/layer"
 	"github.com/itsubaki/autograd/variable"
+
+	"gptgo/pkg"
 )
 
 type LayerNorm struct {
@@ -14,17 +16,17 @@ type LayerNorm struct {
 func NewLayerNorm(dim int) *LayerNorm {
 	return &LayerNorm{
 		eps:   1e-05,
-		Scale: Ones(1, dim),
-		Shift: Zeros(1, dim),
+		Scale: pkg.Ones(1, dim),
+		Shift: pkg.Zeros(1, dim),
 	}
 }
 
 // It is implemented using existing primitives, so backprop will work
 func (ln *LayerNorm) Forward(x *variable.Variable) *variable.Variable {
-	xmean := Mean(x)
-	xvar := Variance(x)
-	xhat := Div(Sub(x, xmean), Pow(0.5)(Add(xvar, variable.New(ln.eps))))
-	out := Add(Mul(ln.Scale, xhat), ln.Shift)
+	xmean := pkg.Mean(x)
+	xvar := pkg.Variance(x)
+	xhat := pkg.Div(pkg.Sub(x, xmean), pkg.Pow(0.5)(pkg.Add(xvar, variable.New(ln.eps))))
+	out := pkg.Add(pkg.Mul(ln.Scale, xhat), ln.Shift)
 
 	return out
 }

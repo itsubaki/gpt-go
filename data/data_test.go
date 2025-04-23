@@ -117,9 +117,9 @@ func ExampleSample() {
 	testData := pkg.V{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
 	blockSize := 3
 
-	randInt = func(_ int) int { return 0 }
+	RandInt = func(_ int) int { return 0 }
 	defer func() {
-		randInt = rand.Intn
+		RandInt = rand.Intn
 	}()
 
 	x, y := Sample(testData, blockSize)

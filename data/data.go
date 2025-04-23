@@ -3,7 +3,7 @@ package data
 import (
 	_ "embed"
 	"fmt"
-	"math/rand"
+	"math/rand/v2"
 	"regexp"
 	"slices"
 	"strconv"
@@ -23,7 +23,7 @@ var (
 	//go:embed vocab
 	vocabFile string
 
-	randInt = rand.Intn
+	RandInt = rand.IntN
 )
 
 var Dataset = func() string {
@@ -104,7 +104,7 @@ func Sample(data []float64, blockSize int) (*variable.Variable, *variable.Variab
 		panic("Not enough Data for the given block size")
 	}
 
-	offset := randInt(dataLen)
+	offset := RandInt(dataLen)
 
 	x := make([]float64, blockSize)
 	y := make([]float64, blockSize)

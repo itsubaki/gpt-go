@@ -111,6 +111,7 @@ func PrintShape(v *variable.Variable) {
 	fmt.Printf("(%d, %d)\n", len(v.Data), len(v.Data[0]))
 }
 
+// Returns a matrix of 1s
 func Ones(m, n int) *variable.Variable {
 	out := make([][]float64, m)
 	for i := range m {
@@ -127,6 +128,7 @@ func DisableDropout() {
 	variable.Config.Train = false // Prevent dropout
 }
 
+// Returns the first element of the variable
 func Val(x *variable.Variable) float64 {
 	return x.Data[0][0]
 }

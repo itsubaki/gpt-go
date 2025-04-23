@@ -5,6 +5,8 @@ import (
 	"testing"
 
 	"github.com/itsubaki/autograd/variable"
+
+	"gptgo/data"
 )
 
 func TestNeuron(t *testing.T) {
@@ -121,16 +123,42 @@ func TestLinear(t *testing.T) {
 
 // TODO add more in-between explanations
 
-func TestTrainingLoop(t *testing.T) {
+func TestTransformer(t *testing.T) {
+	// Mocking
 	RandEmbeds = func(rows, cols int) *variable.Variable {
 		return Zeros(rows, cols)
 	}
-
 	RandWeights = func(rows, cols int) *variable.Variable {
-		return Zeros(rows, cols)
+		return Ones(rows, cols)
 	}
+	data.RandInt = func(_ int) int {
+		return 0
+	}
+
+	vocabSize := 10
+	embedSize := 2
+	blockSize := 2
+
+	// Basic transformer components
+	tokEmbeds := RandEmbeds(vocabSize, embedSize)
+	posEmbeds := RandEmbeds(blockSize, embedSize)
+	block := NewBlock(embedSize, 1)
+	norm := NewLayerNorm(embedSize)
+	lmHead := NewLinear(embedSize, vocabSize)
+
+	input, targets := data.Sample([]float64{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, blockSize)
+	embeds := Rows(tokEmbeds, input.Data[0]...)
+	embeds = Add(embeds, posEmbeds) // add positional embedding
+	embeds = block.Forward(embeds)
+	embeds = norm.Forward(embeds)
+	logits := lmHead.Forward(embeds)
+
+	loss := CrossEntropy(logits, targets)
+
+	areEqual(t, V{2.302585092994046}, loss)
 }
 
+// Move to pkg
 func areEqual[T V | M](t *testing.T, want T, got *variable.Variable) {
 	t.Helper()
 

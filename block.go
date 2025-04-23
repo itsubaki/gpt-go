@@ -21,7 +21,8 @@ var (
 	Softmax      = function.Softmax
 	CrossEntropy = function.SoftmaxCrossEntropy
 	RandEmbeds   = pkg.RandKaiming
-	Scalar       = pkg.Val
+	Rows         = pkg.Rows
+	Val          = pkg.Val
 )
 
 type Block struct {
@@ -30,8 +31,8 @@ type Block struct {
 	saHead    *MultiHeadAttention
 	ffwd      *Linear
 	ffwdProj  *Linear
-	norm1     *pkg.LayerNorm
-	norm2     *pkg.LayerNorm
+	norm1     *LayerNorm
+	norm2     *LayerNorm
 }
 
 func NewBlock(embedSize, numHeads int) *Block {
@@ -41,8 +42,8 @@ func NewBlock(embedSize, numHeads int) *Block {
 		saHead:    NewMultiHeadAttention(embedSize, numHeads),
 		ffwd:      NewLinear(embedSize, embedSize*4),
 		ffwdProj:  NewLinear(embedSize*4, embedSize),
-		norm1:     pkg.NewLayerNorm(embedSize),
-		norm2:     pkg.NewLayerNorm(embedSize),
+		norm1:     NewLayerNorm(embedSize),
+		norm2:     NewLayerNorm(embedSize),
 	}
 }
 

@@ -25,7 +25,7 @@ const (
 func main() {
 	fmt.Println("Loading dataset...")
 	dataset, vocabSize := data.Tokenize(pretrainedTokens)
-	fmt.Printf("Scalar 100 characters:\n%s\n", strings.TrimSpace(data.Decode(dataset[:100]...)))
+	fmt.Printf("Val 100 characters:\n%s\n", strings.TrimSpace(data.Decode(dataset[:100]...)))
 	fmt.Printf("Vocabulary: %s\n", data.Characters())
 
 	// Basic transformer components.
@@ -35,7 +35,7 @@ func main() {
 	for range layers {
 		blocks = append(blocks, NewBlock(embedSize, heads))
 	}
-	norm := pkg.NewLayerNorm(embedSize)
+	norm := NewLayerNorm(embedSize)
 	lmHead := NewLinear(embedSize, vocabSize)
 
 	// Collecting all the parameters.
@@ -65,8 +65,8 @@ func main() {
 		//   [vector for tok=2],
 		//   ... other embeds
 		// ]
-		embeds := pkg.Rows(tokEmbeds, input.Data[0]...) // get embed for every input token
-		embeds = Add(embeds, posEmbeds)                 // add positional embedding
+		embeds := Rows(tokEmbeds, input.Data[0]...) // get embed for every input token
+		embeds = Add(embeds, posEmbeds)             // add positional embedding
 		for _, block := range blocks {
 			embeds = block.Forward(embeds)
 		}
@@ -82,7 +82,7 @@ func main() {
 		loss := CrossEntropy(logits, targets)
 		loss = MulC(lossScale, loss)
 		if (i % evalIters) == 0 {
-			fmt.Printf("epoch: %5d, loss: %.5f\n", i, Scalar(loss)/lossScale)
+			fmt.Printf("epoch: %5d, loss: %.5f\n", i, Val(loss)/lossScale)
 		}
 
 		// Backward pass, calculate gradients (how much each parameter contributes to the loss)
@@ -107,7 +107,7 @@ func main() {
 		}
 
 		// Get embeddings for all tokens in context
-		inputEmbeds := pkg.Rows(tokEmbeds, contextTokens...)
+		inputEmbeds := Rows(tokEmbeds, contextTokens...)
 		input := Add(inputEmbeds, posEmbeds)
 		for _, block := range blocks {
 			input = block.Forward(input)
