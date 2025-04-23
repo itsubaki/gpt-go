@@ -93,7 +93,7 @@ func TestZipUnzip(t *testing.T) {
 	areEqual(t, 2, y)
 }
 
-func Example_addTokensFromText() {
+func TestAddTokensFromText(t *testing.T) {
 	idToToken = make(map[int]string)
 	tokenToID = make(map[string]int)
 
@@ -108,12 +108,8 @@ func Example_addTokensFromText() {
 		}
 	}
 
-	fmt.Println(len(tokenToID))
-	fmt.Println(contains)
-
-	// Output:
-	// 8
-	// true
+	areEqual(t, 8, len(tokenToID))
+	areEqual(t, true, contains)
 }
 
 func ExampleSample() {

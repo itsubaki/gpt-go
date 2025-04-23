@@ -18,9 +18,9 @@ var (
 	mergeRules map[int64]int
 	rulesOrder []int64
 
-	//go:embed fairy_tales.txt
+	//go:embed jules_verne.txt
 	datasetFile string
-	//go:embed fairy_vocab
+	//go:embed vocab
 	vocabFile string
 
 	randInt = rand.Intn

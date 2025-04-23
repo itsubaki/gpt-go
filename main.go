@@ -11,21 +11,21 @@ import (
 // Hyperparameters
 const (
 	blockSize        = 64
-	embedSize        = 256
+	embedSize        = 128
 	heads            = 4
 	layers           = 4
-	epochs           = 40000
+	epochs           = 20000
 	learningRate     = 0.0005
 	evalIters        = 1000
-	dropout          = 0.0  // disable some % of our neurons to prevent overfitting, model is likely to generalize
-	lossScale        = 0.05 // we don't use batches, so scaling loss down may help better convergence
+	dropout          = 0.0 // disable some % of our neurons to prevent overfitting, model is likely to generalize
+	lossScale        = 1.0 // we don't use batches, so scaling loss down may help better convergence
 	pretrainedTokens = 7000
 )
 
 func main() {
 	fmt.Println("Loading dataset...")
 	dataset, vocabSize := data.Tokenize(pretrainedTokens)
-	fmt.Printf("First 100 characters:\n%s\n", strings.TrimSpace(data.Decode(dataset[:100]...)))
+	fmt.Printf("Scalar 100 characters:\n%s\n", strings.TrimSpace(data.Decode(dataset[:100]...)))
 	fmt.Printf("Vocabulary: %s\n", data.Characters())
 
 	// Basic transformer components.
@@ -82,7 +82,7 @@ func main() {
 		loss := CrossEntropy(logits, targets)
 		loss = MulC(lossScale, loss)
 		if (i % evalIters) == 0 {
-			fmt.Printf("epoch: %5d, loss: %.5f\n", i, loss.Data[0][0]/lossScale)
+			fmt.Printf("epoch: %5d, loss: %.5f\n", i, Scalar(loss)/lossScale)
 		}
 
 		// Backward pass, calculate gradients (how much each parameter contributes to the loss)

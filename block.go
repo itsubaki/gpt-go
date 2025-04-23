@@ -15,11 +15,13 @@ var (
 	Dropout      = function.DropoutSimple
 	MatMul       = pkg.MatMul
 	Add          = variable.Add
+	Sub          = variable.Sub
 	MulC         = variable.MulC
 	GetItem      = variable.GetItem
 	Softmax      = function.Softmax
 	CrossEntropy = function.SoftmaxCrossEntropy
 	RandEmbeds   = pkg.RandKaiming
+	Scalar       = pkg.Scalar
 )
 
 type Block struct {

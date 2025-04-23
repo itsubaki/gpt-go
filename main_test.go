@@ -8,39 +8,72 @@ import (
 )
 
 func TestNeuron(t *testing.T) {
-	// Our neuron has 2 inputs (vector size) and 1 output (number of columns in weights).
+	// Our neuron has 2 inputs and 1 output (number of columns in weight matrix).
 	// Its goal is to predict next number in the sequence.
-	input := V{1, 2}.Var()
-	weights := M{
-		{0}, // how much first input (1) contributes to the output
-		{1}, // how much second input (2) contributes to the output
-	}.Var()
+	input := V{1, 2} // {x1, x2}
+	weight := M{
+		{2}, // how much x1 contributes to the output
+		{3}, // how much x2 contributes to the output
+	}
 
 	// We calculate the output by multiplying the input vector with the weight matrix.
-	output := MatMul(input, weights)
-	// output[0] = 1*2 + 2*2 = 6
-	areEqual(t, V{6}, output)
+	output := MatMul(input.Var(), weight.Var())
+	// output[0] = 1*2 + 2*3 = 8
+	areEqual(t, V{8}, output)
 
-	// That's a bad prediction (!=3), so we have to adjust the weights.
-	weights = M{
-		{-1},
-		{2},
-	}.Var()
+	// That's a bad prediction (not equal to 3), so we have to adjust the weight.
+	weight = M{
+		{1}, // nudge the first weight down by 1
+		{1}, // nudge the second weight down by 2
+	}
 
-	output = MatMul(input, weights)
-	// output[0] = 1*-1 + 2*2 = 3
-	// Now our neuron's prediction matches the target, so we can keep the weights.
-	// What we did now is "manual learning". How we know how to adjust the weights?
+	output = MatMul(input.Var(), weight.Var())
+	// output = 1*-1 + 2*2 = 3
+	// Now our neuron's prediction matches the target, so the weight are correct.
+	// In reality, though, we don't tune the weight manually.
 	areEqual(t, V{3}, output)
 }
 
 func TestLoss(t *testing.T) {
+	input := V{1, 2}.Var()
+	weight := M{
+		{2}, // w1
+		{3}, // w2
+	}.Var()
+	output := MatMul(input, weight)
+	target := V{3}.Var()
 
+	// We need a single number to characterize how bad our prediction is.
+	// For that we need a loss function.
+	// Let's pick the simplest one:
+	// loss = prediction - target
+	loss := Sub(output, target)
+	// 8 - 3 = 5
+	areEqual(t, V{5}, loss)
+	// So the loss is 5, which is a bad loss (we should strive to 0).
+
+	// Both input (x1, x2) and weights (w1, w2) values contribute to the loss.
+	// So, to minimize the loss we can tune the input or the weights.
+	// Since we are training a model, we want to tune the weights. Inputs come from fixed dataset.
+	// So we need to calculate how much w1 and w2 contribute to the loss.
+	// "By what amount the loss would change if we change x1 and x2 by some tiny value".
+	// That's derivative. The speed of change of the loss with respect to the weights.
+
+	// dLoss/dW1 = (x1 * w1 + x2 * w2) = x1 = 1
+	// It means that to make our loss bigger, we need to move our x1 into positive direction (+),  1.
+	// We want the opposite - to make it smaller, so we need to - 1 from our weight.
+	// dLoss/dW2 = (x1 * w1 + x2 * w2) = x2 = 2
+
+	// We calculate how much each weight contributes to the predicted value.
+	// So that we know in which direction to nudge the weight to minimize the loss.
+	loss.Backward()
+	areEqual(t, V{1, 2}, weight.Grad)
 }
 
 func TestGradientDescent(t *testing.T) {
-
 }
+
+// TODO add more in-between explanations
 
 func TestTrainingLoop(t *testing.T) {
 	RandEmbeds = func(rows, cols int) *variable.Variable {
@@ -122,7 +155,7 @@ func TestTrainingLoop(t *testing.T) {
 //
 //	// Print test data for verification
 //	fmt.Printf("Test dataset: %v\n", dataset)
-//	fmt.Printf("First characters: %s\n", data.Decode(dataset[:2]...))
+//	fmt.Printf("Scalar characters: %s\n", data.Decode(dataset[:2]...))
 //	fmt.Printf("Vocabulary: %s\n", data.Characters())
 //
 //	// Initialize model components with manually created values
@@ -206,6 +239,8 @@ func TestTrainingLoop(t *testing.T) {
 //}
 
 func areEqual[T V | M](t *testing.T, want T, got *variable.Variable) {
+	t.Helper()
+
 	// Convert want to a 2D slice of float64
 	var wantData [][]float64
 	switch v := any(want).(type) {

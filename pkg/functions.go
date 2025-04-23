@@ -114,3 +114,7 @@ func PrintShape(v *variable.Variable) {
 func DisableDropout() {
 	variable.Config.Train = false // Prevent dropout
 }
+
+func Scalar(x *variable.Variable) float64 {
+	return x.Data[0][0]
+}
