@@ -87,9 +87,7 @@ func main() {
 	pkg.DisableDropout()
 	fmt.Printf("\n%s", prompt)
 	for i := 0; i < maxTokens; i++ {
-		if len(contextTokens) > blockSize {
-			contextTokens = contextTokens[len(contextTokens)-blockSize:]
-		}
+		contextTokens = contextTokens[max(0, len(contextTokens)-blockSize):]
 
 		// Get embeddings for all tokens in context
 		embeds := Rows(tokEmbeds, contextTokens...)
