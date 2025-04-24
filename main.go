@@ -19,11 +19,11 @@ const (
 	evalIters        = 1000
 	dropout          = 0.0  // disable some % of our neurons to prevent overfitting, model is likely to generalize
 	lossScale        = 1.0  // we don't use batches, so scaling loss down may help better convergence
-	pretrainedTokens = 3000 // how many of subword pretrained tokens to add on top of default character-based tokens
+	pretrainedTokens = 7000 // how many of subword pretrained tokens to add on top of default character-based tokens
 )
 
 func main() {
-	fmt.Println("Loading dataset...")
+	fmt.Println("Tokenizing dataset...")
 	dataset, vocabSize := data.Tokenize(pretrainedTokens)
 	fmt.Printf("First characters:\n%s\n", strings.TrimSpace(data.Decode(dataset[:45]...)))
 	fmt.Printf("Vocabulary: %s\n", data.Characters())
@@ -46,7 +46,7 @@ func main() {
 	}
 	params.Add(norm.Scale, norm.Shift)
 	params.Add(lmHead.Weight, lmHead.Bias)
-	fmt.Println(params)
+	fmt.Printf("Model size: %s\n", params)
 
 	optimizer := pkg.NewAdamW(learningRate)
 
