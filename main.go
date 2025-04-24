@@ -17,15 +17,15 @@ const (
 	epochs           = 40000
 	learningRate     = 0.0005
 	evalIters        = 1000
-	dropout          = 0.0 // disable some % of our neurons to prevent overfitting, model is likely to generalize
-	lossScale        = 1.0 // we don't use batches, so scaling loss down may help better convergence
-	pretrainedTokens = 5000
+	dropout          = 0.0  // disable some % of our neurons to prevent overfitting, model is likely to generalize
+	lossScale        = 1.0  // we don't use batches, so scaling loss down may help better convergence
+	pretrainedTokens = 5000 // how many of subword pretrained tokens to add on top of default character-based tokens
 )
 
 func main() {
 	fmt.Println("Loading dataset...")
 	dataset, vocabSize := data.Tokenize(pretrainedTokens)
-	fmt.Printf("First 100 characters:\n%s\n", strings.TrimSpace(data.Decode(dataset[:100]...)))
+	fmt.Printf("First characters:\n%s\n", strings.TrimSpace(data.Decode(dataset[:45]...)))
 	fmt.Printf("Vocabulary: %s\n", data.Characters())
 
 	// Basic transformer components.
