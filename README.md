@@ -1,9 +1,9 @@
 <img src="https://github.com/zakirullin/files.md/raw/main/docs/go.svg" alt="gptgo" title="gptgo" align="right" height="60" />
 
 # gptgo
-Simple GPT implementation in pure Go. Trained on favourite Jules Verne's books.
+Simple GPT implementation in pure Go. Trained on favourite Jules Verne's books.  
 
-What kind of output you might expect from the model:
+What kind of output you might expect from the model:  
 ```
 Mysterious Island.
 Well.
@@ -15,9 +15,11 @@ My days must follow
 $ go run .
 ```
 
-You can train on your own dataset by point `data.datasetFile` to your txt file.
+You can train on your own dataset by point `data.datasetFile` to your txt file.  
 
 ## How it works?
+You can use this repo in pair with [Neural Networks: Zero to Hero](https://karpathy.ai/zero-to-hero.html) course.  
+Use `git tag` to see how the model evolved through : `naive`, `bigram`, `multihead`, `block`, `full`.
 
 
 
