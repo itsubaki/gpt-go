@@ -92,13 +92,13 @@ func main() {
 		}
 
 		// Get embeddings for all tokens in context
-		inputEmbeds := Rows(tokEmbeds, contextTokens...)
-		input := Add(inputEmbeds, posEmbeds)
+		embeds := Rows(tokEmbeds, contextTokens...)
+		embeds = Add(embeds, posEmbeds)
 		for _, block := range blocks {
-			input = block.Forward(input)
+			embeds = block.Forward(embeds)
 		}
-		input = norm.Forward(input)
-		logits := lmHead.Forward(input) // Get a list of final logits for the next token
+		embeds = norm.Forward(embeds)
+		logits := lmHead.Forward(embeds) // Get a list of final logits for the next token
 
 		// We only care about the prediction for the next token, which is the last position
 		lastTokenOutput := GetItem([]int{len(contextTokens) - 1})(logits)
