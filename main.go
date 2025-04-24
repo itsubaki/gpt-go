@@ -14,12 +14,12 @@ const (
 	embedSize        = 64
 	heads            = 4
 	layers           = 4
-	epochs           = 40000
+	epochs           = 2000
 	learningRate     = 0.0005
 	evalIters        = 1000
 	dropout          = 0.0  // disable some % of our neurons to prevent overfitting, model is likely to generalize
 	lossScale        = 1.0  // we don't use batches, so scaling loss down may help better convergence
-	pretrainedTokens = 7000 // how many of subword pretrained tokens to add on top of default character-based tokens
+	pretrainedTokens = 5000 // how many of subword pretrained tokens to add on top of default character-based tokens
 )
 
 func main() {
@@ -100,9 +100,9 @@ func main() {
 		embeds = norm.Forward(embeds)
 		logits := lmHead.Forward(embeds) // Get a list of final logits for the next token
 
-		// We only care about the prediction for the next token, which is the last position
-		lastTokenOutput := GetItem([]int{len(contextTokens) - 1})(logits)
-		probs := Softmax(lastTokenOutput)
+		// We only care about the probabilities of the next token for the last token
+		logitsForLastToken := Rows(logits, -1)
+		probs := Softmax(logitsForLastToken)
 		nextToken := pkg.Sample(probs)
 		decodedToken := data.Decode(nextToken)
 		fmt.Printf(decodedToken)

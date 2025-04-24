@@ -10,13 +10,9 @@ import (
 )
 
 var (
-	Add     = variable.Add
-	Sub     = variable.Sub
-	Mul     = variable.Mul
-	Div     = variable.Div
-	Zeros   = variable.Zero
-	OneLike = variable.OneLike
-	Pow     = variable.Pow
+	Add   = variable.Add
+	Div   = variable.Div
+	Zeros = variable.Zero
 )
 
 // Shortcut for building matrices:
@@ -53,10 +49,18 @@ func Sample(probs *variable.Variable) float64 {
 	return float64(len(probs.Data)) - 1
 }
 
+// Returns rows at specified indexes. Negative indexes return rows from the end.
 func Rows(x *variable.Variable, indexes ...float64) *variable.Variable {
+	size := len(x.Data)
+
 	var intIndexes []int
 	for _, index := range indexes {
-		intIndexes = append(intIndexes, int(index))
+		intIndex := int(index)
+		if intIndex < 0 {
+			intIndex = size + intIndex
+		}
+
+		intIndexes = append(intIndexes, intIndex)
 	}
 
 	return (&variable.Function{Forwarder: &variable.GetItemT{Slices: intIndexes}}).First(x)
