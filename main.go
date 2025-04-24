@@ -80,7 +80,7 @@ func main() {
 		params.ZeroGrad()
 	}
 
-	// Generate text
+	// Sample from the model.
 	pkg.DisableDropout()
 	prompt := "Mysterious Island"
 	maxTokens := 500
