@@ -28,6 +28,7 @@ You can train on your own dataset by pointing `data.dataset` variable to your te
 
 ## How to understand
 You can use this repository as a companion to the [Neural Networks: Zero to Hero](https://karpathy.ai/zero-to-hero.html) course.  
+
 Use `git checkout <tag>` to see how the model has evolved over time: `naive`, `bigram`, `multihead`, `block`, `residual`, `full`. Refer to [main_test.go](https://github.com/zakirullin/gpt-go/blob/main/main_test.go) for a step-by-step explanation.  
 
 ## Design choices
@@ -39,4 +40,5 @@ The `gonum.matmul` gave us ~30% performance boost, but it brought additional com
 
 ## Credits
 Many thanks to Andrej Karpathy for his outstanding [Neural Networks: Zero to Hero](https://karpathy.ai/zero-to-hero.html) course.  
+
 Thanks to [@itsubaki](https://github.com/itsubaki) for his elegant [autograd](https://github.com/itsubaki/autograd) package.  
