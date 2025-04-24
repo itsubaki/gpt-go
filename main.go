@@ -44,8 +44,8 @@ func main() {
 	for _, block := range blocks {
 		params.Add(block.Params()...)
 	}
-	params.Add(norm.Scale, norm.Shift)
-	params.Add(lmHead.Weight, lmHead.Bias)
+	params.Add(norm.Params()...)
+	params.Add(lmHead.Params()...)
 	fmt.Printf("Model size: %s\n", params)
 
 	optimizer := pkg.NewAdamW(learningRate)

@@ -65,6 +65,18 @@ func (l *Linear) Forward(input *variable.Variable) *variable.Variable {
 	return logits
 }
 
+func (l *Linear) Params() []layer.Parameter {
+	params := []layer.Parameter{
+		l.Weight,
+	}
+
+	if l.Biased {
+		params = append(params, l.Bias)
+	}
+
+	return params
+}
+
 type LayerNorm struct {
 	Scale *variable.Variable
 	Shift *variable.Variable
