@@ -39,7 +39,10 @@ func TestNeuron(t *testing.T) {
 func TestLinear(t *testing.T) {
 	// Linear layer is a collection of neurons.
 	layer := NewLinear(2, 1)
-	layer.Weight = Ones(2, 1)
+	layer.Weight = M{
+		{1},
+		{1},
+	}.Var()
 	output := layer.Forward(V{1, 2}.Var())
 	areEqual(t, 3, output)
 }

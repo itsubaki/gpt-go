@@ -5,7 +5,7 @@ import (
 	"math/rand"
 	"testing"
 
-	"gptgo/pkg"
+	"github.com/itsubaki/autograd/variable"
 )
 
 func TestTokenize(t *testing.T) {
@@ -114,7 +114,7 @@ func TestAddTokensFromText(t *testing.T) {
 
 func ExampleSample() {
 	// Setup data
-	testData := pkg.V{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+	testData := V{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
 	blockSize := 3
 
 	RandInt = func(_ int) int { return 0 }
@@ -262,4 +262,10 @@ func TestDecodeUnicodeWithConsecutiveEscapes(t *testing.T) {
 	expected := "Line breaks: \n\n"
 	result := decodeUnicode(input)
 	areEqual(t, expected, result)
+}
+
+type V []float64
+
+func (v V) Var() *variable.Variable {
+	return variable.NewOf(v)
 }
