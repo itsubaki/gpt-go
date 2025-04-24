@@ -80,9 +80,9 @@ func main() {
 		params.ZeroGrad()
 	}
 
-	// Generate text by prompt
+	// Generate text
 	pkg.DisableDropout()
-	prompt := "Magic forest"
+	prompt := "Mysterious island"
 	maxTokens := 500
 	contextTokens := data.Encode(prompt)
 	fmt.Printf("\n%s", prompt)
