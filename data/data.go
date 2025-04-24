@@ -24,9 +24,7 @@ var (
 	vocab string
 
 	Dataset = func() string { return dataset }
-	Vocab   = func() string {
-		return vocab
-	}
+	Vocab   = func() string { return vocab }
 	RandInt = rand.IntN
 )
 
