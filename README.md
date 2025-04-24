@@ -1,4 +1,4 @@
-<img src="https://github.com/minds.md/minds.md/raw/main/docs/go.svg" alt="gptgo" title="gptgo" align="right" height="60" />
+<img src="https://github.com/mindsmd/minds.md/raw/main/docs/go.svg" alt="gptgo" title="gptgo" align="right" height="60" />
 
 # gptgo
 Simple GPT implementation in pure Go. Trained on favourite Jules Verne books.  
@@ -20,7 +20,7 @@ You can train on your own dataset by point `data.datasetFile` to your txt file.
 ## how it works
 You can use this repo as a companion to the [Neural Networks: Zero to Hero](https://karpathy.ai/zero-to-hero.html) course.  
 Use `git tag` to see how the model has evolved over time: `naive`, `bigram`, `multihead`, `block`, `residual`, `full`.  
-Refer to `main_test.go` for a step-by-step explanation.
+Refer to `main_test.go` for a step-by-step explanation.  
 
 ## whys
 Decided to go without batches.  
@@ -31,4 +31,4 @@ The gonum.matmul gave us ~30% performance boost, but it brought additional compl
 
 ## credits
 Many thanks to Andrej Karpathy for his outstanding [Neural Networks: Zero to Hero](https://karpathy.ai/zero-to-hero.html) course.  
-Thanks to @itsubaki for his elegant [autograd](https://github.com/itsubaki/autograd) library.
+Thanks to @itsubaki for his elegant [autograd](https://github.com/itsubaki/autograd) library.  
