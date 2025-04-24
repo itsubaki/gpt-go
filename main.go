@@ -53,32 +53,19 @@ func main() {
 	// Main training loop.
 	fmt.Printf("bs=%d, es=%d, lr=%.4f, ls=%.2f, vs=%d, epochs=%d \n", blockSize, embedSize, learningRate, lossScale, vocabSize, epochs)
 	for i := 0; i < epochs; i++ {
-		// Input contains blockSize consecutive tokens.
-		// Targets contains the target for each input token.
-		// Example: for input=[0,1], targets=[1,2], meaning
-		// that next token after 0 is 1, next after 1 is 2.
+		// Targets contain the expected next token for each input token.
 		input, targets := data.Sample(dataset, blockSize)
 
 		// Forward pass, calculate predictions for every input token.
-		// [
-		//   [vector for tok=1],
-		//   [vector for tok=2],
-		//   ... other embeds
-		// ]
 		embeds := Rows(tokEmbeds, input.Data[0]...) // get embed for every input token
 		embeds = Add(embeds, posEmbeds)             // add positional embedding
 		for _, block := range blocks {
 			embeds = block.Forward(embeds)
 		}
 		embeds = norm.Forward(embeds)
-		// [
-		//   [score for tok=0, ..., score for tok=4], // for input tok=0
-		//   [score for tok=0, ..., score for tok=4], // for input tok=1
-		//   ... other logits
-		// ]
 		logits := lmHead.Forward(embeds) // converts contextual embeddings to next-token predictions
 
-		// Loss calculation, how much our predicted targets differ from the actual targets?
+		// Loss calculation, how much our predicted targets differ from the expected targets?
 		loss := CrossEntropy(logits, targets)
 		loss = MulC(lossScale, loss)
 		if (i % evalIters) == 0 {
@@ -88,9 +75,7 @@ func main() {
 		// Backward pass, calculate gradients (how much each parameter contributes to the loss)
 		// for all the parameters (weights, biases, embeds). Loss is the tail of a computation graph.
 		loss.Backward()
-
-		// Update the values of parameters according to calculated gradients.
-		// I.e. nudge them in the direction of the gradients, to minimize the loss.
+		// Nudge the parameters in the direction of the gradients, so to minimize the loss.
 		optimizer.Update(params)
 		params.ZeroGrad()
 	}

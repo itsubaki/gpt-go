@@ -100,7 +100,7 @@ func VocabSize() int {
 
 func Sample(data []float64, blockSize int) (*variable.Variable, *variable.Variable) {
 	dataLen := len(data) - (blockSize + 1)
-	if dataLen <= 0 {
+	if dataLen < 0 {
 		panic("Not enough Data for the given block size")
 	}
 

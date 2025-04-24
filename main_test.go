@@ -121,8 +121,6 @@ func TestLinear(t *testing.T) {
 	areEqual(t, 3, output)
 }
 
-// TODO add more in-between explanations
-
 func TestTransformer(t *testing.T) {
 	// Mocking
 	RandEmbeds = func(rows, cols int) *variable.Variable {
@@ -146,13 +144,29 @@ func TestTransformer(t *testing.T) {
 	norm := NewLayerNorm(embedSize)
 	lmHead := NewLinear(embedSize, vocabSize)
 
-	input, targets := data.Sample([]float64{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, blockSize)
-	embeds := Rows(tokEmbeds, input.Data[0]...)
-	embeds = Add(embeds, posEmbeds) // add positional embedding
+	// Input contains blockSize consecutive tokens.
+	// Targets contain the expected next token for each input token.
+	// Example: for input=[0,1], targets=[1,2], meaning
+	// that next token (target) after 0 is 1, next after 1 is 2.
+	input, targets := data.Sample([]float64{0, 1, 2}, blockSize)
+
+	// [
+	//   [vector for tok0],
+	//   [vector for tok1],
+	//   ... other embeds
+	// ]
+	embeds := Rows(tokEmbeds, input.Data[0]...) // get embed for every input token
+	embeds = Add(embeds, posEmbeds)             // add positional embedding
 	embeds = block.Forward(embeds)
 	embeds = norm.Forward(embeds)
-	logits := lmHead.Forward(embeds)
+	// [
+	//   [score for tok0, ..., score for tokN], // for input tok0
+	//   [score for tok0, ..., score for tokN], // for input tok1
+	//   ... other logits
+	// ]
+	logits := lmHead.Forward(embeds) // converts contextual embeddings to next-token predictions
 
+	// Loss calculation, how much our predicted targets differ from the actual targets?
 	loss := CrossEntropy(logits, targets)
 
 	areEqual(t, 2.302585092994046, loss)
@@ -160,27 +174,8 @@ func TestTransformer(t *testing.T) {
 
 func areEqual(t *testing.T, want float64, got *variable.Variable) {
 	t.Helper()
-	gotValue := Val(got)
-
-	if math.Abs(want-gotValue) > 1e-9 {
-		t.Errorf("value mismatch: want %v, got %v", want, gotValue)
-	}
-}
-
-func areVectorsEqual(t *testing.T, want V, got *variable.Variable) {
-	t.Helper()
-	gotVector := got.Data[0]
-
-	if len(want) != len(gotVector) {
-		t.Errorf("vector length mismatch: want length=%d, got lector=%d", len(want), len(gotVector))
-		return
-	}
-
-	for i := range want {
-		epsilon := 1e-9
-		if math.Abs(want[i]-gotVector[i]) > epsilon {
-			t.Errorf("vector mismatch at index %d: want %v, got %v", i, want[i], gotVector[i])
-		}
+	if math.Abs(want-Val(got)) > 1e-9 {
+		t.Errorf("value mismatch: want %v, got %v", want, Val(got))
 	}
 }
 
@@ -194,13 +189,8 @@ func areMatricesEqual(t *testing.T, want M, got *variable.Variable) {
 	}
 
 	for i := range want {
-		if len(want[i]) != len(gotMatrix[i]) {
-			t.Errorf("matrix row length mismatch at row %d: want length=%d, got length=%d", i, len(want[i]), len(gotMatrix[i]))
-			continue
-		}
 		for j := range want[i] {
-			epsilon := 1e-9
-			if math.Abs(want[i][j]-gotMatrix[i][j]) > epsilon {
+			if math.Abs(want[i][j]-gotMatrix[i][j]) > 1e-9 {
 				t.Errorf("matrix mismatch at row %d, column %d: want %v, got %v", i, j, want[i][j], gotMatrix[i][j])
 			}
 		}
