@@ -16,6 +16,7 @@ var (
 )
 
 // Shortcut for building readable matrices:
+//
 //	M{
 //	  {1, 2},
 //	  {3, 4},

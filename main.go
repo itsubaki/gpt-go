@@ -53,7 +53,7 @@ func main() {
 	// Main training loop.
 	fmt.Printf("bs=%d, es=%d, lr=%.4f, ls=%.2f, vs=%d, epochs=%d \n", blockSize, embedSize, learningRate, lossScale, vocabSize, epochs)
 	for i := 0; i < epochs; i++ {
-		// Targets contain the expected next token for each input token.
+		// Targets contain the ground truth next token for each input token.
 		input, targets := data.Sample(dataset, blockSize)
 
 		// Forward pass, calculate predictions for every input token.
@@ -65,7 +65,7 @@ func main() {
 		embeds = norm.Forward(embeds)
 		logits := lmHead.Forward(embeds) // converts contextual embeddings to next-token predictions
 
-		// Loss calculation, how much our predicted targets differ from the expected targets?
+		// Loss calculation, how much our predicted targets differ from the ground truth targets?
 		loss := CrossEntropy(logits, targets)
 		loss = MulC(lossScale, loss)
 		if (i % evalIters) == 0 {
