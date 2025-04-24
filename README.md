@@ -1,4 +1,4 @@
-<img src="https://github.com/mindsmd/minds.md/raw/main/docs/go.svg" alt="gptgo" title="gptgo" align="right" height="60" />
+<img src="https://raw.githubusercontent.com/MindsMD/minds.md/refs/heads/main/header.svg" alt="gptgo" title="gptgo" align="right" height="60" />
 
 # gptgo
 Simple GPT implementation in pure Go. Trained on favourite Jules Verne books.  
