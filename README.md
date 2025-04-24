@@ -31,4 +31,4 @@ The gonum.matmul gave us ~30% performance boost, but it brought additional compl
 
 ## Credits
 Many thanks to Andrej Karpathy for his outstanding [Neural Networks: Zero to Hero](https://karpathy.ai/zero-to-hero.html) course.  
-Thanks to @itsubaki for his elegant [autograd](https://github.com/itsubaki/autograd) library.  
+Thanks to [@itsubaki](https://github.com/itsubaki) for his elegant [autograd](https://github.com/itsubaki/autograd) library.  
