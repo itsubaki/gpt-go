@@ -25,7 +25,7 @@ const (
 func main() {
 	fmt.Println("Loading dataset...")
 	dataset, vocabSize := data.Tokenize(pretrainedTokens)
-	fmt.Printf("Val 100 characters:\n%s\n", strings.TrimSpace(data.Decode(dataset[:100]...)))
+	fmt.Printf("First 100 characters:\n%s\n", strings.TrimSpace(data.Decode(dataset[:100]...)))
 	fmt.Printf("Vocabulary: %s\n", data.Characters())
 
 	// Basic transformer components.
