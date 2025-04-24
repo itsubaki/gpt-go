@@ -32,7 +32,7 @@ Use `git checkout <tag>` to see how the model has evolved over time: `naive`, `b
 Refer to [main_test.go](https://github.com/zakirullin/gpt-go/blob/main/main_test.go) for a step-by-step explanation.  
 
 ## Design choices
-Decided to go without batches.  
+No batches.  
 I've given up the complexity of the batch dimension for the sake of better understanding. Batches aren't inherent to transformer architecture.
 
 Removed `gonum` dependency.  
