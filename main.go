@@ -11,10 +11,10 @@ import (
 // Hyperparameters
 const (
 	blockSize        = 32
-	embedSize        = 64
+	embedSize        = 128
 	heads            = 4
 	layers           = 4
-	epochs           = 20000
+	epochs           = 40000
 	learningRate     = 0.001
 	evalIters        = 1000
 	dropout          = 0.0  // disable some % of our neurons to prevent overfitting, model is likely to generalize
@@ -52,7 +52,7 @@ func main() {
 
 	// Main training loop.
 	fmt.Printf("bs=%d, es=%d, lr=%.4f, ls=%.2f, vs=%d, epochs=%d \n", blockSize, embedSize, learningRate, lossScale, vocabSize, epochs)
-	for i := 0; i < epochs; i++ {
+	for i := 0; i <= epochs; i++ {
 		// Targets contain the ground truth next token for each input token.
 		input, targets := data.Sample(dataset, blockSize)
 
