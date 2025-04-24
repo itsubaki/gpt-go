@@ -105,7 +105,7 @@ func main() {
 		probs := Softmax(logitsForLastToken)
 		nextToken := pkg.Sample(probs)
 		decodedToken := data.Decode(nextToken)
-		fmt.Printf(decodedToken)
+		fmt.Print(decodedToken)
 		contextTokens = append(contextTokens, nextToken)
 	}
 }
