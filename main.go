@@ -81,10 +81,10 @@ func main() {
 	}
 
 	// Sample from the model.
-	pkg.DisableDropout()
 	prompt := "Mysterious Island"
 	maxTokens := 500
 	contextTokens := data.Encode(prompt)
+	pkg.DisableDropout()
 	fmt.Printf("\n%s", prompt)
 	for i := 0; i < maxTokens; i++ {
 		if len(contextTokens) > blockSize {
