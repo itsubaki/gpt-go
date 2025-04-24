@@ -50,7 +50,7 @@ func main() {
 
 	optimizer := pkg.NewAdamW(learningRate)
 
-	// Main training loop.
+	// Training loop.
 	fmt.Printf("bs=%d, es=%d, lr=%.4f, ls=%.2f, vs=%d, epochs=%d \n", blockSize, embedSize, learningRate, lossScale, vocabSize, epochs)
 	for i := 0; i <= epochs; i++ {
 		// Targets contain the ground truth next token for each input token.
@@ -89,16 +89,16 @@ func main() {
 	for i := 0; i < maxTokens; i++ {
 		contextTokens = contextTokens[max(0, len(contextTokens)-blockSize):]
 
-		// Get embeddings for all tokens in context
+		// Get embeddings for all tokens in context.
 		embeds := Rows(tokEmbeds, contextTokens...)
 		embeds = Add(embeds, posEmbeds)
 		for _, block := range blocks {
 			embeds = block.Forward(embeds)
 		}
 		embeds = norm.Forward(embeds)
-		logits := lmHead.Forward(embeds) // Get a list of final logits for the next token
+		logits := lmHead.Forward(embeds) // get a list of final logits for the next token
 
-		// We only care about the probabilities of the next token for the last token
+		// We only care about the probabilities of the next token for the last token.
 		logitsForLastToken := Rows(logits, -1)
 		probs := Softmax(logitsForLastToken)
 		nextToken := pkg.Sample(probs)
