@@ -36,6 +36,14 @@ func TestNeuron(t *testing.T) {
 	areEqual(t, 3, output)
 }
 
+func TestLinear(t *testing.T) {
+	// Linear layer is a collection of neurons.
+	layer := NewLinear(2, 1)
+	layer.Weight = Ones(2, 1)
+	output := layer.Forward(V{1, 2}.Var())
+	areEqual(t, 3, output)
+}
+
 func TestLoss(t *testing.T) {
 	input := V{1, 2}.Var()
 	weight := M{
@@ -111,14 +119,6 @@ func TestGradientDescent(t *testing.T) {
 	// If the input is {1, 2}, the output is 3.
 	// Our learning weights are:
 	areMatricesEqual(t, M{{1}, {1}}, weight.Var()) // w1 = 1, w2 = 2
-}
-
-func TestLinear(t *testing.T) {
-	// Linear layer is a collection of neurons.
-	layer := NewLinear(2, 1)
-	layer.Weight = Ones(2, 1)
-	output := layer.Forward(V{1, 2}.Var())
-	areEqual(t, 3, output)
 }
 
 func TestTransformer(t *testing.T) {
