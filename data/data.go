@@ -146,7 +146,7 @@ func createMergeRules(rules string, numMerges int) {
 	merges := strings.Split(rules, "\n")
 	merges = merges[:min(numMerges, len(merges))]
 
-	// Mint new rules, create merging mergingRules
+	// Mint new tokens, save merge rules
 	for _, m := range merges {
 		re := regexp.MustCompile(`\[(.*?)\]\[(.*?)\] -> \[(.*?)\]`)
 		matches := re.FindStringSubmatch(m)
@@ -155,12 +155,12 @@ func createMergeRules(rules string, numMerges int) {
 		}
 
 		// Process Unicode escape sequences in all tokens
-		first := decodeUnicode(matches[1])
-		second := decodeUnicode(matches[2])
-		result := decodeUnicode(matches[3])
+		left := decodeUnicode(matches[1])
+		right := decodeUnicode(matches[2])
+		mergedToken := decodeUnicode(matches[3])
 
-		addTokensToVocab(result)
-		addRule(tokenToID[first], tokenToID[second], tokenToID[result])
+		addTokensToVocab(mergedToken)
+		addRule(tokenToID[left], tokenToID[right], tokenToID[mergedToken])
 	}
 }
 
