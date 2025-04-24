@@ -3,7 +3,7 @@
 # gpt-go
 Simple GPT implementation in pure Go. Trained on favourite Jules Verne books.  
 
-What kind of output you can expect from the model:  
+What kind of response you can expect from the model:  
 ```
 Mysterious Island.
 Well.
