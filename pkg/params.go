@@ -33,7 +33,7 @@ func (p *Params) String() string {
 		numParams += len(param.Data) * len(param.Data[0])
 	}
 
-	return fmt.Sprintf("%.3fM parameters\n", float64(numParams)/1e6)
+	return fmt.Sprintf("Model size: %.3fM parameters\n", float64(numParams)/1e6)
 }
 
 func (p *Params) ZeroGrad() {

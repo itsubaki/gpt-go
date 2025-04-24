@@ -11,7 +11,7 @@ import (
 // Hyperparameters
 const (
 	blockSize        = 32
-	embedSize        = 128
+	embedSize        = 64
 	heads            = 4
 	layers           = 4
 	epochs           = 40000
@@ -19,7 +19,7 @@ const (
 	evalIters        = 1000
 	dropout          = 0.0  // disable some % of our neurons to prevent overfitting, model is likely to generalize
 	lossScale        = 1.0  // we don't use batches, so scaling loss down may help better convergence
-	pretrainedTokens = 5000 // how many of subword pretrained tokens to add on top of default character-based tokens
+	pretrainedTokens = 3000 // how many of subword pretrained tokens to add on top of default character-based tokens
 )
 
 func main() {

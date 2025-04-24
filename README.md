@@ -12,7 +12,9 @@ My days must follow
 
 Params and loss:
 ```
-bs=32, es=64, lr=0.0010, ls=1, vs=3060, epochs=20000
+Model size: 0.596M parameters
+
+bs=32, es=64, lr=0.0010, ls=1.0, vs=3000, epochs=20000
 ...
 epoch: 18000, loss: 5.04248
 epoch: 19000, loss: 4.97543
