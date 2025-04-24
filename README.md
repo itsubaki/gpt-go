@@ -31,7 +31,7 @@ You can use this repository as a companion to the [Neural Networks: Zero to Hero
 Use `git tag` to see how the model has evolved over time: `naive`, `bigram`, `multihead`, `block`, `residual`, `full`.  
 Refer to [main_test.go](https://github.com/zakirullin/gpt-go/blob/main/main_test.go) for a step-by-step explanation.  
 
-## Simplifications
+## Design choices
 Decided to go without batches.  
 I've given up the complexity of the batch dimension for the sake of better understanding. Batches aren't inherent to transformer architecture.
 
