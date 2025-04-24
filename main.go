@@ -82,7 +82,7 @@ func main() {
 
 	// Generate text
 	pkg.DisableDropout()
-	prompt := "Mysterious island"
+	prompt := "Mysterious Island"
 	maxTokens := 500
 	contextTokens := data.Encode(prompt)
 	fmt.Printf("\n%s", prompt)
