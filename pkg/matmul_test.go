@@ -2,6 +2,8 @@ package pkg
 
 import (
 	"fmt"
+
+	"github.com/itsubaki/autograd/variable"
 )
 
 func ExampleMatMul_basic2x2() {
@@ -139,4 +141,22 @@ func ExampleMatMul_gradient() {
 	// Output:
 	//variable([[11 15] [11 15]])
 	//variable([[4 4] [6 6]])
+}
+
+// Shortcut for building readable matrices:
+//
+//	M{
+//	  {1, 2},
+//	  {3, 4},
+//	}.Var()
+type M [][]float64
+
+func (m M) Var() *variable.Variable {
+	return variable.NewOf(m...)
+}
+
+type V []float64
+
+func (v V) Var() *variable.Variable {
+	return variable.NewOf(v)
 }

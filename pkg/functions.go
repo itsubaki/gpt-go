@@ -15,24 +15,6 @@ var (
 	Zeros = variable.Zero
 )
 
-// Shortcut for building readable matrices:
-//
-//	M{
-//	  {1, 2},
-//	  {3, 4},
-//	}.Var()
-type M [][]float64
-
-func (m M) Var() *variable.Variable {
-	return variable.NewOf(m...)
-}
-
-type V []float64
-
-func (v V) Var() *variable.Variable {
-	return variable.NewOf(v)
-}
-
 func Sample(probs *variable.Variable) float64 {
 	r := rand.Float64()
 
