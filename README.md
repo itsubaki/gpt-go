@@ -24,20 +24,20 @@ epoch: 20000, loss: 4.86982
 $ go run .
 ```
 
-You can train on your own dataset by pointing `data.dataset` variable to your txt corpus.  
+You can train on your own dataset by pointing `data.dataset` variable to your text corpus.  
 
 ## How it works
-You can use this repo as a companion to the [Neural Networks: Zero to Hero](https://karpathy.ai/zero-to-hero.html) course.  
-Use `git tag` to see how the model has evolved over time: `naive`, `bigram`, `multihead`, `block`, `residual`, `full`.  
+You can use this repository as a companion to the [Neural Networks: Zero to Hero](https://karpathy.ai/zero-to-hero.html) course.  
+Use `git tag` to see how the model has evolved over time: `naive`, `bigram`, `multihead`, `block`, `residual`, `full`
 Refer to `main_test.go` for a step-by-step explanation.  
 
 ## WHYs
 Decided to go without batches.  
 I've given up the complexity of the batch dimension for the sake of better understanding. Batches aren't inherent to transformer architecture.
 
-Removed gonum dependency.  
-The gonum.matmul gave us ~30% performance boost, but it brought additional complexity. We're not striving for maximum efficiency here, rather for radical simplicity. Current matmul implementation is quite effective, and it's only 40 lines of readable plain code.  
+Removed `gonum` dependency.  
+The `gonum.matmul` gave us ~30% performance boost, but it brought additional complexity. We're not striving for maximum efficiency here, rather for radical simplicity. Current matmul implementation is quite effective, and it's only 40 lines of plain readable code.  
 
 ## Credits
 Many thanks to Andrej Karpathy for his outstanding [Neural Networks: Zero to Hero](https://karpathy.ai/zero-to-hero.html) course.  
-Thanks to [@itsubaki](https://github.com/itsubaki) for his elegant [autograd](https://github.com/itsubaki/autograd) library.  
+Thanks to [@itsubaki](https://github.com/itsubaki) for his elegant [autograd](https://github.com/itsubaki/autograd) package.  
