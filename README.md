@@ -1,26 +1,33 @@
-### TODO
-- add NewTensor() everywhere instead Tensor{}. We have to keep invariants
-- options-like pattern tensor building? T2, T1 etc
-- replace initialization with Kaiming distribution (currently normal which may cause issues, Building makemore Part 3: Activations & Gradients, BatchNorm)
-- calc grad for forward
-- implement more advanced optimizer
-- float32 is faster on CPUs?
-- be careful, any .At() child tensor's data reuse parent's data
+<img src="https://github.com/zakirullin/files.md/raw/main/docs/go.svg" alt="gptgo" title="gptgo" align="right" height="60" />
 
-// We need better way for copying
-grad := gradOutput.Mul(layer.Weight.T())
-embedGrad := embedsGrad.At(int(input))
-grad = embedGrad.Add(grad)
-for j := 0; j < len(embedGrad.Data); j++ {
-    embedGrad.Data[j] += grad.At(j).First()
-}
+# gptgo
+Simple GPT implementation in pure Go. Trained on favourite Jules Verne's books.
 
-// Same for shape. Don't forget that currently slices refer to same data
-append([]int{}, t.Shape...), // copying
+What kind of output you might expect from the model:
+```
+Mysterious Island.
+Well.
+My days must follow
+```
 
-### WHYs
-Decided to go without batches.
-I have an  Apple M3, not much profit using batches in terms of CPU speed. I'll give up complexity of batches for the sake of better understanding. Transformer's architecture allows me to do so, layer norm works fine without batches.
+## How to run
+```shell
+$ go run .
+```
 
-Removed gonum dependency.
-The gonum.matmul gave us ~30% performance boost, but it brought additional complexity. We're not striving for maximum efficiency here, rather for radical simplicity. Current matmul implementation is quite effective, and it's only 40 lines of readable plain code.
+You can train on your own dataset by point `data.datasetFile` to your txt file.
+
+## How it works?
+
+
+
+## WHYs
+Decided to go without batches.  
+I have an  Apple M3, not much profit using batches in terms of CPU speed. I'll give up complexity of batches for the sake of better understanding. Transformer's architecture allows me to do so, layer norm works fine without batches.  
+
+Removed gonum dependency.  
+The gonum.matmul gave us ~30% performance boost, but it brought additional complexity. We're not striving for maximum efficiency here, rather for radical simplicity. Current matmul implementation is quite effective, and it's only 40 lines of readable plain code.  
+
+## Credits
+Many thanks to Andrej Karpathy for his outstanding [Neural Networks: Zero to Hero](https://karpathy.ai/zero-to-hero.html) course.  
+Thanks to @itsubaki for his elegant [autograd](https://github.com/itsubaki/autograd) library.  

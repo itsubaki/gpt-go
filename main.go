@@ -72,7 +72,7 @@ func main() {
 			fmt.Printf("epoch: %5d, loss: %.5f\n", i, Val(loss)/lossScale)
 		}
 
-		// Backward pass, calculate gradients (how much each parameter contributes to the loss)
+		// Backward pass, calculate the gradients (how much each parameter contributes to the loss)
 		// for all the parameters (weights, biases, embeds). Loss is the tail of a computation graph.
 		loss.Backward()
 		// Nudge the parameters in the direction of the gradients, so to minimize the loss.
