@@ -23,16 +23,12 @@ var (
 	//go:embed vocab
 	vocab string
 
+	Dataset = func() string { return dataset }
+	Vocab   = func() string {
+		return vocab
+	}
 	RandInt = rand.IntN
 )
-
-var Dataset = func() string {
-	return dataset
-}
-
-var Vocab = func() string {
-	return vocab
-}
 
 func Tokenize(numMerges int) ([]float64, int) {
 	tokenToID = make(map[string]int)
