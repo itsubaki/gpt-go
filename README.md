@@ -1,6 +1,6 @@
 <img src="https://raw.githubusercontent.com/MindsMD/minds.md/refs/heads/main/header.svg" alt="gptgo" title="gptgo" align="right" height="60" />
 
-# gptgo
+# gpt-go
 Simple GPT implementation in pure Go. Trained on favourite Jules Verne books.  
 
 What kind of output you can expect from the model:  
