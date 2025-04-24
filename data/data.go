@@ -19,19 +19,19 @@ var (
 	rulesOrder []int64
 
 	//go:embed jules_verne.txt
-	datasetFile string
+	dataset string
 	//go:embed vocab
-	vocabFile string
+	vocab string
 
 	RandInt = rand.IntN
 )
 
 var Dataset = func() string {
-	return datasetFile
+	return dataset
 }
 
 var Vocab = func() string {
-	return vocabFile
+	return vocab
 }
 
 func Tokenize(numMerges int) ([]float64, int) {
@@ -182,16 +182,6 @@ func addRule(tok1, tok2, mergedTok int) {
 	rulesOrder = append(rulesOrder, key)
 }
 
-func zip(tok1, tok2 int) int64 {
-	return int64(tok1)<<32 | int64(tok2&0xFFFFFFFF)
-}
-
-func unzip(tok int64) (int, int) {
-	tok1 := int(tok >> 32)
-	tok2 := int(tok & 0xFFFFFFFF)
-	return tok1, tok2
-}
-
 func normNewLines(text string) string {
 	text = strings.Replace(text, "\r\n", "\n", -1) // replace Windows line endings
 	return strings.Replace(text, "\r", "\n", -1)   // replace remaining Mac line endings
@@ -211,4 +201,14 @@ func decodeUnicode(s string) string {
 	})
 
 	return result
+}
+
+func zip(tok1, tok2 int) int64 {
+	return int64(tok1)<<32 | int64(tok2&0xFFFFFFFF)
+}
+
+func unzip(tok int64) (int, int) {
+	tok1 := int(tok >> 32)
+	tok2 := int(tok & 0xFFFFFFFF)
+	return tok1, tok2
 }

@@ -24,7 +24,7 @@ epoch: 20000, loss: 4.86982
 $ go run .
 ```
 
-You can train on your own dataset by pointing `data.datasetFile` to your txt file.  
+You can train on your own dataset by pointing `data.dataset` variable to your txt corpus.  
 
 ## How it works
 You can use this repo as a companion to the [Neural Networks: Zero to Hero](https://karpathy.ai/zero-to-hero.html) course.  
