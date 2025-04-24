@@ -1,6 +1,6 @@
-// MatMul performs parallelized matrix multiplication that optimizes
+// MatMul performs parallelized matrix multiplication that minimizes
 // CPU cache misses. It divides the computation into sequential chunks
-// processed by multiple goroutines.
+// processed by multiple goroutines in parallel.
 package pkg
 
 import (
