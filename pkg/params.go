@@ -4,6 +4,7 @@ package pkg
 import (
 	"encoding/binary"
 	"fmt"
+	"hash/crc32"
 	"os"
 
 	"github.com/itsubaki/autograd/layer"
@@ -47,9 +48,6 @@ func (p *Params) ZeroGrad() {
 	p.params.Cleargrads()
 }
 
-// Currently we only differentiate the models by total count.
-// Two models having different dimensions in weights but same
-// total count are considered same, which is wrong.
 func (p *Params) Save() {
 	filename := fmt.Sprintf("model-%.3fM", float64(p.Count())/1e6)
 	file, err := os.Create(filename)
@@ -58,7 +56,8 @@ func (p *Params) Save() {
 	}
 	defer file.Close()
 
-	// Save map of params in ordered fashion
+	hash := crc32.NewIEEE()
+	// Save map of params in ordered fashion.
 	for i := 0; i < len(p.params); i++ {
 		key := fmt.Sprintf("%d", i)
 		for _, row := range p.params[key].Data {
@@ -66,6 +65,14 @@ func (p *Params) Save() {
 				panic(err)
 			}
 		}
+		shape := fmt.Sprintf("%d:%d×%d", i, len(p.params[key].Data), len(p.params[key].Data[0]))
+		hash.Write([]byte(shape))
+	}
+
+	// Save checksum at the end of the file.
+	checksum := hash.Sum32()
+	if err := binary.Write(file, binary.LittleEndian, checksum); err != nil {
+		panic(err)
 	}
 }
 
@@ -77,7 +84,8 @@ func (p *Params) Load() {
 	}
 	defer file.Close()
 
-	// Load map of params in ordered fashion
+	// Load map of params in ordered fashion.
+	hash := crc32.NewIEEE()
 	for i := 0; i < len(p.params); i++ {
 		key := fmt.Sprintf("%d", i)
 		for j := range p.params[key].Data {
@@ -85,5 +93,16 @@ func (p *Params) Load() {
 				panic(err)
 			}
 		}
+		shape := fmt.Sprintf("%d:%d×%d", i, len(p.params[key].Data), len(p.params[key].Data[0]))
+		hash.Write([]byte(shape))
+	}
+
+	var savedChecksum uint32
+	if err := binary.Read(file, binary.LittleEndian, &savedChecksum); err != nil {
+		panic(fmt.Errorf("failed to read shapes checksum: %v", err))
+	}
+
+	if savedChecksum != hash.Sum32() {
+		panic(fmt.Errorf("model shapes mismatch: expected checksum %d, got %d", savedChecksum, hash.Sum32()))
 	}
 }
