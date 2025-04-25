@@ -122,10 +122,10 @@ func main() {
 		context := data.Encode(prompt)
 		for i := 0; i < maxTokens; i++ {
 			nextToken := nextTok(context)
-			decodedToken := data.Decode(nextToken)
-			fmt.Print(decodedToken)
+			fmt.Print(data.Decode(nextToken))
 			context = append(context, nextToken)
 		}
+
 		fmt.Print("\n$ ")
 		scanner := bufio.NewScanner(os.Stdin)
 		scanner.Scan()
