@@ -105,5 +105,5 @@ func (p *Params) LoadPretrainedIfExists() {
 		panic("model shapes mismatch, remove model-* files")
 	}
 
-	fmt.Printf("Loaded pretrained model from %s\n", filename)
+	fmt.Printf("Loaded pretrained model: %s\n", filename)
 }
