@@ -104,4 +104,6 @@ func (p *Params) LoadPretrainedIfExists() {
 	if savedChecksum != hash.Sum32() {
 		panic("model shapes mismatch, remove model-* files")
 	}
+
+	fmt.Printf("Loaded pretrained model from %s\n", filename)
 }

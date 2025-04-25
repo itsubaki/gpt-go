@@ -94,6 +94,7 @@ func main() {
 	}
 	params.Save()
 	pkg.DisableDropout()
+	// Training is done.
 
 	// Predicts the next token based on the context of tokens.
 	nextTok := func(context []float64) float64 {
