@@ -66,7 +66,7 @@ func main() {
 	// Training loop.
 	fmt.Printf("bs=%d, es=%d, lr=%.4f, ls=%.2f, vs=%d, epochs=%d \n", blockSize, embedSize, learningRate, lossScale, vocabSize, epochs)
 	for i := 0; i <= epochs; i++ {
-		// Targets contain the ground truth next token for each input token.
+		// Targets contain the ground truth nextToken token for each input token.
 		input, targets := data.Sample(dataset, blockSize)
 
 		// Forward pass, calculate predictions for every input token.
@@ -76,7 +76,7 @@ func main() {
 			embeds = block.Forward(embeds)
 		}
 		embeds = norm.Forward(embeds)
-		logits := lmHead.Forward(embeds) // converts contextual embeddings to next-token predictions
+		logits := lmHead.Forward(embeds) // converts contextual embeddings to nextToken-token predictions
 
 		// Loss calculation, how much our predicted targets differ from the ground truth targets?
 		loss := CrossEntropy(logits, targets)
@@ -97,28 +97,32 @@ func main() {
 	// Sample from the model.
 	maxTokens := 200
 	pkg.DisableDropout()
+	nextToken := func(tokens []float64) float64 {
+		tokens = tokens[max(0, len(tokens)-blockSize):]
+
+		// Get embeddings for all tokens in context.
+		embeds := Rows(tokEmbeds, tokens...)
+		embeds = Add(embeds, posEmbeds)
+		for _, block := range blocks {
+			embeds = block.Forward(embeds)
+		}
+		embeds = norm.Forward(embeds)
+		logits := lmHead.Forward(embeds) // get a list of final logits for the nextToken token
+
+		// We only care about the probabilities of the nextToken token for the last token.
+		logitsForLastToken := Rows(logits, -1)
+		probs := Softmax(logitsForLastToken)
+		nextToken := pkg.Sample(probs)
+		decodedToken := data.Decode(nextToken)
+		fmt.Print(decodedToken)
+
+		return nextToken
+	}
 	gen := func(prompt string) {
-		contextTokens := data.Encode(prompt)
+		context := data.Encode(prompt)
 		fmt.Printf("\n%s", prompt)
 		for i := 0; i < maxTokens; i++ {
-			contextTokens = contextTokens[max(0, len(contextTokens)-blockSize):]
-
-			// Get embeddings for all tokens in context.
-			embeds := Rows(tokEmbeds, contextTokens...)
-			embeds = Add(embeds, posEmbeds)
-			for _, block := range blocks {
-				embeds = block.Forward(embeds)
-			}
-			embeds = norm.Forward(embeds)
-			logits := lmHead.Forward(embeds) // get a list of final logits for the next token
-
-			// We only care about the probabilities of the next token for the last token.
-			logitsForLastToken := Rows(logits, -1)
-			probs := Softmax(logitsForLastToken)
-			nextToken := pkg.Sample(probs)
-			decodedToken := data.Decode(nextToken)
-			fmt.Print(decodedToken)
-			contextTokens = append(contextTokens, nextToken)
+			context = append(context, nextToken(context))
 		}
 	}
 
