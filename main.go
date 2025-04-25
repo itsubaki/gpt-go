@@ -130,6 +130,7 @@ func main() {
 		scanner.Scan()
 		prompt = scanner.Text()
 		if prompt == "exit" {
+			fmt.Println("Bye!")
 			break
 		}
 	}
