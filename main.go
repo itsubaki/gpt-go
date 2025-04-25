@@ -7,8 +7,8 @@ import (
 	"os"
 	"strings"
 
-	"gptgo/data"
-	"gptgo/pkg"
+	"github.com/zakirullin/gpt-go/data"
+	"github.com/zakirullin/gpt-go/pkg"
 )
 
 // Hyperparameters

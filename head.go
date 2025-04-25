@@ -7,7 +7,7 @@ import (
 	"github.com/itsubaki/autograd/layer"
 	"github.com/itsubaki/autograd/variable"
 
-	"gptgo/pkg"
+	"github.com/zakirullin/gpt-go/pkg"
 )
 
 type MultiHeadAttention struct {

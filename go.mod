@@ -1,4 +1,4 @@
-module gptgo
+module github.com/zakirullin/gpt-go
 
 go 1.23.6
 
