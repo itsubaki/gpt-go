@@ -44,7 +44,20 @@ I've given up the complexity of the batch dimension for the sake of better under
 Removed `gonum` dependency.  
 The `gonum.matmul` gave us ~30% performance boost, but it brought additional complexity. We're not striving for maximum efficiency here, rather for radical simplicity. Current matmul implementation is quite effective, and it's only 40 lines of plain readable code.  
 
-## Credits
-Many thanks to Andrej Karpathy for his outstanding [Neural Networks: Zero to Hero](https://karpathy.ai/zero-to-hero.html) course.  
+## Papers
+You don't need to read them to understand the code :)  
 
-Thanks to [@itsubaki](https://github.com/itsubaki) for his elegant [autograd](https://github.com/itsubaki/autograd) package.  
+[Attention Is All You Need](https://arxiv.org/abs/1706.03762)  
+[Deep Residual Learning](https://arxiv.org/abs/1512.03385)  
+[DeepMind WaveNet](https://arxiv.org/abs/1609.03499)  
+[Kaiming initialization](https://arxiv.org/abs/1502.01852)  
+[Batch Normalization](https://arxiv.org/abs/1502.03167)  
+[ImageNet Classification](https://papers.nips.cc/paper_files/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html)  
+[OpenAI GPT-3 paper](https://arxiv.org/abs/2005.14165)  
+[Analyzing the Structure of Attention](https://arxiv.org/abs/1906.04284)  
+[On the Biology of a Large Language Model](https://transformer-circuits.pub/2025/attribution-graphs/biology.html)  
+
+## Credits
+Many thanks to Andrej Karpathy for his outstanding [Neural Networks: Zero to Hero](https://karpathy.ai/zero-to-hero.html) course.
+
+Thanks to [@itsubaki](https://github.com/itsubaki) for his elegant [autograd](https://github.com/itsubaki/autograd) package.
