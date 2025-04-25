@@ -23,6 +23,7 @@ const (
 	dropout          = 0.0  // disable some % of our neurons to prevent overfitting, model is likely to generalize
 	lossScale        = 1.0  // we don't use batches, so scaling loss down may help better convergence
 	pretrainedTokens = 5000 // how many of subword pretrained tokens to add on top of default character-based tokens
+	maxTokens        = 200  // tokens limit for generation
 )
 
 func main() {
@@ -93,10 +94,9 @@ func main() {
 		params.ZeroGrad()
 	}
 	params.Save()
+	pkg.DisableDropout()
 
 	// Sample from the model.
-	maxTokens := 200
-	pkg.DisableDropout()
 	nextToken := func(tokens []float64) float64 {
 		tokens = tokens[max(0, len(tokens)-blockSize):]
 
