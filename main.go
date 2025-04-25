@@ -62,10 +62,9 @@ func main() {
 	params.Load()
 	fmt.Printf("Model size: %s\n", params)
 
-	optimizer := pkg.NewAdamW(learningRate)
-
 	// Training loop.
 	fmt.Printf("bs=%d, es=%d, lr=%.4f, ls=%.2f, vs=%d, epochs=%d \n", blockSize, embedSize, learningRate, lossScale, vocabSize, epochs)
+	optimizer := pkg.NewAdamW(learningRate)
 	for i := 0; i <= epochs; i++ {
 		// Targets contain the ground truth nextToken token for each input token.
 		input, targets := data.Sample(dataset, blockSize)
