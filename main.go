@@ -66,7 +66,7 @@ func main() {
 	fmt.Printf("bs=%d, es=%d, lr=%.4f, ls=%.2f, vs=%d, epochs=%d \n", blockSize, embedSize, learningRate, lossScale, vocabSize, epochs)
 	optimizer := pkg.NewAdamW(learningRate)
 	for i := 0; i <= epochs; i++ {
-		// Targets contain the ground truth nextToken token for each input token.
+		// Targets contain the ground truth next token for each input token.
 		input, targets := data.Sample(dataset, blockSize)
 
 		// Forward pass, calculate predictions for every input token.
@@ -76,7 +76,7 @@ func main() {
 			embeds = block.Forward(embeds)
 		}
 		embeds = norm.Forward(embeds)
-		logits := lmHead.Forward(embeds) // converts contextual embeddings to nextToken-token predictions
+		logits := lmHead.Forward(embeds) // converts contextual embeddings to next token predictions
 
 		// Loss calculation, how much our predicted targets differ from the ground truth targets?
 		loss := CrossEntropy(logits, targets)
@@ -106,9 +106,9 @@ func main() {
 			embeds = block.Forward(embeds)
 		}
 		embeds = norm.Forward(embeds)
-		logits := lmHead.Forward(embeds) // get a list of final logits for the nextToken token
+		logits := lmHead.Forward(embeds) // get a list of final logits for the next token
 
-		// We only care about the probabilities of the nextToken token for the last token.
+		// We only care about the probabilities of the next token for the last token.
 		logitsForNextToken := Rows(logits, -1)
 		probs := Softmax(logitsForNextToken)
 		nextToken := pkg.Sample(probs)
