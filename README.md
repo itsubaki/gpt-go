@@ -39,7 +39,7 @@ Use `git checkout <tag>` to see how the model has evolved over time: `naive`, `b
 
 ## Design choices
 No batches.  
-I've given up the complexity of the batch dimension for the sake of better understanding. Batches aren't inherent to transformer architecture.
+I've given up the complexity of the batch dimension for the sake of better understanding. It's far easier to build intuition with 2D matrices, rather than with 3D tensors. Besides, batches aren't inherent to transformer architecture.  
 
 Removed `gonum` dependency.  
 The `gonum.matmul` gave us ~30% performance boost, but it brought additional complexity. We're not striving for maximum efficiency here, rather for radical simplicity. Current matmul implementation is quite effective, and it's only 40 lines of plain readable code.  
