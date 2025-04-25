@@ -26,6 +26,7 @@ const (
 )
 
 func main() {
+	// Skip training if -chat flag is set.
 	epochs := epochs
 	chat := flag.Bool("chat", false, "Skip training and jump straight to chat")
 	flag.Parse()
@@ -33,6 +34,7 @@ func main() {
 		epochs = 0
 	}
 
+	// Loading dataset and building vocabulary.
 	fmt.Println("Tokenizing dataset...")
 	dataset, vocabSize := data.Tokenize(pretrainedTokens)
 	fmt.Printf("First characters:\n%s\n", strings.TrimSpace(data.Decode(dataset[:45]...)))
