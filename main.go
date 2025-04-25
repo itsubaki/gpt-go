@@ -59,7 +59,7 @@ func main() {
 	}
 	params.Add(norm.Params()...)
 	params.Add(lmHead.Params()...)
-	params.Load()
+	params.LoadPretrainedIfExists()
 	fmt.Printf("Model size: %s\n", params)
 
 	// Training loop.
