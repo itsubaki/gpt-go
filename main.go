@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"os"
 	"strings"
 
 	"gptgo/data"
@@ -14,12 +16,12 @@ const (
 	embedSize        = 64
 	heads            = 4
 	layers           = 4
-	epochs           = 20000
+	epochs           = 0
 	learningRate     = 0.001
 	evalIters        = 1000
-	dropout          = 0.0 // disable some % of our neurons to prevent overfitting, model is likely to generalize
-	lossScale        = 1.0 // we don't use batches, so scaling loss down may help better convergence
-	pretrainedTokens = 0   // how many of subword pretrained tokens to add on top of default character-based tokens
+	dropout          = 0.0  // disable some % of our neurons to prevent overfitting, model is likely to generalize
+	lossScale        = 1.0  // we don't use batches, so scaling loss down may help better convergence
+	pretrainedTokens = 5000 // how many of subword pretrained tokens to add on top of default character-based tokens
 )
 
 func main() {
@@ -83,29 +85,42 @@ func main() {
 	params.Save()
 
 	// Sample from the model.
-	prompt := "Mysterious Island"
 	maxTokens := 500
-	contextTokens := data.Encode(prompt)
-	pkg.DisableDropout()
-	fmt.Printf("\n%s", prompt)
-	for i := 0; i < maxTokens; i++ {
-		contextTokens = contextTokens[max(0, len(contextTokens)-blockSize):]
+	gen := func(prompt string) {
+		contextTokens := data.Encode(prompt)
+		pkg.DisableDropout()
+		fmt.Printf("\n%s", prompt)
+		for i := 0; i < maxTokens; i++ {
+			contextTokens = contextTokens[max(0, len(contextTokens)-blockSize):]
 
-		// Get embeddings for all tokens in context.
-		embeds := Rows(tokEmbeds, contextTokens...)
-		embeds = Add(embeds, posEmbeds)
-		for _, block := range blocks {
-			embeds = block.Forward(embeds)
+			// Get embeddings for all tokens in context.
+			embeds := Rows(tokEmbeds, contextTokens...)
+			embeds = Add(embeds, posEmbeds)
+			for _, block := range blocks {
+				embeds = block.Forward(embeds)
+			}
+			embeds = norm.Forward(embeds)
+			logits := lmHead.Forward(embeds) // get a list of final logits for the next token
+
+			// We only care about the probabilities of the next token for the last token.
+			logitsForLastToken := Rows(logits, -1)
+			probs := Softmax(logitsForLastToken)
+			nextToken := pkg.Sample(probs)
+			decodedToken := data.Decode(nextToken)
+			fmt.Print(decodedToken)
+			contextTokens = append(contextTokens, nextToken)
 		}
-		embeds = norm.Forward(embeds)
-		logits := lmHead.Forward(embeds) // get a list of final logits for the next token
+	}
 
-		// We only care about the probabilities of the next token for the last token.
-		logitsForLastToken := Rows(logits, -1)
-		probs := Softmax(logitsForLastToken)
-		nextToken := pkg.Sample(probs)
-		decodedToken := data.Decode(nextToken)
-		fmt.Print(decodedToken)
-		contextTokens = append(contextTokens, nextToken)
+	prompt := "Mysterious Island"
+	for {
+		gen(prompt)
+		fmt.Print("\n\n$ ")
+		scanner := bufio.NewScanner(os.Stdin)
+		scanner.Scan()
+		prompt = scanner.Text()
+		if prompt == "exit" {
+			break
+		}
 	}
 }
