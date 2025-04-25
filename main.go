@@ -95,12 +95,12 @@ func main() {
 	params.Save()
 	pkg.DisableDropout()
 
-	// Sample from the model.
-	nextTok := func(tokens []float64) float64 {
-		tokens = tokens[max(0, len(tokens)-blockSize):]
+	// Predicts the next token based on the context of tokens.
+	nextTok := func(context []float64) float64 {
+		context = context[max(0, len(context)-blockSize):]
 
-		// Get embeddings for all tokens in context.
-		embeds := Rows(tokEmbeds, tokens...)
+		// Get embeddings for all context in context.
+		embeds := Rows(tokEmbeds, context...)
 		embeds = Add(embeds, posEmbeds)
 		for _, block := range blocks {
 			embeds = block.Forward(embeds)
@@ -116,6 +116,7 @@ func main() {
 		return nextToken
 	}
 
+	// Sample from the model.
 	prompt := "Mysterious Island"
 	for {
 		fmt.Printf("\n%s", prompt)
