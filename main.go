@@ -96,7 +96,7 @@ func main() {
 	pkg.DisableDropout()
 
 	// Sample from the model.
-	nextToken := func(tokens []float64) float64 {
+	nextTok := func(tokens []float64) float64 {
 		tokens = tokens[max(0, len(tokens)-blockSize):]
 
 		// Get embeddings for all tokens in context.
@@ -112,8 +112,6 @@ func main() {
 		logitsForNextToken := Rows(logits, -1)
 		probs := Softmax(logitsForNextToken)
 		nextToken := pkg.Sample(probs)
-		decodedToken := data.Decode(nextToken)
-		fmt.Print(decodedToken)
 
 		return nextToken
 	}
@@ -123,7 +121,10 @@ func main() {
 		fmt.Printf("\n%s", prompt)
 		context := data.Encode(prompt)
 		for i := 0; i < maxTokens; i++ {
-			context = append(context, nextToken(context))
+			nextToken := nextTok(context)
+			decodedToken := data.Decode(nextToken)
+			fmt.Print(decodedToken)
+			context = append(context, nextToken)
 		}
 		fmt.Print("\n$ ")
 		scanner := bufio.NewScanner(os.Stdin)
