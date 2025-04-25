@@ -20,19 +20,17 @@ epoch: 20000, loss: 4.86982
 ```
 
 ## How to run
-To train the model:  
 ```shell
 $ go run .
 ```
 
-Trained params are saved in `model-*` file.  
+You can train on your own dataset by pointing `data.dataset` variable to your text corpus.  
+Trained params will be saved to `model-*` file.  
 
 To chat with the model:  
 ```shell
 $ go run . -chat
 ```
-
-You can train on your own dataset by pointing `data.dataset` variable to your text corpus.  
 
 ## How to understand
 You can use this repository as a companion to the [Neural Networks: Zero to Hero](https://karpathy.ai/zero-to-hero.html) course.  
