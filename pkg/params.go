@@ -49,8 +49,7 @@ func (p *Params) ZeroGrad() {
 }
 
 func (p *Params) Save() {
-	filename := fmt.Sprintf("model-%.3fM", float64(p.Count())/1e6)
-	file, err := os.Create(filename)
+	file, err := os.Create(p.filename())
 	if err != nil {
 		panic(err)
 	}
@@ -77,8 +76,7 @@ func (p *Params) Save() {
 }
 
 func (p *Params) LoadPretrainedIfExists() {
-	filename := fmt.Sprintf("model-%.3fM", float64(p.Count())/1e6)
-	file, err := os.Open(filename)
+	file, err := os.Open(p.filename())
 	if err != nil {
 		return
 	}
@@ -105,5 +103,9 @@ func (p *Params) LoadPretrainedIfExists() {
 		panic("model shapes mismatch, remove model-* files")
 	}
 
-	fmt.Printf("Loaded pretrained model: %s\n", filename)
+	fmt.Printf("Loaded pretrained model: %s\n", p.filename())
+}
+
+func (p *Params) filename() string {
+	return fmt.Sprintf("model-%.3fM", float64(p.Count())/1e6)
 }
