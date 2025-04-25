@@ -17,7 +17,7 @@ const (
 	embedSize        = 64
 	heads            = 4
 	layers           = 4
-	epochs           = 0
+	epochs           = 20000
 	learningRate     = 0.001
 	evalIters        = 1000
 	dropout          = 0.0  // disable some % of our neurons to prevent overfitting, model is likely to generalize
@@ -93,7 +93,7 @@ func main() {
 	params.Save()
 
 	// Sample from the model.
-	maxTokens := 500
+	maxTokens := 200
 	pkg.DisableDropout()
 	gen := func(prompt string) {
 		contextTokens := data.Encode(prompt)
