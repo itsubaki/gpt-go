@@ -109,8 +109,8 @@ func main() {
 		logits := lmHead.Forward(embeds) // get a list of final logits for the nextToken token
 
 		// We only care about the probabilities of the nextToken token for the last token.
-		logitsForLastToken := Rows(logits, -1)
-		probs := Softmax(logitsForLastToken)
+		logitsForNextToken := Rows(logits, -1)
+		probs := Softmax(logitsForNextToken)
 		nextToken := pkg.Sample(probs)
 		decodedToken := data.Decode(nextToken)
 		fmt.Print(decodedToken)
