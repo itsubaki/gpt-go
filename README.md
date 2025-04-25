@@ -27,7 +27,7 @@ $ go run .
 You can train on your own dataset by pointing `data.dataset` variable to your text corpus.  
 Trained params will be saved to `model-*` file.  
 
-To chat with the model:  
+To run in chat-only mode:  
 ```shell
 $ go run . -chat
 ```

@@ -103,6 +103,6 @@ func (p *Params) Load() {
 	}
 
 	if savedChecksum != hash.Sum32() {
-		panic(fmt.Errorf("model shapes mismatch: expected checksum %d, got %d", savedChecksum, hash.Sum32()))
+		panic("model shapes mismatch, remove model-* files")
 	}
 }
