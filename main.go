@@ -11,15 +11,15 @@ import (
 // Hyperparameters
 const (
 	blockSize        = 32
-	embedSize        = 128
+	embedSize        = 64
 	heads            = 4
 	layers           = 4
-	epochs           = 40000
+	epochs           = 20000
 	learningRate     = 0.001
 	evalIters        = 1000
-	dropout          = 0.0  // disable some % of our neurons to prevent overfitting, model is likely to generalize
-	lossScale        = 1.0  // we don't use batches, so scaling loss down may help better convergence
-	pretrainedTokens = 5000 // how many of subword pretrained tokens to add on top of default character-based tokens
+	dropout          = 0.0 // disable some % of our neurons to prevent overfitting, model is likely to generalize
+	lossScale        = 1.0 // we don't use batches, so scaling loss down may help better convergence
+	pretrainedTokens = 0   // how many of subword pretrained tokens to add on top of default character-based tokens
 )
 
 func main() {
@@ -46,6 +46,7 @@ func main() {
 	}
 	params.Add(norm.Params()...)
 	params.Add(lmHead.Params()...)
+	params.Load()
 	fmt.Printf("Model size: %s\n", params)
 
 	optimizer := pkg.NewAdamW(learningRate)
@@ -79,6 +80,7 @@ func main() {
 		optimizer.Update(params)
 		params.ZeroGrad()
 	}
+	params.Save()
 
 	// Sample from the model.
 	prompt := "Mysterious Island"
