@@ -32,7 +32,7 @@ func main() {
 	chat := flag.Bool("chat", false, "Skip training and jump straight to chat")
 	flag.Parse()
 	if *chat {
-		epochs = 0
+		epochs = -1
 	}
 
 	// Loading dataset and building vocabulary.
@@ -117,17 +117,14 @@ func main() {
 
 		return nextToken
 	}
-	gen := func(prompt string) {
-		context := data.Encode(prompt)
-		fmt.Printf("\n%s", prompt)
-		for i := 0; i < maxTokens; i++ {
-			context = append(context, nextToken(context))
-		}
-	}
 
 	prompt := "Mysterious Island"
 	for {
-		gen(prompt)
+		fmt.Printf("\n%s", prompt)
+		context := data.Encode(prompt)
+		for i := 0; i < maxTokens; i++ {
+			context = append(context, nextToken(context))
+		}
 		fmt.Print("\n$ ")
 		scanner := bufio.NewScanner(os.Stdin)
 		scanner.Scan()
