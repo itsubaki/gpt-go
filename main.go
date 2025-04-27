@@ -17,8 +17,8 @@ const (
 	embedSize        = 384
 	heads            = 8
 	layers           = 8
-	steps            = 50
-	evalSteps        = 1
+	epochs           = 1
+	evalFreq         = 0.1
 	learningRate     = 0.0005
 	dropout          = 0.2  // disable some % of our neurons to prevent overfitting, model is likely to generalize
 	lossScale        = 1.0  // we don't use batches, so scaling loss down may help better convergence
@@ -28,11 +28,11 @@ const (
 
 func main() {
 	// Skip training if -chat flag is provided.
-	steps := steps
+	epochs := epochs
 	chat := flag.Bool("chat", false, "Skip training and jump straight to chat")
 	flag.Parse()
 	if *chat {
-		steps = -1
+		epochs = -1
 	}
 
 	// Loading dataset and building vocabulary.
@@ -64,9 +64,10 @@ func main() {
 	fmt.Printf("Model size: %s\n", params)
 
 	// Training loop.
-	fmt.Printf("bs=%d, es=%d, lr=%.4f, ls=%.2f, vs=%d, steps=%d \n", blockSize, embedSize, learningRate, lossScale, vocabSize, steps)
+	fmt.Printf("bs=%d, es=%d, lr=%.4f, ls=%.2f, vs=%d, epochs=%d \n", blockSize, embedSize, learningRate, lossScale, vocabSize, epochs)
 	optimizer := pkg.NewAdamW(learningRate)
-	for i := 0; i <= steps; i++ {
+	steps := len(dataset) / blockSize
+	for i := 0; i < epochs*steps; i++ {
 		// Targets contain the ground truth next token for each input token.
 		input, targets := data.SampleSeq(dataset, blockSize)
 
@@ -82,7 +83,7 @@ func main() {
 		// Loss calculation, how much our predicted targets differ from the ground truth targets?
 		loss := CrossEntropy(logits, targets)
 		loss = MulC(lossScale, loss)
-		if (i % evalSteps) == 0 {
+		if i%int(float64(steps)*evalFreq) == 0 {
 			fmt.Printf("step: %5d, loss: %.5f\n", i, Val(loss)/lossScale)
 		}
 
