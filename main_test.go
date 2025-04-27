@@ -6,7 +6,7 @@ import (
 
 	"github.com/itsubaki/autograd/variable"
 
-	"gptgo/data"
+	"github.com/zakirullin/gpt-go/data"
 )
 
 func TestNeuron(t *testing.T) {

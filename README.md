@@ -55,7 +55,6 @@ You don't need to read them to understand the code :)
 [Deep NN + huge data = breakthrough performance](https://papers.nips.cc/paper_files/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html)  
 [OpenAI GPT-3 paper](https://arxiv.org/abs/2005.14165)  
 [Analyzing the Structure of Attention](https://arxiv.org/abs/1906.04284)  
-[On the Biology of a Large Language Model](https://transformer-circuits.pub/2025/attribution-graphs/biology.html)  
 
 ## Credits
 Many thanks to Andrej Karpathy for his outstanding [Neural Networks: Zero to Hero](https://karpathy.ai/zero-to-hero.html) course.

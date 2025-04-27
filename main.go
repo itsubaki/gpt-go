@@ -13,12 +13,12 @@ import (
 
 // Hyperparameters
 const (
-	blockSize        = 64
+	blockSize        = 32
 	embedSize        = 64
 	heads            = 4
 	layers           = 4
 	epochs           = 20000
-	learningRate     = 0.0001
+	learningRate     = 0.001
 	evalIters        = 1000
 	dropout          = 0.0  // disable some % of our neurons to prevent overfitting, model is likely to generalize
 	lossScale        = 1.0  // we don't use batches, so scaling loss down may help better convergence
@@ -118,7 +118,7 @@ func main() {
 	}
 
 	// Sample from the model.
-	prompt := "mysterious island"
+	prompt := "magic forest"
 	for {
 		fmt.Printf("\n%s", prompt)
 		context := data.Encode(prompt)
