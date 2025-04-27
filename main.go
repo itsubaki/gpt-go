@@ -112,13 +112,13 @@ func main() {
 		// We only care about the probabilities of the next token for the last token.
 		logitsForNextToken := Rows(logits, -1)
 		probs := Softmax(logitsForNextToken)
-		nextToken := pkg.SampleTemp(probs, 0.8)
+		nextToken := pkg.SampleTemp(probs, 0.7)
 
 		return nextToken
 	}
 
 	// Sample from the model.
-	prompt := "Mysterious island"
+	prompt := "mysterious island"
 	for {
 		fmt.Printf("\n%s", prompt)
 		context := data.Encode(prompt)

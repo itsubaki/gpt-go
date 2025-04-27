@@ -34,13 +34,13 @@ func Sample(probs *variable.Variable) float64 {
 
 // SampleTemp returns a random index based on the given probabilities and temperature.
 // The higher the temperature, the more random the sampling.
-// Usually, temperature is between 0.5 and 1.0.
+// Usually, temperature is between 0.5 and 0.8.
 func SampleTemp(probs *variable.Variable, temperature float64) float64 {
 	adjustedProbs := make([]float64, len(probs.Data[0]))
 	copy(adjustedProbs, probs.Data[0])
 	if temperature != 1.0 {
-		// Lower temperature: More deterministic (higher probs amplified, lower reduced)
-		// Higher temperature: More random/diverse (probabilities become more uniform)
+		// Lower temperature: higher probs amplified, lower reduced, more deterministic
+		// Higher temperature: probabilities become more uniform, more random
 		sum := 0.0
 		for i, p := range adjustedProbs {
 			// Apply temperature by raising to power of 1/temperature
@@ -58,7 +58,7 @@ func SampleTemp(probs *variable.Variable, temperature float64) float64 {
 }
 
 // SampleMax returns the index of the maximum value.
-// I use that to verify that the model has remembered some pattern.
+// I use that to verify that the model has remembered some patterns.
 func SampleMax(probs *variable.Variable) float64 {
 	maxProb := -1.0
 	maxIndex := 0
