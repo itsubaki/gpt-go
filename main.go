@@ -17,9 +17,9 @@ const (
 	embedSize        = 384
 	heads            = 8
 	layers           = 8
-	epochs           = 50
+	steps            = 50
+	evalSteps        = 1
 	learningRate     = 0.0005
-	evalIters        = 1
 	dropout          = 0.2  // disable some % of our neurons to prevent overfitting, model is likely to generalize
 	lossScale        = 1.0  // we don't use batches, so scaling loss down may help better convergence
 	pretrainedTokens = 7000 // how many of subword pretrained tokens to add on top of default character-based tokens
@@ -28,11 +28,11 @@ const (
 
 func main() {
 	// Skip training if -chat flag is provided.
-	epochs := epochs
+	steps := steps
 	chat := flag.Bool("chat", false, "Skip training and jump straight to chat")
 	flag.Parse()
 	if *chat {
-		epochs = -1
+		steps = -1
 	}
 
 	// Loading dataset and building vocabulary.
@@ -40,6 +40,7 @@ func main() {
 	dataset, vocabSize := data.Tokenize(pretrainedTokens)
 	fmt.Printf("First characters:\n%s\n", strings.TrimSpace(data.Decode(dataset[:45]...)))
 	fmt.Printf("Vocabulary: %s\n", data.Characters())
+	fmt.Printf("Number of tokens in dataset: %d\n", len(dataset))
 
 	// Basic transformer components.
 	tokEmbeds := RandEmbeds(vocabSize, embedSize)
@@ -63,9 +64,9 @@ func main() {
 	fmt.Printf("Model size: %s\n", params)
 
 	// Training loop.
-	fmt.Printf("bs=%d, es=%d, lr=%.4f, ls=%.2f, vs=%d, epochs=%d \n", blockSize, embedSize, learningRate, lossScale, vocabSize, epochs)
+	fmt.Printf("bs=%d, es=%d, lr=%.4f, ls=%.2f, vs=%d, steps=%d \n", blockSize, embedSize, learningRate, lossScale, vocabSize, steps)
 	optimizer := pkg.NewAdamW(learningRate)
-	for i := 0; i <= epochs; i++ {
+	for i := 0; i <= steps; i++ {
 		// Targets contain the ground truth next token for each input token.
 		input, targets := data.SampleSeq(dataset, blockSize)
 
@@ -81,8 +82,8 @@ func main() {
 		// Loss calculation, how much our predicted targets differ from the ground truth targets?
 		loss := CrossEntropy(logits, targets)
 		loss = MulC(lossScale, loss)
-		if (i % evalIters) == 0 {
-			fmt.Printf("epoch: %5d, loss: %.5f\n", i, Val(loss)/lossScale)
+		if (i % evalSteps) == 0 {
+			fmt.Printf("step: %5d, loss: %.5f\n", i, Val(loss)/lossScale)
 		}
 
 		// Backward pass, calculate the gradients (how much each parameter contributes to the loss)
