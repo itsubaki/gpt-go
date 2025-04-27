@@ -18,12 +18,12 @@ const (
 	heads            = 4
 	layers           = 4
 	epochs           = 20000
-	learningRate     = 0.001
+	learningRate     = 0.0001
 	evalIters        = 1000
 	dropout          = 0.0  // disable some % of our neurons to prevent overfitting, model is likely to generalize
-	lossScale        = 1.0  // we don't use batches, so scaling loss down may help better convergence
+	lossScale        = 0.2  // we don't use batches, so scaling loss down may help better convergence
 	pretrainedTokens = 5000 // how many of subword pretrained tokens to add on top of default character-based tokens
-	maxTokens        = 200  // tokens limit for generation
+	maxTokens        = 100  // tokens limit for generation
 )
 
 func main() {
@@ -112,13 +112,13 @@ func main() {
 		// We only care about the probabilities of the next token for the last token.
 		logitsForNextToken := Rows(logits, -1)
 		probs := Softmax(logitsForNextToken)
-		nextToken := pkg.Sample(probs)
+		nextToken := pkg.SampleTemp(probs, 0.8)
 
 		return nextToken
 	}
 
 	// Sample from the model.
-	prompt := "Mysterious Island"
+	prompt := "Mysterious island"
 	for {
 		fmt.Printf("\n%s", prompt)
 		context := data.Encode(prompt)

@@ -15,6 +15,7 @@ var (
 	Zeros = variable.Zero
 )
 
+// Sample returns a random index based on the given probabilities.
 func Sample(probs *variable.Variable) float64 {
 	r := rand.Float64()
 
@@ -29,6 +30,46 @@ func Sample(probs *variable.Variable) float64 {
 
 	// Fallback (should rarely happen due to floating point precision)
 	return float64(len(probs.Data)) - 1
+}
+
+// SampleTemp returns a random index based on the given probabilities and temperature.
+// The higher the temperature, the more random the sampling.
+// Usually, temperature is between 0.5 and 1.0.
+func SampleTemp(probs *variable.Variable, temperature float64) float64 {
+	adjustedProbs := make([]float64, len(probs.Data[0]))
+	copy(adjustedProbs, probs.Data[0])
+	if temperature != 1.0 {
+		// Lower temperature: More deterministic (higher probs amplified, lower reduced)
+		// Higher temperature: More random/diverse (probabilities become more uniform)
+		sum := 0.0
+		for i, p := range adjustedProbs {
+			// Apply temperature by raising to power of 1/temperature
+			adjustedProbs[i] = math.Pow(p, 1.0/temperature)
+			sum += adjustedProbs[i]
+		}
+
+		// Re-normalize
+		for i := range adjustedProbs {
+			adjustedProbs[i] /= sum
+		}
+	}
+
+	return Sample(variable.NewOf(adjustedProbs))
+}
+
+// SampleMax returns the index of the maximum value.
+// I use that to verify that the model has remembered some pattern.
+func SampleMax(probs *variable.Variable) float64 {
+	maxProb := -1.0
+	maxIndex := 0
+	for i, p := range probs.Data[0] {
+		if p > maxProb {
+			maxProb = p
+			maxIndex = i
+		}
+	}
+
+	return float64(maxIndex)
 }
 
 // Returns rows at specified indexes. Negative indexes return rows from the end.
