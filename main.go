@@ -13,16 +13,16 @@ import (
 
 // Hyperparameters
 const (
-	blockSize        = 32
-	embedSize        = 64
-	heads            = 4
-	layers           = 4
-	epochs           = 20000
-	learningRate     = 0.001
-	evalIters        = 1000
-	dropout          = 0.0  // disable some % of our neurons to prevent overfitting, model is likely to generalize
+	blockSize        = 512
+	embedSize        = 384
+	heads            = 8
+	layers           = 8
+	epochs           = 50
+	learningRate     = 0.0005
+	evalIters        = 1
+	dropout          = 0.2  // disable some % of our neurons to prevent overfitting, model is likely to generalize
 	lossScale        = 1.0  // we don't use batches, so scaling loss down may help better convergence
-	pretrainedTokens = 5000 // how many of subword pretrained tokens to add on top of default character-based tokens
+	pretrainedTokens = 7000 // how many of subword pretrained tokens to add on top of default character-based tokens
 	maxTokens        = 100  // tokens limit for generation
 )
 
@@ -67,7 +67,7 @@ func main() {
 	optimizer := pkg.NewAdamW(learningRate)
 	for i := 0; i <= epochs; i++ {
 		// Targets contain the ground truth next token for each input token.
-		input, targets := data.Sample(dataset, blockSize)
+		input, targets := data.SampleSeq(dataset, blockSize)
 
 		// Forward pass, calculate predictions for every input token.
 		embeds := Rows(tokEmbeds, input.Data[0]...) // get embed for every input token

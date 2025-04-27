@@ -26,6 +26,8 @@ var (
 	Dataset = func() string { return dataset }
 	Vocab   = func() string { return vocab }
 	RandInt = rand.IntN
+
+	samplePos int
 )
 
 func Tokenize(numMerges int) ([]float64, int) {
@@ -107,6 +109,33 @@ func Sample(data []float64, blockSize int) (*variable.Variable, *variable.Variab
 		x[i] = data[i+offset]
 		y[i] = data[i+offset+1]
 	}
+
+	return variable.New(x...), variable.New(y...)
+}
+
+// SampleSeq sequentially samples data with the given block size.
+func SampleSeq(data []float64, blockSize int) (*variable.Variable, *variable.Variable) {
+	dataLen := len(data)
+	if dataLen < blockSize+1 {
+		panic("Not enough Data for the given block size")
+	}
+
+	x := make([]float64, blockSize)
+	y := make([]float64, blockSize)
+
+	// Check if we need to reset position (not enough room for a full sequence + target)
+	if samplePos > dataLen-blockSize-1 {
+		samplePos = 0
+	}
+	for i := 0; i < blockSize; i++ {
+		xPos := (samplePos + i) % dataLen
+		yPos := (samplePos + i + 1) % dataLen
+
+		x[i] = data[xPos]
+		y[i] = data[yPos]
+	}
+
+	samplePos = (samplePos + blockSize) % dataLen
 
 	return variable.New(x...), variable.New(y...)
 }
