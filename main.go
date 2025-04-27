@@ -40,7 +40,7 @@ func main() {
 	dataset, vocabSize := data.Tokenize(pretrainedTokens)
 	fmt.Printf("First characters:\n%s\n", strings.TrimSpace(data.Decode(dataset[:45]...)))
 	fmt.Printf("Vocabulary: %s\n", data.Characters())
-	fmt.Printf("Tokens in dataset: %.3f\n", pkg.Millions(len(dataset)))
+	fmt.Printf("Tokens in dataset: %.3fM\n", pkg.Millions(len(dataset)))
 
 	// Basic transformer components.
 	tokEmbeds := RandEmbeds(vocabSize, embedSize)
@@ -61,7 +61,7 @@ func main() {
 	params.Add(norm.Params()...)
 	params.Add(lmHead.Params()...)
 	params.LoadPretrainedIfExists()
-	fmt.Printf("Model size: %.3f\n", pkg.Millions(params.Count()))
+	fmt.Printf("Model size: %.3fM\n", pkg.Millions(params.Count()))
 
 	// Training loop.
 	optimizer := pkg.NewAdamW(learningRate)
