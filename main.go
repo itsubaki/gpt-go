@@ -40,7 +40,7 @@ func main() {
 	dataset, vocabSize := data.Tokenize(pretrainedTokens)
 	fmt.Printf("First characters:\n%s\n", strings.TrimSpace(data.Decode(dataset[:45]...)))
 	fmt.Printf("Vocabulary: %s\n", data.Characters())
-	fmt.Printf("Tokens in dataset: %d\n", len(dataset))
+	fmt.Printf("Tokens in dataset: %.3f\n", pkg.Millions(len(dataset)))
 
 	// Basic transformer components.
 	tokEmbeds := RandEmbeds(vocabSize, embedSize)
@@ -65,9 +65,9 @@ func main() {
 
 	// Training loop.
 	optimizer := pkg.NewAdamW(learningRate)
-	steps := len(dataset) / blockSize
+	steps := epochs * len(dataset) / blockSize
 	fmt.Printf("bs=%d, es=%d, lr=%.4f, ls=%.2f, vs=%d, epochs=%d, steps=%d\n", blockSize, embedSize, learningRate, lossScale, vocabSize, epochs, steps)
-	for i := 0; i < epochs*steps; i++ {
+	for i := 0; i < steps; i++ {
 		// Targets contain the ground truth next token for each input token.
 		input, targets := data.SampleSeq(dataset, blockSize)
 

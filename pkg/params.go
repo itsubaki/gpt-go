@@ -102,5 +102,5 @@ func (p *Params) LoadPretrainedIfExists() {
 }
 
 func (p *Params) filename() string {
-	return fmt.Sprintf("model-%.3fM", float64(p.Count())/1e6)
+	return fmt.Sprintf("model-%.3fM", Millions(p.Count()))
 }
