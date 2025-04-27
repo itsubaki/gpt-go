@@ -18,9 +18,9 @@ var (
 	mergeRules map[int64]int
 	rulesOrder []int64
 
-	//go:embed jules_verne.txt
+	//go:embed fairy_tales.txt
 	dataset string
-	//go:embed vocab
+	//go:embed fairy_vocab
 	vocab string
 
 	Dataset = func() string { return dataset }
