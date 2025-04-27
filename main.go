@@ -13,16 +13,16 @@ import (
 
 // Hyperparameters
 const (
-	blockSize        = 512
-	embedSize        = 384
-	heads            = 8
-	layers           = 8
+	blockSize        = 32
+	embedSize        = 64
+	heads            = 4
+	layers           = 4
 	epochs           = 1   // how many times to go through the dataset
 	evalFreq         = 0.1 // portion of epoch to evaluate
 	learningRate     = 0.0005
 	dropout          = 0.2  // disable some % of our neurons to prevent overfitting, model is likely to generalize
 	lossScale        = 1.0  // we don't use batches, so scaling loss down may help better convergence
-	pretrainedTokens = 7000 // how many of subword pretrained tokens to add on top of default character-based tokens
+	pretrainedTokens = 5000 // how many of subword pretrained tokens to add on top of default character-based tokens
 	maxTokens        = 100  // tokens limit for generation
 )
 
