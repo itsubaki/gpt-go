@@ -114,7 +114,7 @@ func main() {
 		// We only care about the probabilities of the next token for the last token.
 		logitsForNextToken := Rows(logits, -1)
 		probs := Softmax(logitsForNextToken)
-		nextToken := pkg.SampleTemp(probs, 0.7)
+		nextToken := pkg.SampleTemp(probs, 0.8)
 
 		return nextToken
 	}

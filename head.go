@@ -74,6 +74,7 @@ func NewHead(embedSize, headSize int) *Head {
 	return &Head{embedSize, headSize, key, query, value}
 }
 
+// Self-attention is happening here
 func (h *Head) Forward(input *variable.Variable) *variable.Variable {
 	T := len(input.Data)
 	key := h.Key.Forward(input)
