@@ -27,7 +27,7 @@ var (
 	Vocab   = func() string { return vocab }
 	RandInt = rand.IntN
 
-	samplePos int
+	datasetPos int
 )
 
 func Tokenize(numMerges int) ([]float64, int) {
@@ -124,18 +124,18 @@ func SampleSeq(data []float64, blockSize int) (*variable.Variable, *variable.Var
 	y := make([]float64, blockSize)
 
 	// Check if we need to reset position (not enough room for a full sequence + target)
-	if samplePos > dataLen-blockSize-1 {
-		samplePos = 0
+	if datasetPos > dataLen-blockSize-1 {
+		datasetPos = 0
 	}
 	for i := 0; i < blockSize; i++ {
-		xPos := (samplePos + i) % dataLen
-		yPos := (samplePos + i + 1) % dataLen
+		xPos := (datasetPos + i) % dataLen
+		yPos := (datasetPos + i + 1) % dataLen
 
 		x[i] = data[xPos]
 		y[i] = data[yPos]
 	}
 
-	samplePos = (samplePos + blockSize) % dataLen
+	datasetPos = (datasetPos + blockSize) % dataLen
 
 	return variable.New(x...), variable.New(y...)
 }

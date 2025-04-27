@@ -17,8 +17,8 @@ const (
 	embedSize        = 384
 	heads            = 8
 	layers           = 8
-	epochs           = 1
-	evalFreq         = 0.1
+	epochs           = 1   // how many times to go through the dataset
+	evalFreq         = 0.1 // portion of epoch to evaluate
 	learningRate     = 0.0005
 	dropout          = 0.2  // disable some % of our neurons to prevent overfitting, model is likely to generalize
 	lossScale        = 1.0  // we don't use batches, so scaling loss down may help better convergence
@@ -40,7 +40,7 @@ func main() {
 	dataset, vocabSize := data.Tokenize(pretrainedTokens)
 	fmt.Printf("First characters:\n%s\n", strings.TrimSpace(data.Decode(dataset[:45]...)))
 	fmt.Printf("Vocabulary: %s\n", data.Characters())
-	fmt.Printf("Number of tokens in dataset: %d\n", len(dataset))
+	fmt.Printf("Tokens in dataset: %d\n", len(dataset))
 
 	// Basic transformer components.
 	tokEmbeds := RandEmbeds(vocabSize, embedSize)
@@ -64,9 +64,9 @@ func main() {
 	fmt.Printf("Model size: %s\n", params)
 
 	// Training loop.
-	fmt.Printf("bs=%d, es=%d, lr=%.4f, ls=%.2f, vs=%d, epochs=%d \n", blockSize, embedSize, learningRate, lossScale, vocabSize, epochs)
 	optimizer := pkg.NewAdamW(learningRate)
 	steps := len(dataset) / blockSize
+	fmt.Printf("bs=%d, es=%d, lr=%.4f, ls=%.2f, vs=%d, epochs=%d, steps=%d\n", blockSize, embedSize, learningRate, lossScale, vocabSize, epochs, steps)
 	for i := 0; i < epochs*steps; i++ {
 		// Targets contain the ground truth next token for each input token.
 		input, targets := data.SampleSeq(dataset, blockSize)
