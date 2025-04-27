@@ -15,6 +15,10 @@ var (
 	Zeros = variable.Zero
 )
 
+func Millions(num int) float64 {
+	return float64(num) / 1e6
+}
+
 // Sample returns a random index based on the given probabilities.
 func Sample(probs *variable.Variable) float64 {
 	r := rand.Float64()

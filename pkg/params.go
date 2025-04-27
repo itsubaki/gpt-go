@@ -30,11 +30,6 @@ func (p *Params) Params() layer.Parameters {
 	return p.params
 }
 
-func (p *Params) String() string {
-
-	return fmt.Sprintf("%.3fM parameters\n", float64(p.Count())/1e6)
-}
-
 func (p *Params) Count() int {
 	numParams := 0
 	for _, param := range p.params {

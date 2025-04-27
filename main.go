@@ -61,7 +61,7 @@ func main() {
 	params.Add(norm.Params()...)
 	params.Add(lmHead.Params()...)
 	params.LoadPretrainedIfExists()
-	fmt.Printf("Model size: %s\n", params)
+	fmt.Printf("Model size: %.3f\n", pkg.Millions(params.Count()))
 
 	// Training loop.
 	optimizer := pkg.NewAdamW(learningRate)
