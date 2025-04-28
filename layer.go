@@ -27,8 +27,6 @@ type Linear struct {
 	BiasGrad *variable.Variable
 }
 
-type LinearOption func(*Linear)
-
 func NewLinear(in, out int, opts ...LinearOption) *Linear {
 	l := &Linear{
 		In:     in,
@@ -43,15 +41,6 @@ func NewLinear(in, out int, opts ...LinearOption) *Linear {
 	}
 
 	return l
-}
-
-func NoBias() LinearOption {
-	return func(l *Linear) {
-		l.Biased = false
-		// Set bias tensors to nil or zero-sized tensors
-		l.Bias = nil
-		l.BiasGrad = nil
-	}
 }
 
 // Forward computes the output based on the input (forward pass)
@@ -75,6 +64,17 @@ func (l *Linear) Params() []layer.Parameter {
 	}
 
 	return params
+}
+
+type LinearOption func(*Linear)
+
+func NoBias() LinearOption {
+	return func(l *Linear) {
+		l.Biased = false
+		// Set bias tensors to nil or zero-sized tensors
+		l.Bias = nil
+		l.BiasGrad = nil
+	}
 }
 
 type LayerNorm struct {
