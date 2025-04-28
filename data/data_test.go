@@ -21,21 +21,6 @@ func TestTokenize(t *testing.T) {
 	areEqual(t, 4, vocabSize)
 }
 
-func TestTokenizeWithUnicode(t *testing.T) {
-	Dataset = func() string {
-		return "a\n\n"
-	}
-	Vocab = func() string {
-		return "[\\u000a][\\u000a] -> [\\u000a\\u000a]"
-	}
-	encoded, vocabSize := Tokenize(1)
-
-	areSlicesEqual(t, []float64{0, 2}, encoded)
-	areEqual(t, 3, vocabSize)
-
-	areEqual(t, "a\n\n", Decode(encoded...))
-}
-
 func TestEncode(t *testing.T) {
 	Dataset = func() string {
 		return "abcd"
@@ -69,7 +54,7 @@ func TestDecode(t *testing.T) {
 	areEqual(t, "aaabdaaabac", decoded)
 }
 
-func TestEncodeDecodeNewLines(t *testing.T) {
+func TestEncodeDecodeDifferentNewLines(t *testing.T) {
 	Dataset = func() string {
 		return "a\nb\r\nc"
 	}
@@ -82,6 +67,21 @@ func TestEncodeDecodeNewLines(t *testing.T) {
 
 	decoded := Decode([]float64{0, 1, 2, 1, 3}...)
 	areEqual(t, "a\nb\nc", decoded)
+}
+
+func TestEncodeDecodeTokenizedNewLines(t *testing.T) {
+	Dataset = func() string {
+		return "a\nb\n\nc"
+	}
+	Vocab = func() string {
+		return "[\\n][\\n] -> [\\n\\n]"
+	}
+
+	encoded, _ := Tokenize(1)
+	areSlicesEqual(t, []float64{0, 1, 2, 4, 3}, encoded)
+
+	decoded := Decode([]float64{0, 1, 2, 4, 3}...)
+	areEqual(t, "a\nb\n\nc", decoded)
 }
 
 func TestZipUnzip(t *testing.T) {
@@ -206,62 +206,6 @@ func areSlicesEqual[T comparable](t *testing.T, want, got []T) {
 			return
 		}
 	}
-}
-
-func TestDecodeUnicodeSimpleString(t *testing.T) {
-	input := "hello world"
-	expected := "hello world"
-	result := decodeUnicode(input)
-	areEqual(t, expected, result)
-}
-
-func TestDecodeUnicodeWithSingleEscape(t *testing.T) {
-	input := "hello\\u0020world"
-	expected := "hello world"
-	result := decodeUnicode(input)
-	areEqual(t, expected, result)
-}
-
-func TestDecodeUnicodeWithMultipleEscapes(t *testing.T) {
-	input := "\\u0048\\u0065\\u006c\\u006c\\u006f"
-	expected := "Hello"
-	result := decodeUnicode(input)
-	areEqual(t, expected, result)
-}
-
-func TestDecodeUnicodeWithNewlines(t *testing.T) {
-	input := "First line\\u000aSecond line"
-	expected := "First line\nSecond line"
-	result := decodeUnicode(input)
-	areEqual(t, expected, result)
-}
-
-func TestDecodeUnicodeWithTabAndSpace(t *testing.T) {
-	input := "Tab:\\u0009Space:\\u0020End"
-	expected := "Tab:\tSpace: End"
-	result := decodeUnicode(input)
-	areEqual(t, expected, result)
-}
-
-func TestDecodeUnicodeWithSpecialChars(t *testing.T) {
-	input := "Copyright\\u00A9 Trademark\\u2122"
-	expected := "Copyright© Trademark™"
-	result := decodeUnicode(input)
-	areEqual(t, expected, result)
-}
-
-func TestDecodeUnicodeWithMixedText(t *testing.T) {
-	input := "Normal text with \\u0061 unicode \\u0062 characters"
-	expected := "Normal text with a unicode b characters"
-	result := decodeUnicode(input)
-	areEqual(t, expected, result)
-}
-
-func TestDecodeUnicodeWithConsecutiveEscapes(t *testing.T) {
-	input := "Line breaks: \\u000a\\u000a"
-	expected := "Line breaks: \n\n"
-	result := decodeUnicode(input)
-	areEqual(t, expected, result)
 }
 
 type V []float64
