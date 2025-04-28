@@ -70,7 +70,7 @@ func (p *Params) Save() {
 	}
 }
 
-func (p *Params) LoadPretrainedIfExists() {
+func (p *Params) TryLoadPretrained() {
 	file, err := os.Open(p.filename())
 	if err != nil {
 		return

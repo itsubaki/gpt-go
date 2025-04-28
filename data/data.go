@@ -18,9 +18,9 @@ var (
 	mergeRules map[int64]int
 	rulesOrder []int64
 
-	//go:embed fairy_tales.txt
+	//go:embed jules_verne.txt
 	dataset string
-	//go:embed fairy_vocab
+	//go:embed vocab
 	vocab string
 
 	Dataset = func() string { return dataset }
@@ -46,7 +46,7 @@ func Encode(s string) []float64 {
 	for _, ch := range s {
 		tok, ok := tokenToID[string(ch)]
 		if !ok {
-			panic(fmt.Sprintf("Char '%s' is missing from vocabulary", string(ch)))
+			panic(fmt.Sprintf("char '%s' is missing from vocabulary", string(ch)))
 		}
 		tokens = append(tokens, float64(tok))
 	}
@@ -54,7 +54,7 @@ func Encode(s string) []float64 {
 	for _, rule := range rulesOrder {
 		var newTokens []float64
 		tok1, tok2 := unzip(rule)
-		// Try to apply rule on every token pair
+		// Try to apply rule on every pair of tokens
 		for i := 0; i < len(tokens); {
 			hasNextToken := i+1 < len(tokens)
 			shouldMerge := hasNextToken && int(tokens[i]) == tok1 && int(tokens[i+1]) == tok2
@@ -80,8 +80,7 @@ func Decode(indices ...float64) string {
 		if token, ok := idToToken[id]; ok {
 			result.WriteString(token)
 		} else {
-			msg := fmt.Sprintf("Uknown token ID=%d", id)
-			panic(msg)
+			panic(fmt.Sprintf("uknown token id=%d", id))
 		}
 	}
 
@@ -92,10 +91,11 @@ func VocabSize() int {
 	return len(tokenToID)
 }
 
+// Sample returns a random sample of data of the given block size.
 func Sample(data []float64, blockSize int) (*variable.Variable, *variable.Variable) {
 	dataLen := len(data) - (blockSize + 1)
 	if dataLen < 0 {
-		panic("Not enough Data for the given block size")
+		panic("not enough data for the given block size")
 	}
 
 	offset := RandInt(dataLen)
@@ -145,7 +145,7 @@ func createMergeRules(rules string, numMerges int) {
 		re := regexp.MustCompile(`\[(.*?)\]\[(.*?)\] -> \[(.*?)\]`)
 		matches := re.FindStringSubmatch(m)
 		if len(matches) != 4 {
-			panic(fmt.Sprintf("Invalid Vocab format: %s", m))
+			panic(fmt.Sprintf("invalid vocab format: %s", m))
 		}
 
 		// Process Unicode escape sequences in all tokens
@@ -197,10 +197,12 @@ func decodeUnicode(s string) string {
 	return result
 }
 
+// Zips two tokens into a single int64
 func zip(tok1, tok2 int) int64 {
 	return int64(tok1)<<32 | int64(tok2&0xFFFFFFFF)
 }
 
+// Unzips a single int64 into two tokens
 func unzip(tok int64) (int, int) {
 	tok1 := int(tok >> 32)
 	tok2 := int(tok & 0xFFFFFFFF)

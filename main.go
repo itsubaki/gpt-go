@@ -17,7 +17,7 @@ const (
 	embedSize        = 64
 	heads            = 4
 	layers           = 4
-	steps            = 40000
+	steps            = 20000
 	evalSteps        = 1000
 	learningRate     = 0.001
 	dropout          = 0.2  // disable some % of our neurons to prevent overfitting, model is likely to generalize
@@ -60,7 +60,7 @@ func main() {
 	}
 	params.Add(norm.Params()...)
 	params.Add(lmHead.Params()...)
-	params.LoadPretrainedIfExists()
+	params.TryLoadPretrained()
 	fmt.Printf("Model size: %.3fM\n", pkg.Millions(params.Count()))
 
 	// Training loop.
@@ -81,10 +81,10 @@ func main() {
 
 		// Loss calculation, how much our predicted targets differ from the ground truth targets?
 		loss := CrossEntropy(logits, targets)
-		loss = MulC(lossScale, loss)
 		if i%evalSteps == 0 {
-			fmt.Printf("step: %5d, loss: %.5f\n", i, Val(loss)/lossScale)
+			fmt.Printf("step: %5d, loss: %.5f\n", i, Val(loss))
 		}
+		loss = MulC(lossScale, loss)
 
 		// Backward pass, calculate the gradients (how much each parameter contributes to the loss)
 		// for all the parameters (weights, biases, embeds). Loss is the tail of a computation graph.
