@@ -1,4 +1,3 @@
-// Just a small wrapper over existing library's params
 package pkg
 
 import (
@@ -12,7 +11,6 @@ import (
 
 type Params struct {
 	params layer.Parameters
-	count  int
 }
 
 func NewParams() *Params {
@@ -21,8 +19,7 @@ func NewParams() *Params {
 
 func (p *Params) Add(params ...layer.Parameter) {
 	for _, param := range params {
-		p.params.Add(fmt.Sprintf("%d", p.count), param)
-		p.count++
+		p.params.Add(fmt.Sprintf("%d", len(p.params)), param)
 	}
 }
 
