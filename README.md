@@ -24,7 +24,7 @@ step: 20000, loss: 4.86982
 $ go run .
 ```
 
-It takes about 50 minutes to train on MacBook Air M3. You can train on your own dataset by pointing `data.dataset` variable to your text corpus.  
+It takes about 50 minutes to train on MacBook Air M3. You can train on your own dataset by pointing the `data.dataset` variable to your text corpus.  
 
 To run in chat-only mode once the training is done:  
 ```shell
