@@ -158,8 +158,8 @@ func TestTransformer(t *testing.T) {
 	//   [vector for tok1],
 	//   ... other embeds
 	// ]
-	embeds := Rows(tokEmbeds, input.Data[0]...) // get embed for every input token
-	embeds = Add(embeds, posEmbeds)             // add positional embedding
+	embeds := Rows(tokEmbeds, Flat(input)...) // get embed for every input token
+	embeds = Add(embeds, posEmbeds)           // add positional embedding
 	embeds = block.Forward(embeds)
 	embeds = norm.Forward(embeds)
 	// [

@@ -22,6 +22,7 @@ var (
 	RandEmbeds   = pkg.RandKaiming
 	Rows         = pkg.Rows
 	Val          = pkg.Val
+	Flat         = pkg.Flat
 )
 
 type Block struct {

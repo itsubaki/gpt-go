@@ -160,6 +160,10 @@ func Val(x *variable.Variable) float64 {
 	return x.Data[0][0]
 }
 
+func Flat(x *variable.Variable) []float64 {
+	return matrix.Flatten(x.Data)
+}
+
 func Millions(num int) float64 {
 	return float64(num) / 1e6
 }

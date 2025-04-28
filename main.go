@@ -27,7 +27,7 @@ const (
 )
 
 func main() {
-	// Skip training if -chat flag is provided.
+	// Skip training if "-chat" flag is provided.
 	steps := steps
 	chat := flag.Bool("chat", false, "Skip training and jump straight to chat")
 	flag.Parse()
@@ -71,8 +71,8 @@ func main() {
 		input, targets := data.Sample(dataset, blockSize)
 
 		// Forward pass, calculate predictions for every input token.
-		embeds := Rows(tokEmbeds, input.Data[0]...) // get embed for every input token
-		embeds = Add(embeds, posEmbeds)             // add positional embedding
+		embeds := Rows(tokEmbeds, Flat(input)...) // get embed for every input token
+		embeds = Add(embeds, posEmbeds)           // add positional embedding
 		for _, block := range blocks {
 			embeds = block.Forward(embeds)
 		}
