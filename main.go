@@ -17,8 +17,8 @@ const (
 	embedSize        = 64
 	heads            = 4
 	layers           = 4
-	steps            = 20000 // how many times to go through the dataset
-	evalSteps        = 1000  // portion of epoch to evaluate
+	steps            = 20000
+	evalSteps        = 1000
 	learningRate     = 0.001
 	dropout          = 0.2  // disable some % of our neurons to prevent overfitting, model is likely to generalize
 	lossScale        = 1.0  // we don't use batches, so scaling loss down may help better convergence
