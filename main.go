@@ -17,7 +17,7 @@ const (
 	embedSize        = 64
 	heads            = 4
 	layers           = 4
-	steps            = 20000
+	steps            = 40000
 	evalSteps        = 1000
 	learningRate     = 0.001
 	dropout          = 0.2  // disable some % of our neurons to prevent overfitting, model is likely to generalize
@@ -82,7 +82,7 @@ func main() {
 		// Loss calculation, how much our predicted targets differ from the ground truth targets?
 		loss := CrossEntropy(logits, targets)
 		loss = MulC(lossScale, loss)
-		if i%int(float64(steps)*evalSteps) == 0 {
+		if i%evalSteps == 0 {
 			fmt.Printf("step: %5d, loss: %.5f\n", i, Val(loss)/lossScale)
 		}
 
