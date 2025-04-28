@@ -17,8 +17,8 @@ const (
 	embedSize        = 64
 	heads            = 4
 	layers           = 4
-	epochs           = 1   // how many times to go through the dataset
-	evalFreq         = 0.1 // portion of epoch to evaluate
+	steps            = 20000 // how many times to go through the dataset
+	evalSteps        = 1000  // portion of epoch to evaluate
 	learningRate     = 0.001
 	dropout          = 0.2  // disable some % of our neurons to prevent overfitting, model is likely to generalize
 	lossScale        = 1.0  // we don't use batches, so scaling loss down may help better convergence
@@ -28,11 +28,11 @@ const (
 
 func main() {
 	// Skip training if -chat flag is provided.
-	epochs := epochs
+	steps := steps
 	chat := flag.Bool("chat", false, "Skip training and jump straight to chat")
 	flag.Parse()
 	if *chat {
-		epochs = -1
+		steps = -1
 	}
 
 	// Loading dataset and building vocabulary.
@@ -65,11 +65,10 @@ func main() {
 
 	// Training loop.
 	optimizer := pkg.NewAdamW(learningRate)
-	steps := epochs * len(dataset) / blockSize
-	fmt.Printf("bs=%d, es=%d, lr=%.4f, ls=%.2f, vs=%d, epochs=%d, steps=%d\n", blockSize, embedSize, learningRate, lossScale, vocabSize, epochs, steps)
+	fmt.Printf("bs=%d, es=%d, lr=%.4f, ls=%.2f, vs=%d, steps=%d\n", blockSize, embedSize, learningRate, lossScale, vocabSize, steps)
 	for i := 0; i < steps; i++ {
 		// Targets contain the ground truth next token for each input token.
-		input, targets := data.SampleSeq(dataset, blockSize)
+		input, targets := data.Sample(dataset, blockSize)
 
 		// Forward pass, calculate predictions for every input token.
 		embeds := Rows(tokEmbeds, input.Data[0]...) // get embed for every input token
@@ -83,7 +82,7 @@ func main() {
 		// Loss calculation, how much our predicted targets differ from the ground truth targets?
 		loss := CrossEntropy(logits, targets)
 		loss = MulC(lossScale, loss)
-		if i%int(float64(steps)*evalFreq) == 0 {
+		if i%int(float64(steps)*evalSteps) == 0 {
 			fmt.Printf("step: %5d, loss: %.5f\n", i, Val(loss)/lossScale)
 		}
 
