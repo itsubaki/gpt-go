@@ -111,7 +111,7 @@ func Sample(data []float64, blockSize int) (*variable.Variable, *variable.Variab
 	return variable.New(x...), variable.New(y...)
 }
 
-func Characters() string {
+func Chars() string {
 	var tokens []string
 	for token := range tokenToID {
 		if len(token) == 1 {

@@ -39,7 +39,7 @@ func main() {
 	fmt.Println("Tokenizing dataset...")
 	dataset, vocabSize := data.Tokenize(pretrainedTokens)
 	fmt.Printf("First characters:\n%s\n", strings.TrimSpace(data.Decode(dataset[:45]...)))
-	fmt.Printf("Vocabulary: %s\n", data.Characters())
+	fmt.Printf("Vocabulary: %s\n", data.Chars())
 	fmt.Printf("Tokens in dataset: %.3fM\n", pkg.Millions(len(dataset)))
 
 	// Basic transformer components.
@@ -113,9 +113,9 @@ func main() {
 		// We only care about the probabilities of the next token for the last token.
 		logitsForNextToken := Rows(logits, -1)
 		probs := Softmax(logitsForNextToken)
-		nextToken := pkg.SampleTemp(probs, 0.8)
+		tok := pkg.SampleTemp(probs, 0.8)
 
-		return nextToken
+		return tok
 	}
 
 	// Sample from the model.
