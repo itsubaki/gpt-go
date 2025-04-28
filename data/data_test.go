@@ -1,7 +1,7 @@
 package data
 
 import (
-	"fmt"
+	"math"
 	"math/rand"
 	"testing"
 
@@ -112,7 +112,7 @@ func TestAddTokensFromText(t *testing.T) {
 	areEqual(t, true, contains)
 }
 
-func ExampleSample() {
+func TestSample(t *testing.T) {
 	// Setup data
 	testData := V{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
 	blockSize := 3
@@ -123,16 +123,12 @@ func ExampleSample() {
 	}()
 
 	x, y := Sample(testData, blockSize)
-	fmt.Println(len(x.Data), len(x.Data[0]))
-	fmt.Println(len(y.Data), len(y.Data[0]))
-	fmt.Println(x.Data)
-	fmt.Println(y.Data)
-
-	// Output:
-	// 1 3
-	// 1 3
-	// [[0 1 2]]
-	// [[1 2 3]]
+	areMatricesEqual(t, M{
+		{0, 1, 2},
+	}, x)
+	areMatricesEqual(t, M{
+		{1, 2, 3},
+	}, y)
 }
 
 func TestNormNewLinesEmptyString(t *testing.T) {
@@ -208,8 +204,32 @@ func areSlicesEqual[T comparable](t *testing.T, want, got []T) {
 	}
 }
 
+func areMatricesEqual(t *testing.T, want M, got *variable.Variable) {
+	t.Helper()
+	gotMatrix := got.Data
+
+	if len(want) != len(gotMatrix) {
+		t.Errorf("matrix length mismatch: want length=%d, got length=%d", len(want), len(gotMatrix))
+		return
+	}
+
+	for i := range want {
+		for j := range want[i] {
+			if math.Abs(want[i][j]-gotMatrix[i][j]) > 1e-9 {
+				t.Errorf("matrix mismatch at row %d, column %d: want %v, got %v", i, j, want[i][j], gotMatrix[i][j])
+			}
+		}
+	}
+}
+
 type V []float64
 
 func (v V) Var() *variable.Variable {
 	return variable.NewOf(v)
+}
+
+type M [][]float64
+
+func (m M) Var() *variable.Variable {
+	return variable.NewOf(m...)
 }

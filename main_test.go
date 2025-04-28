@@ -200,14 +200,14 @@ func areMatricesEqual(t *testing.T, want M, got *variable.Variable) {
 	}
 }
 
-type M [][]float64
-
-func (m M) Var() *variable.Variable {
-	return variable.NewOf(m...)
-}
-
 type V []float64
 
 func (v V) Var() *variable.Variable {
 	return variable.NewOf(v)
+}
+
+type M [][]float64
+
+func (m M) Var() *variable.Variable {
+	return variable.NewOf(m...)
 }
