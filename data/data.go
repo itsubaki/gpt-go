@@ -6,7 +6,6 @@ import (
 	"math/rand/v2"
 	"regexp"
 	"slices"
-	"strconv"
 	"strings"
 
 	"github.com/itsubaki/autograd/variable"
@@ -149,9 +148,9 @@ func createMergeRules(rules string, numMerges int) {
 		}
 
 		// Process Unicode escape sequences in all tokens
-		left := decodeUnicode(matches[1])
-		right := decodeUnicode(matches[2])
-		mergedToken := decodeUnicode(matches[3])
+		left := strings.ReplaceAll(matches[1], "\\n", "\n")
+		right := strings.ReplaceAll(matches[2], "\\n", "\n")
+		mergedToken := strings.ReplaceAll(matches[3], "\\n", "\n")
 
 		addTokensToVocab(mergedToken)
 		addRule(tokenToID[left], tokenToID[right], tokenToID[mergedToken])
@@ -179,22 +178,6 @@ func addRule(tok1, tok2, mergedTok int) {
 func normNewLines(text string) string {
 	text = strings.Replace(text, "\r\n", "\n", -1) // replace Windows line endings
 	return strings.Replace(text, "\r", "\n", -1)   // replace remaining Mac line endings
-}
-
-// Decodes Python-style \uFFFF format
-func decodeUnicode(s string) string {
-	re := regexp.MustCompile(`\\u([0-9a-fA-F]{4})`)
-	result := re.ReplaceAllStringFunc(s, func(match string) string {
-		hexStr := match[2:] // Skip the \u prefix
-		val, err := strconv.ParseInt(hexStr, 16, 32)
-		if err != nil {
-			return match // literal value
-		}
-
-		return string(rune(val))
-	})
-
-	return result
 }
 
 // Zips two tokens into a single int64

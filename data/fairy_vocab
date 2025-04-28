@@ -37,7 +37,7 @@
 [ ][p] -> [ p] 292
 [e][s] -> [es] 293
 [ ][in] -> [ in] 294
-[\u000a][\u000a] -> [\u000a\u000a] 295
+[\n][\n] -> [\n\n] 295
 [ ][n] -> [ n] 296
 [ ][g] -> [ g] 297
 [a][d] -> [ad] 298
@@ -48,7 +48,7 @@
 [o][t] -> [ot] 303
 [o][w] -> [ow] 304
 [ b][e] -> [ be] 305
-[.][\u000a\u000a] -> [.\u000a\u000a] 306
+[.][\n\n] -> [.\n\n] 306
 [i][m] -> [im] 307
 [i][d] -> [id] 308
 [ ][I] -> [ I] 309
@@ -105,7 +105,7 @@
 [t][h] -> [th] 360
 [ sa][id] -> [ said] 361
 [r][i] -> [ri] 362
-[,][\u000a] -> [,\u000a] 363
+[,][\n] -> [,\n] 363
 [ m][e] -> [ me] 364
 [ ][is] -> [ is] 365
 [ a][n] -> [ an] 366
@@ -271,7 +271,7 @@
 [at][her] -> [ather] 526
 [f][ter] -> [fter] 527
 [u][m] -> [um] 528
-[.][\u000a] -> [.\u000a] 529
+[.][\n] -> [.\n] 529
 [ ][G] -> [ G] 530
 [ ][C] -> [ C] 531
 [it][e] -> [ite] 532
@@ -410,7 +410,7 @@
 [c][o] -> [co] 665
 [ you][ng] -> [ young] 666
 [ The][n] -> [ Then] 667
-[?][\u000a\u000a] -> [?\u000a\u000a] 668
+[?][\n\n] -> [?\n\n] 668
 [f][t] -> [ft] 669
 [he][s] -> [hes] 670
 [ p][l] -> [ pl] 671
@@ -491,7 +491,7 @@
 [e][w] -> [ew] 746
 [ t][ake] -> [ take] 747
 [ b][l] -> [ bl] 748
-[!][\u000a\u000a] -> [!\u000a\u000a] 749
+[!][\n\n] -> [!\n\n] 749
 [m][an] -> [man] 750
 [i][es] -> [ies] 751
 [t][ain] -> [tain] 752
@@ -567,7 +567,7 @@
 [ br][other] -> [ brother] 822
 [ whi][le] -> [ while] 823
 [un][g] -> [ung] 824
-[:][\u000a\u000a] -> [:\u000a\u000a] 825
+[:][\n\n] -> [:\n\n] 825
 [i][gh] -> [igh] 826
 [ m][ight] -> [ might] 827
 [ p][er] -> [ per] 828
@@ -1212,7 +1212,7 @@
 [claim][ed] -> [claimed] 1467
 [ sil][ver] -> [ silver] 1468
 [ou][b] -> [oub] 1469
-[!][\u000a] -> [!\u000a] 1470
+[!][\n] -> [!\n] 1470
 [th][is] -> [this] 1471
 [et][er] -> [eter] 1472
 [ st][or] -> [ stor] 1473
@@ -1416,7 +1416,7 @@
 [ ar][rived] -> [ arrived] 1671
 [b][l] -> [bl] 1672
 [end][ed] -> [ended] 1673
-[:][\u000a] -> [:\u000a] 1674
+[:][\n] -> [:\n] 1674
 [ut][h] -> [uth] 1675
 [ tr][ue] -> [ true] 1676
 [ b][ad] -> [ bad] 1677
@@ -1799,7 +1799,7 @@
 [ver][al] -> [veral] 2054
 [ w][ear] -> [ wear] 2055
 [if][ic] -> [ific] 2056
-[?][\u000a] -> [?\u000a] 2057
+[?][\n] -> [?\n] 2057
 [ mon][th] -> [ month] 2058
 [ le][gs] -> [ legs] 2059
 [him][self] -> [himself] 2060
@@ -1842,7 +1842,7 @@
 [g][ing] -> [ging] 2097
 [ent][le] -> [entle] 2098
 [ t][ra] -> [ tra] 2099
-[:--][\u000a\u000a] -> [:--\u000a\u000a] 2100
+[:--][\n\n] -> [:--\n\n] 2100
 [ ch][ief] -> [ chief] 2101
 [ it][self] -> [ itself] 2102
 [ bre][ak] -> [ break] 2103
@@ -2835,7 +2835,7 @@
 [ hun][ting] -> [ hunting] 3090
 [ burn][ing] -> [ burning] 3091
 [ h][orn] -> [ horn] 3092
-[--][\u000a\u000a] -> [--\u000a\u000a] 3093
+[--][\n\n] -> [--\n\n] 3093
 [re][m] -> [rem] 3094
 [iz][ir] -> [izir] 3095
 [w][a] -> [wa] 3096
@@ -3337,7 +3337,7 @@
 [ dro][p] -> [ drop] 3592
 [p][res] -> [pres] 3593
 [ as][hes] -> [ ashes] 3594
-[,][\u000a\u000a] -> [,\u000a\u000a] 3595
+[,][\n\n] -> [,\n\n] 3595
 [ P][ar] -> [ Par] 3596
 [ous][ly] -> [ously] 3597
 [ fro][g] -> [ frog] 3598
@@ -3551,7 +3551,7 @@
 [ing][ing] -> [inging] 3806
 [ik][in] -> [ikin] 3807
 [ e][gg] -> [ egg] 3808
-[.)][\u000a\u000a] -> [.)\u000a\u000a] 3809
+[.)][\n\n] -> [.)\n\n] 3809
 [ c][ows] -> [ cows] 3810
 [ nat][ure] -> [ nature] 3811
 [us][hes] -> [ushes] 3812
@@ -3789,7 +3789,7 @@
 [ m][or] -> [ mor] 4044
 [ var][ious] -> [ various] 4045
 [an][a] -> [ana] 4046
-[,--][\u000a\u000a] -> [,--\u000a\u000a] 4047
+[,--][\n\n] -> [,--\n\n] 4047
 [ra][h] -> [rah] 4048
 [ Se][a] -> [ Sea] 4049
 [ Qu][oth] -> [ Quoth] 4050
@@ -4388,7 +4388,7 @@
 [ K][night] -> [ Knight] 4643
 [ delic][ate] -> [ delicate] 4644
 [ pur][ch] -> [ purch] 4645
-[)][\u000a\u000a] -> [)\u000a\u000a] 4646
+[)][\n\n] -> [)\n\n] 4646
 [ safe][ly] -> [ safely] 4647
 [ d][ig] -> [ dig] 4648
 [qu][est] -> [quest] 4649
@@ -5379,8 +5379,8 @@
 [ H][unter] -> [ Hunter] 5634
 [amar][al] -> [amaral] 5635
 [amaral][zaman] -> [amaralzaman] 5636
-[-][\u000a] -> [-\u000a] 5637
-[)][\u000a] -> [)\u000a] 5638
+[-][\n] -> [-\n] 5637
+[)][\n] -> [)\n] 5638
 [ fl][ute] -> [ flute] 5639
 [d][ark] -> [dark] 5640
 [es][ides] -> [esides] 5641
@@ -5469,7 +5469,7 @@
 [ did][st] -> [ didst] 5724
 [ a][uth] -> [ auth] 5725
 [ sign][if] -> [ signif] 5726
-[)][.\u000a\u000a] -> [).\u000a\u000a] 5727
+[)][.\n\n] -> [).\n\n] 5727
 [ee][b] -> [eeb] 5728
 [ D][amascus] -> [ Damascus] 5729
 [l][ady] -> [lady] 5730
@@ -6221,7 +6221,7 @@
 [ Europe][an] -> [ European] 6476
 [ comp][l] -> [ compl] 6477
 [ sparrow][s] -> [ sparrows] 6478
-[--][\u000a] -> [--\u000a] 6479
+[--][\n] -> [--\n] 6479
 [ comp][osed] -> [ composed] 6480
 [ eleg][ant] -> [ elegant] 6481
 [ exceed][ingly] -> [ exceedingly] 6482
@@ -9234,7 +9234,7 @@
 [ O][ff] -> [ Off] 9489
 [vis][it] -> [visit] 9490
 [ re][leas] -> [ releas] 9491
-[)][,\u000a] -> [),\u000a] 9492
+[)][,\n] -> [),\n] 9492
 [ ne][phew] -> [ nephew] 9493
 [ supp][orted] -> [ supported] 9494
 [ neighbour][hood] -> [ neighbourhood] 9495
