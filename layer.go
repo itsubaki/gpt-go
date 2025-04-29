@@ -21,11 +21,10 @@ var (
 )
 
 type Linear struct {
-	In, Out  int
-	Weight   *variable.Variable
-	Biased   bool
-	Bias     *variable.Variable
-	BiasGrad *variable.Variable
+	In, Out int
+	Weight  *variable.Variable
+	Biased  bool
+	Bias    *variable.Variable
 }
 
 func NewLinear(in, out int, opts ...LinearOption) *Linear {
@@ -74,7 +73,6 @@ func NoBias() LinearOption {
 		l.Biased = false
 		// Set bias tensors to nil or zero-sized tensors
 		l.Bias = nil
-		l.BiasGrad = nil
 	}
 }
 

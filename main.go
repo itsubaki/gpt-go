@@ -17,13 +17,14 @@ const (
 	embedSize        = 64
 	heads            = 4
 	layers           = 4
-	steps            = 20000
-	evalSteps        = 1000
+	steps            = 10000
+	evalSteps        = 100
 	learningRate     = 0.001
 	dropout          = 0.0  // disable some % of our neurons to prevent overfitting, model is likely to generalize
 	lossScale        = 1.0  // we don't use batches, so scaling loss down may help better convergence
+	embedScale       = 0.1  // scale down the token embeddings
 	pretrainedTokens = 5000 // how many of subword pretrained tokens to add on top of default character-based tokens
-	maxTokens        = 100  // tokens limit for generation
+	maxTokens        = 50   // tokens limit for generation
 )
 
 func main() {
@@ -44,7 +45,9 @@ func main() {
 
 	// Basic transformer components.
 	tokEmbeds := RandEmbeds(vocabSize, embedSize)
+	tokEmbeds = MulC(embedScale, tokEmbeds) // scale down the token embeddings
 	posEmbeds := RandEmbeds(blockSize, embedSize)
+	posEmbeds = MulC(embedScale, posEmbeds) // scale down the positional embeddings
 	var blocks []*Block
 	for range layers {
 		blocks = append(blocks, NewBlock(embedSize, heads))
@@ -59,8 +62,9 @@ func main() {
 		params.Add(block.Params()...)
 	}
 	params.Add(norm.Params()...)
-	params.Add(lmHead.Params()...)
+	params.Add(lmHead.Bias)
 	params.TryLoadPretrained()
+	lmHead.Weight = Transpose(tokEmbeds) // Tie the weights, because they are similar
 	fmt.Printf("Model size: %.3fM\n", pkg.Millions(params.Count()))
 
 	// Training loop.

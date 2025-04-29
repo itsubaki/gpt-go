@@ -17,6 +17,7 @@ var (
 	Add          = variable.Add
 	Sub          = variable.Sub
 	MulC         = variable.MulC
+	Transpose    = variable.Transpose
 	Softmax      = function.Softmax
 	CrossEntropy = function.SoftmaxCrossEntropy
 	RandEmbeds   = pkg.Normal
