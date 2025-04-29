@@ -31,9 +31,9 @@ func NewLinear(in, out int, opts ...LinearOption) *Linear {
 	l := &Linear{
 		In:     in,
 		Out:    out,
-		Weight: RandWeights(in, out),
+		Weight: Ones(in, out),
 		Biased: true,
-		Bias:   variable.Zero(1, out),
+		Bias:   Ones(1, out),
 	}
 
 	for _, opt := range opts {

@@ -12,15 +12,15 @@ import (
 )
 
 var (
+	//go:embed input.txt
+	dataset string
+	//go:embed vocab
+	vocab string
+
 	tokenToID  map[string]int
 	idToToken  map[int]string
 	mergeRules map[int64]int
 	rulesOrder []int64
-
-	//go:embed jules_verne.txt
-	dataset string
-	//go:embed vocab
-	vocab string
 
 	Dataset = func() string { return dataset }
 	Vocab   = func() string { return vocab }

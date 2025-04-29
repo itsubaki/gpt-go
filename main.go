@@ -7,24 +7,38 @@ import (
 	"os"
 	"strings"
 
+	"github.com/itsubaki/autograd/variable"
+
 	"github.com/zakirullin/gpt-go/data"
 	"github.com/zakirullin/gpt-go/pkg"
 )
 
 // Hyperparameters
 const (
-	blockSize        = 32
-	embedSize        = 64
-	heads            = 4
-	layers           = 4
-	steps            = 20000
-	evalSteps        = 1000
+	blockSize        = 2
+	embedSize        = 2
+	heads            = 1
+	layers           = 1
+	steps            = 5000
+	evalSteps        = 100
 	learningRate     = 0.001
-	dropout          = 0.2  // disable some % of our neurons to prevent overfitting, model is likely to generalize
-	lossScale        = 1.0  // we don't use batches, so scaling loss down may help better convergence
-	pretrainedTokens = 5000 // how many of subword pretrained tokens to add on top of default character-based tokens
-	maxTokens        = 100  // tokens limit for generation
+	dropout          = 0.2 // disable some % of our neurons to prevent overfitting, model is likely to generalize
+	lossScale        = 1.0 // we don't use batches, so scaling loss down may help better convergence
+	pretrainedTokens = 0   // how many of subword pretrained tokens to add on top of default character-based tokens
+	maxTokens        = 100 // tokens limit for generation
 )
+
+type V []float64
+
+func (v V) Var() *variable.Variable {
+	return variable.NewOf(v)
+}
+
+type M [][]float64
+
+func (m M) Var() *variable.Variable {
+	return variable.NewOf(m...)
+}
 
 func main() {
 	// Skip training if "-chat" flag is provided.
@@ -60,24 +74,28 @@ func main() {
 	}
 	params.Add(norm.Params()...)
 	params.Add(lmHead.Params()...)
-	params.TryLoadPretrained()
-	fmt.Printf("Model size: %.3fM\n", pkg.Millions(params.Count()))
+	//params.TryLoadPretrained()
+	fmt.Printf("Model size: %.6fM\n", pkg.Millions(params.Count()))
 
 	// Training loop.
 	optimizer := pkg.NewAdamW(learningRate)
 	fmt.Printf("bs=%d, es=%d, lr=%.4f, ls=%.2f, vs=%d, steps=%d\n", blockSize, embedSize, learningRate, lossScale, vocabSize, steps)
 	for i := 0; i < steps; i++ {
 		// Targets contain the ground truth next token for each input token.
-		input, targets := data.Sample(dataset, blockSize)
+		//input, targets := data.Sample(dataset, blockSize)
+		input := V{1, 2}.Var()
+		targets := V{2, 3}.Var()
 
 		// Forward pass, calculate predictions for every input token.
 		embeds := Rows(tokEmbeds, Flat(input)...) // get embed for every input token
 		embeds = Add(embeds, posEmbeds)           // add positional embedding
-		for _, block := range blocks {
-			embeds = block.Forward(embeds)
-		}
-		embeds = norm.Forward(embeds)
+		//for _, block := range blocks {
+		//	embeds = block.Forward(embeds)
+		//}
+		//embeds = norm.Forward(embeds)
 		logits := lmHead.Forward(embeds) // converts contextual embeddings to next token predictions
+		fmt.Println(logits)
+		break
 
 		// Loss calculation, how much our predicted targets differ from the ground truth targets?
 		loss := CrossEntropy(logits, targets)
