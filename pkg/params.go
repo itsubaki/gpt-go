@@ -92,7 +92,7 @@ func (p *Params) TryLoadPretrained() {
 		panic(fmt.Errorf("failed to read shapes checksum: %v", err))
 	}
 	if savedChecksum != hash.Sum32() {
-		panic(fmt.Sprintf("model shapes mismatch, remove '%s' file", p.filename()))
+		panic("model shapes mismatch, remove model-* files")
 	}
 
 	fmt.Printf("Loaded pretrained params: %s\n", p.filename())
