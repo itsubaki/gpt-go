@@ -19,7 +19,7 @@ var (
 	MulC         = variable.MulC
 	Softmax      = function.Softmax
 	CrossEntropy = function.SoftmaxCrossEntropy
-	RandEmbeds   = pkg.RandKaiming
+	RandEmbeds   = pkg.Normal
 	Rows         = pkg.Rows
 	Val          = pkg.Val
 	Flat         = pkg.Flat

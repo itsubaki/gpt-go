@@ -89,21 +89,16 @@ func Rows(x *variable.Variable, indexes ...float64) *variable.Variable {
 	return (&variable.Function{Forwarder: &variable.GetItemT{Slices: intIndexes}}).First(x)
 }
 
-// Add tests
-func RandKaiming(rows, cols int) *variable.Variable {
-	// Calculate the standard deviation based on Kaiming/He formula
-	// For ReLU activation, we use a factor of 2.0 divided by fan-in (input dimensions)
-	sigma := math.Sqrt(2.0 / float64(cols))
-
-	// Define a transformation function that samples from a normal distribution
-	// and scales values by the calculated standard deviation
+// Returns a matrix of random values from a normal distribution.
+func Normal(rows, cols int) *variable.Variable {
 	rnd := func(_ float64) float64 {
-		return rand.NormFloat64() * sigma
+		return rand.Float64()
 	}
 
-	result := matrix.F(matrix.Zero(rows, cols), rnd)
+	m := matrix.Zero(rows, cols)
+	m = matrix.F(m, rnd)
 
-	return variable.NewOf(result...)
+	return variable.NewOf(m...)
 }
 
 // Only works with 2D tensors
