@@ -20,7 +20,7 @@ const (
 	steps            = 20000
 	evalSteps        = 1000
 	learningRate     = 0.001
-	dropout          = 0.2  // disable some % of our neurons to prevent overfitting, model is likely to generalize
+	dropout          = 0.0  // disable some % of our neurons to prevent overfitting, model is likely to generalize
 	lossScale        = 1.0  // we don't use batches, so scaling loss down may help better convergence
 	pretrainedTokens = 5000 // how many of subword pretrained tokens to add on top of default character-based tokens
 	maxTokens        = 100  // tokens limit for generation
@@ -64,6 +64,7 @@ func main() {
 	fmt.Printf("Model size: %.3fM\n", pkg.Millions(params.Count()))
 
 	// Training loop.
+	losses := Zero()
 	optimizer := pkg.NewAdamW(learningRate)
 	fmt.Printf("bs=%d, es=%d, lr=%.4f, ls=%.2f, vs=%d, steps=%d\n", blockSize, embedSize, learningRate, lossScale, vocabSize, steps)
 	for i := 0; i < steps; i++ {
@@ -81,8 +82,10 @@ func main() {
 
 		// Loss calculation, how much our predicted targets differ from the ground truth targets?
 		loss := CrossEntropy(logits, targets)
+		losses = Add(losses, loss)
 		if i%evalSteps == 0 {
-			fmt.Printf("step: %5d, loss: %.5f\n", i, Val(loss))
+			fmt.Printf("step: %5d, loss: %.5f\n", i, Val(Mean(losses)))
+			losses = Zero()
 		}
 		loss = MulC(lossScale, loss)
 

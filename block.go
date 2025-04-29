@@ -10,6 +10,7 @@ import (
 
 var (
 	Zeros        = variable.Zero
+	Zero         = pkg.Zero
 	Ones         = pkg.Ones
 	ReLU         = function.ReLU
 	Dropout      = function.DropoutSimple

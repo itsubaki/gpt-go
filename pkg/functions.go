@@ -150,6 +150,10 @@ func DisableDropout() {
 	variable.Config.Train = false // Prevent dropout
 }
 
+func Zero() *variable.Variable {
+	return variable.NewOf([]float64{0})
+}
+
 // Returns the first element of the variable
 func Val(x *variable.Variable) float64 {
 	return x.Data[0][0]
