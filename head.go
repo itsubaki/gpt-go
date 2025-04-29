@@ -35,7 +35,6 @@ func NewMultiHeadAttention(embedSize, numHeads int) *MultiHeadAttention {
 }
 
 func (mh *MultiHeadAttention) Forward(input *variable.Variable) *variable.Variable {
-	return input
 	var features []*variable.Variable
 	for _, head := range mh.Heads {
 		features = append(features, head.Forward(input))
@@ -77,7 +76,6 @@ func NewHead(embedSize, headSize int) *Head {
 
 // Self-attention is happening here
 func (h *Head) Forward(input *variable.Variable) *variable.Variable {
-	return input
 	T := len(input.Data)
 	key := h.Key.Forward(input)
 	query := variable.Transpose(h.Query.Forward(input))

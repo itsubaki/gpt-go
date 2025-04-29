@@ -87,7 +87,7 @@ func NewLayerNorm(dim int) *LayerNorm {
 	return &LayerNorm{
 		eps:   1e-05,
 		Scale: Ones(1, dim),
-		Shift: Ones(1, dim),
+		Shift: Zeros(1, dim),
 	}
 }
 

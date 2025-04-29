@@ -59,9 +59,6 @@ func main() {
 	// Basic transformer components.
 	tokEmbeds := RandEmbeds(vocabSize, embedSize)
 	posEmbeds := RandEmbeds(blockSize, embedSize)
-	tokEmbeds.Data[0][0] = 3
-	tokEmbeds.Data[0][1] = 3
-	tokEmbeds.Data[1][0] = 4
 	var blocks []*Block
 	for range layers {
 		blocks = append(blocks, NewBlock(embedSize, heads))
@@ -92,18 +89,16 @@ func main() {
 		// Forward pass, calculate predictions for every input token.
 		embeds := Rows(tokEmbeds, Flat(input)...) // get embed for every input token
 		embeds = Add(embeds, posEmbeds)           // add positional embedding
-		for _, block := range blocks {
-			embeds = block.Forward(embeds)
-		}
+		//for _, block := range blocks {
+		//	embeds = block.Forward(embeds)
+		//}
 		//embeds = norm.Forward(embeds)
 		logits := lmHead.Forward(embeds) // converts contextual embeddings to next token predictions
 		fmt.Println(logits)
-		loss := CrossEntropy(logits, targets)
-		loss.Backward()
-		fmt.Println(lmHead.Weight.Grad)
 		break
 
 		// Loss calculation, how much our predicted targets differ from the ground truth targets?
+		loss := CrossEntropy(logits, targets)
 		if i%evalSteps == 0 {
 			fmt.Printf("step: %5d, loss: %.5f\n", i, Val(loss))
 		}

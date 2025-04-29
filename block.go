@@ -54,12 +54,12 @@ func (b *Block) Forward(input *variable.Variable) *variable.Variable {
 	input = Add(input, saOut)        // Add residual attention output back to main path
 
 	// Feed-forward network with residual connection
-	//input = b.norm2.Forward(input)                  // Normalize input
-	//ffwdExpanded := b.ffwd.Forward(input)           // Expand to higher dimension
-	//ffwdActivated := ReLU(ffwdExpanded)             // Apply activation function
-	//ffwdOutput := b.ffwdProj.Forward(ffwdActivated) // Project back to original dimension
-	//ffwdOutput = Dropout(dropout)(ffwdOutput)       // Dropping out some neurons to prevent overfitting
-	//input = Add(input, ffwdOutput)                  // Add feed-forward residual output to main path
+	input = b.norm2.Forward(input)                  // Normalize input
+	ffwdExpanded := b.ffwd.Forward(input)           // Expand to higher dimension
+	ffwdActivated := ReLU(ffwdExpanded)             // Apply activation function
+	ffwdOutput := b.ffwdProj.Forward(ffwdActivated) // Project back to original dimension
+	ffwdOutput = Dropout(dropout)(ffwdOutput)       // Dropping out some neurons to prevent overfitting
+	input = Add(input, ffwdOutput)                  // Add feed-forward residual output to main path
 
 	return input
 }
