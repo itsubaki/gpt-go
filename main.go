@@ -22,7 +22,7 @@ const (
 	steps            = 5000
 	evalSteps        = 100
 	learningRate     = 0.001
-	dropout          = 0.2 // disable some % of our neurons to prevent overfitting, model is likely to generalize
+	dropout          = 0.0 // disable some % of our neurons to prevent overfitting, model is likely to generalize
 	lossScale        = 1.0 // we don't use batches, so scaling loss down may help better convergence
 	pretrainedTokens = 0   // how many of subword pretrained tokens to add on top of default character-based tokens
 	maxTokens        = 100 // tokens limit for generation
@@ -95,7 +95,8 @@ func main() {
 		for _, block := range blocks {
 			embeds = block.Forward(embeds)
 		}
-		//embeds = norm.Forward(embeds)
+		fmt.Println(embeds)
+		embeds = norm.Forward(embeds)
 		logits := lmHead.Forward(embeds) // converts contextual embeddings to next token predictions
 		fmt.Println(logits)
 		loss := CrossEntropy(logits, targets)
