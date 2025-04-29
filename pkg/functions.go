@@ -57,9 +57,9 @@ func SampleTemp(probs *variable.Variable, temperature float64) float64 {
 	return Sample(variable.NewOf(adjustedProbs))
 }
 
-// SampleMax returns the index of the maximum value.
+// SampleGreedy returns the index of the maximum value.
 // I use that to verify that the model has remembered some patterns.
-func SampleMax(probs *variable.Variable) float64 {
+func SampleGreedy(probs *variable.Variable) float64 {
 	maxProb := -1.0
 	maxIndex := 0
 	for i, p := range probs.Data[0] {
@@ -148,10 +148,6 @@ func Ones(m, n int) *variable.Variable {
 
 func DisableDropout() {
 	variable.Config.Train = false // Prevent dropout
-}
-
-func Zero() *variable.Variable {
-	return variable.NewOf([]float64{0})
 }
 
 // Returns the first element of the variable

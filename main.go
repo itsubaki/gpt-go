@@ -64,7 +64,7 @@ func main() {
 	fmt.Printf("Model size: %.3fM\n", pkg.Millions(params.Count()))
 
 	// Training loop.
-	losses := Zero()
+	losses := 0.0
 	optimizer := pkg.NewAdamW(learningRate)
 	fmt.Printf("bs=%d, es=%d, lr=%.4f, ls=%.2f, vs=%d, steps=%d\n", blockSize, embedSize, learningRate, lossScale, vocabSize, steps)
 	for i := 0; i < steps; i++ {
@@ -82,10 +82,11 @@ func main() {
 
 		// Loss calculation, how much our predicted targets differ from the ground truth targets?
 		loss := CrossEntropy(logits, targets)
-		losses = Add(losses, loss)
+		losses += Val(loss)
 		if i%evalSteps == 0 {
-			fmt.Printf("step: %5d, loss: %.5f\n", i, Val(Mean(losses)))
-			losses = Zero()
+			avgLoss := losses / float64(min(i+1, evalSteps))
+			fmt.Printf("step: %5d, loss: %.5f\n", i, avgLoss)
+			losses = 0
 		}
 		loss = MulC(lossScale, loss)
 
