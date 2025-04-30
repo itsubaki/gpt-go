@@ -78,20 +78,20 @@ func NewHead(embedSize, headSize int) *Head {
 	return &Head{embedSize, headSize, key, query, value}
 }
 
-// Self-attention is happening here
+// Self-attention mechanism, see main_test.go for explanation.
 func (h *Head) Forward(input *variable.Variable) *variable.Variable {
 	key := h.Key.Forward(input)
-	query := Transpose(h.Query.Forward(input))
-	wei := MatMul(key, query)
+	query := h.Query.Forward(input)
+	attentions := MatMul(query, Transpose(key))
 
 	T := len(input.Data) // number of tokens
 	tril := Tril(Ones(T, T))
-	wei = MaskedInfFill(wei, tril)
-	wei = Softmax(wei)
-	wei = Dropout(dropout)(wei)
+	attentions = MaskedInfFill(attentions, tril)
+	attentions = Softmax(attentions)
+	attentions = Dropout(dropout)(attentions)
 
 	v := h.Value.Forward(input)
-	weightedSum := MatMul(wei, v)
+	weightedSum := MatMul(attentions, v)
 	normalizedSum := MulC(math.Pow(float64(h.embedSize), -0.5), weightedSum)
 
 	return normalizedSum

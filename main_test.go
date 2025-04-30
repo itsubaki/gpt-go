@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"math"
 	"testing"
 
@@ -140,7 +141,10 @@ func TestGradientDescent(t *testing.T) {
 	// Our simple model is now trained.
 	// If the input is {1, 2}, the output is 3.
 	// Our learning weights are:
-	areMatricesEqual(t, M{{1}, {1}}, weight.Var()) // w1 = 1, w2 = 2
+	areMatricesEqual(t, M{
+		{1},
+		{1},
+	}, weight.Var()) // w1 = 1, w2 = 2
 }
 
 func TestSelfAttention(t *testing.T) {
@@ -153,10 +157,10 @@ func TestSelfAttention(t *testing.T) {
 	// Embeddings are a way to represent words (tokens) as vectors. It encodes the meaning of
 	// the word in a high-dimensional space. Similar words are close to each other.
 	embeds := M{
-		{4, 5, 6}, // embedding for "cat"
-		{1, 2, 1}, // embedding for ", "
-		{4, 6, 7}, // embedding for "dog"
-		{1, 2, 3}, // embedding for " and"
+		{4, 1, 6}, // embedding for "cat"
+		{1, 8, 1}, // embedding for ", "
+		{4, 1, 7}, // embedding for "dog"
+		{1, 9, 3}, // embedding for " and"
 	}.Var()
 	// As we can see, embeddings for "cat" and "dog" are quite similar.
 
@@ -167,17 +171,17 @@ func TestSelfAttention(t *testing.T) {
 
 	// Then convert it to the list of embeddings:
 	//{
-	//	{4, 5, 6}, // embedding for "cat"
-	//	{1, 2, 3}, // embedding for ", "
-	//	{4, 6, 7}, // embedding for "dog"
-	//	{1, 2, 3}, // embedding for " and"
+	//	{4, 1, 6}, // embedding for "cat"
+	//	{1, 8, 3}, // embedding for ", "
+	//	{4, 1, 7}, // embedding for "dog"
+	//	{1, 9, 3}, // embedding for " and"
 	//}
 	inputEmbeds := Rows(embeds, Flat(input)...)
 	areMatricesEqual(t, M{
-		{4, 5, 6}, // embedding for "cat"
-		{1, 2, 1}, // embedding for ", "
-		{4, 6, 7}, // embedding for "dog"
-		{1, 2, 3}, // embedding for " and"
+		{4, 1, 6}, // embedding for "cat"
+		{1, 8, 1}, // embedding for ", "
+		{4, 1, 7}, // embedding for "dog"
+		{1, 9, 3}, // embedding for " and"
 	}, inputEmbeds)
 
 	// How do we predict next token from a given sequence of tokens?
@@ -191,7 +195,7 @@ func TestSelfAttention(t *testing.T) {
 	// " and" -> "cat" + ", " + "dog" + " and"
 	// Since we're operating with numerical representations of the words (embeddings), we can just add them together.
 	// I.e. for token " and" we'll do that:
-	// {4, 5, 6} + {1, 2, 1} + {4, 6, 7} + {1, 2, 3} = {10, 15, 17}
+	// {4, 1, 6} + {1, 8, 1} + {4, 1, 7} + {1, 9, 3} = {10, 19, 17}
 	// Now our resulting vector " and" combines more information from the previous tokens. Now we can predict the next
 	// token more accurately, because we have more context.
 
@@ -201,14 +205,13 @@ func TestSelfAttention(t *testing.T) {
 		{1, 1, 0, 0}, // second token attends at itself and the previous token ( "cat" + ", ")
 		{1, 1, 1, 0}, // third token attends at itself and the two previous tokens ("cat" + ", " + "dog")
 		{1, 1, 1, 1}, // fourth token attends at itself and all the previous tokens ("cat" + ", " + "dog" + " and")
-
 	}.Var()
 	enrichedEmbeds := MatMul(tril, inputEmbeds)
 	areMatricesEqual(t, M{
-		{4, 5, 6},
-		{5, 7, 7},
-		{9, 13, 14},
-		{10, 15, 17},
+		{4, 1, 6},
+		{5, 9, 7},
+		{9, 10, 14},
+		{10, 19, 17},
 	}, enrichedEmbeds)
 
 	// So, at this point each embedding is enriched with the information from all the previous tokens.
@@ -224,23 +227,77 @@ func TestWeightedSelfAttention(t *testing.T) {
 	// But let's split them into 3 categories:
 	// Query - "what I am looking for"
 	// Key - "what I can communicate"
-	// Value - "what I can give you"
+	// Value - "what I give you"
 
 	// Since we don't know how to split them, we can use a linear layer to learn that for us.
-	//q := NewLinear(3, 3)
-	//k := NewLinear(3, 3)
-	//v := NewLinear(3, 3)
-	//
-	//embeds := M{
-	//	{4, 5, 6}, // embedding for "cat"
-	//	{1, 2, 1}, // embedding for ", "
-	//	{4, 6, 7}, // embedding for "dog"
-	//	{1, 2, 3}, // embedding for " and"
-	//}.Var()
+	// We introduce 3 linear layers: query, key and value.
+	query := NewLinear(3, 3)   // converts each embedding into a query vector "what I am looking for"
+	query.Weight = Zeros(3, 3) // manually set values for a good example
+	query.Weight.Data[1][0] = 10
 
-	// Self-attention is a mechanism that allows the model to focus on different
-	// parts of the input sequence. It does so by computing a weighted sum of
-	// the previous input vectors, where the weights are determined by the interest between the input vectors.
+	key := NewLinear(3, 3) // converts each embedding into a key vector "what I can communicate"
+	key.Weight = Zeros(3, 3)
+	key.Weight.Data[0][0] = 1 // first neuron is paying attention to the first component of the embedding
+
+	value := NewLinear(3, 3) // converts each embedding into a value vector "what I give you"
+	value.Weight = Ones(3, 3)
+
+	embeds := M{
+		{4, 1, 6}, // embedding for "cat"
+		{1, 8, 1}, // embedding for ", "
+		{4, 1, 7}, // embedding for "dog"
+		{1, 9, 3}, // embedding for " and"
+	}.Var()
+
+	// Let's now extract the key and query vectors for each embed.
+
+	k := key.Forward(embeds)
+	// For our case, let's imagine that first component of our key is responsible for
+	// I am "enumerable token". The bigger the value, "the more enumerable" the token is.
+	areMatricesEqual(t, M{
+		{4, 0, 0}, // "cat" is quite enumerable
+		{1, 0, 0}, // ", " is not quite enumerable
+		{4, 0, 0}, // "dog" is quite enumerable
+		{1, 0, 0}, // " and" is not quite enumerable
+	}, k)
+
+	q := query.Forward(embeds)
+	areMatricesEqual(t, M{
+		{10, 0, 0}, // token "cat" is not looking for something enumerable
+		{80, 0, 0}, // token ", " is looking for something enumerable a lot
+		{10, 0, 0}, // token "dog" is not looking for something enumerable
+		{90, 0, 0}, // token " and" is looking for something enumerable a lot
+	}, q)
+
+	// If we multiply q query-vector for " and" and any other k key-vectors, we would answer
+	// to question "what tokens are good for me?".
+	attentionScoresForLastTok := MatMul(k, Transpose(V{90, 0, 0}.Var()))
+	areMatricesEqual(t, M{
+		{360}, // how much vector "cat" is interested to me, I am totally interested in "cat" token
+		{90},  // value is small, I am not interested in ", " token
+		{360}, // value is big, I am totally interested in "dog" token
+		{90},
+	}, attentionScoresForLastTok)
+	// So, vector " and" is interested only in tokens it is referencing to - "cat" and "dog".
+
+	// Calculate attention scores for all tokens:
+	attentionScores := MatMul(k, Transpose(q))
+	fmt.Println(attentionScores)
+
+	tril := M{
+		{1, 0, 0, 0}, // first token attends only at itself ("cat"), it can't look into the future
+		{1, 1, 0, 0}, // second token attends at itself and the previous token ( "cat" + ", ")
+		{1, 1, 1, 0}, // third token attends at itself and the two previous tokens ("cat" + ", " + "dog")
+		{1, 1, 1, 1}, // fourth token attends at itself and all the previous tokens ("cat" + ", " + "dog" + " and")
+	}.Var()
+	// Previously we attended to all the previous token with the help of this tril matrix.
+	// Now we only attend to those tokens in which we are interested, which is basically:
+	attentionScores = MaskedInfFill(attentionScores, tril)
+	areMatricesEqual(t, M{
+		//{80, -inf},
+	}, attentionScores)
+	attentionScores = Softmax(attentionScores)
+	areMatricesEqual(t, M{}, variable.New(0))
 }
 
 func TestTransformer(t *testing.T) {
