@@ -78,7 +78,7 @@ func main() {
 			embeds = block.Forward(embeds)
 		}
 		embeds = norm.Forward(embeds)
-		logits := lmHead.Forward(embeds) // converts contextual embeddings to next token predictions
+		logits := lmHead.Forward(embeds) // get scores for the next token for every context-enriched token
 
 		// Loss calculation, how much our predicted targets differ from the ground truth targets?
 		loss := CrossEntropy(logits, targets)
