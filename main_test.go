@@ -124,6 +124,64 @@ func TestGradientDescent(t *testing.T) {
 	areMatricesEqual(t, M{{1}, {1}}, weight.Var()) // w1 = 1, w2 = 2
 }
 
+func TestSelfAttention(t *testing.T) {
+	// Suppose we have the following tokens (~words) in our vocabulary:
+	// 0 - "green"
+	// 1 - ", "
+	// 2 - "blue"
+	// 3 - " and"
+
+	// Embeddings are a way to represent words (tokens) as vectors. It encodes the meaning of
+	// the word in a high-dimensional space. Similar words are close to each other.
+	embeds := M{
+		{4, 5, 6}, // embedding for "green"
+		{1, 2, 1}, // embedding for ", "
+		{4, 6, 7}, // embedding for "blue"
+		{1, 2, 3}, // embedding for " and"
+	}.Var()
+	// As we can see, embeddings for "green" and "blue" are quite similar.
+
+	// The input to transformer models are a sequence of token embeddings.
+	// So if we feed "green, blue and" string to our transformer, we must encode it.
+	// First we tokenize it, i.e. split the sentence into the tokens:
+	input := V{0, 1, 2, 3}.Var()
+
+	// Then convert it to the list of embeddings:
+	//{
+	//	{4, 5, 6}, // embedding for "green"
+	//	{1, 2, 3}, // embedding for ", "
+	//	{4, 6, 7}, // embedding for "blue"
+	//	{1, 2, 3}, // embedding for " and"
+	//}
+	inputEmbeds := Rows(embeds, Flat(input)...)
+	areMatricesEqual(t, M{
+		{4, 5, 6}, // embedding for "green"
+		{1, 2, 1}, // embedding for ", "
+		{4, 6, 7}, // embedding for "blue"
+		{1, 2, 3}, // embedding for " and"
+	}, inputEmbeds)
+
+	// How do we predict next token from a given sequence of tokens?
+	// We can naively predict the next token by looking only at the last token (bigram model does that).
+	// However, by looking at the token "and" alone, we lose the context of the previous tokens (what does "and" refer to?).
+
+	// So, we have to somehow combine the information from the current token and all the previous tokens.
+	// "green" -> "green", no previous tokens}
+	// ", " -> "green" + ", "
+	// "blue" -> "green" + "," + "blue"
+	// " and" -> "green" + "," + "blue" + "and"
+	// Since we're operating with numerical representations of the words (embeddings), we can just add them together.
+	// I.e. for token " and" we'll do that:
+	// {4, 5, 6} + {1, 2, 1} + {4, 6, 7} + {1, 2, 3} = {11, 15, 17}
+	// Now our resulting vectors combines more information from the previous tokens. We can predict the next token
+	// more accurately, because we have more context.
+
+	// Self-attention is a mechanism that allows the model to focus on different
+	// parts of the input sequence. It does this by computing a weighted sum of
+	// the previous input vectors, where the weights are determined by the interest between the input vectors.
+
+}
+
 func TestTransformer(t *testing.T) {
 	// Mocking
 	RandEmbeds = func(rows, cols int) *variable.Variable {
@@ -153,20 +211,20 @@ func TestTransformer(t *testing.T) {
 	// that next token (target) after 0 is 1, next after 1 is 2.
 	input, targets := data.Sample([]float64{0, 1, 2}, blockSize)
 
-	// [
-	//   [vector for tok0],
-	//   [vector for tok1],
+	// {
+	//   {vector for tok0},
+	//   {vector for tok1},
 	//   ... other embeds
-	// ]
+	// }
 	embeds := Rows(tokEmbeds, Flat(input)...) // get embed for every input token
 	embeds = Add(embeds, posEmbeds)           // add positional embedding
 	embeds = block.Forward(embeds)
 	embeds = norm.Forward(embeds)
-	// [
-	//   [score for tok0, ..., score for tokN], // for input tok0
-	//   [score for tok0, ..., score for tokN], // for input tok1
+	// {
+	//   {score for tok0, ..., score for tokN}, // for input tok0
+	//   {score for tok0, ..., score for tokN}, // for input tok1
 	//   ... other logits
-	// ]
+	// }
 	logits := lmHead.Forward(embeds) // converts contextual embeddings to next-token predictions
 
 	// Loss calculation, how much our predicted targets differ from the actual targets?
