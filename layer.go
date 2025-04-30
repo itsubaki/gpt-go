@@ -90,7 +90,7 @@ func NewLayerNorm(dim int) *LayerNorm {
 	}
 }
 
-// It is implemented using existing primitives, so backprop will work
+// It is implemented using existing primitives, so back propagation will work
 func (ln *LayerNorm) Forward(x *variable.Variable) *variable.Variable {
 	xmean := Mean(x)
 	xvar := Variance(x)
