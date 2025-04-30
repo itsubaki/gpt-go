@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"math"
 	"testing"
 
@@ -269,20 +268,16 @@ func TestWeightedSelfAttention(t *testing.T) {
 		{90, 0, 0}, // token " and" is looking for something enumerable a lot
 	}, q)
 
-	// If we multiply q query-vector for " and" and any other k key-vectors, we would answer
-	// to question "what tokens are good for me?".
-	attentionScoresForLastTok := MatMul(k, Transpose(V{90, 0, 0}.Var()))
+	// If we multiply q * k vectors, for each token we would answer to
+	// a question "what tokens are interesting for me?".
+	// Big values would indicate high interest.
+	attentionScores := MatMul(q, Transpose(k))
 	areMatricesEqual(t, M{
-		{360}, // how much vector "cat" is interested to me, I am totally interested in "cat" token
-		{90},  // value is small, I am not interested in ", " token
-		{360}, // value is big, I am totally interested in "dog" token
-		{90},
-	}, attentionScoresForLastTok)
-	// So, vector " and" is interested only in tokens it is referencing to - "cat" and "dog".
-
-	// Calculate attention scores for all tokens:
-	attentionScores := MatMul(k, Transpose(q))
-	fmt.Println(attentionScores)
+		{40, 10, 40, 10},
+		{320, 80, 320, 80},
+		{40, 10, 40, 10},
+		{360, 90, 360, 90}, // token " and" is interested in tokens "cat" (score=360) and "dog" (score=360)
+	}, attentionScores)
 
 	tril := M{
 		{1, 0, 0, 0}, // first token attends only at itself ("cat"), it can't look into the future
@@ -293,15 +288,24 @@ func TestWeightedSelfAttention(t *testing.T) {
 	// Previously we attended to all the previous token with the help of this tril matrix.
 	// Now we only attend to those tokens in which we are interested, which is basically:
 	attentionScores = MaskedInfFill(attentionScores, tril)
+	no := math.Inf(-1)
 	areMatricesEqual(t, M{
-		//{80, -inf},
+		{80, no, no, no},
+		{640, 160, no, no},
+		{80, 20, 80, no},
+		{720, 180, 720, 180}, // token " and" is interested in "cat" and "dog", not so much in the others
 	}, attentionScores)
+
 	attentionScores = Softmax(attentionScores)
-	areMatricesEqual(t, M{}, variable.New(0))
+	areMatricesEqual(t, M{
+		{1, 0, 0, 0},
+		{1, 0, 0, 0},
+		{0.5, 0, 0.5, 0},
+		{0.5, 0, 0.5, 0}, // token " and" is interested in "cat" and "dog", not interested into others at all
+	}, attentionScores)
 }
 
 func TestTransformer(t *testing.T) {
-	// Mocking
 	RandEmbeds = func(rows, cols int) *variable.Variable {
 		return Zeros(rows, cols)
 	}

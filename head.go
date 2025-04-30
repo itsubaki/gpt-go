@@ -80,8 +80,8 @@ func NewHead(embedSize, headSize int) *Head {
 
 // Self-attention mechanism, see main_test.go for explanation.
 func (h *Head) Forward(input *variable.Variable) *variable.Variable {
-	key := h.Key.Forward(input)
 	query := h.Query.Forward(input)
+	key := h.Key.Forward(input)
 	attentions := MatMul(query, Transpose(key))
 
 	T := len(input.Data) // number of tokens
