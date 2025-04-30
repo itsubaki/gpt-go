@@ -24,7 +24,7 @@ step: 20000, loss: 4.86982
 $ go run .
 ```
 
-It takes about 50 minutes to train on MacBook Air M3. You can train on your own dataset by pointing the `data.dataset` variable to your text corpus.  
+It takes about 40 minutes to train on MacBook Air M3. You can train on your own dataset by pointing the `data.dataset` variable to your text corpus.  
 
 To run in chat-only mode once the training is done:  
 ```shell
@@ -32,9 +32,20 @@ $ go run . -chat
 ```
 
 ## How to understand
-You can use this repository as a companion to the [Neural Networks: Zero to Hero](https://karpathy.ai/zero-to-hero.html) course.  
+You can use this repository as a companion to the [Neural Networks: Zero to Hero](https://karpathy.ai/zero-to-hero.html) course. Use `git checkout <tag>` to see how the model has evolved over time: `naive`, `bigram`, `multihead`, `block`, `residual`, `full`.  
 
-Use `git checkout <tag>` to see how the model has evolved over time: `naive`, `bigram`, `multihead`, `block`, `residual`, `full`. Refer to [main_test.go](https://github.com/zakirullin/gpt-go/blob/main/main_test.go) for a step-by-step explanation.  
+In [main_test.go](https://github.com/zakirullin/gpt-go/blob/main/main_test.go) you can find step-by-step explanations:    
+```go
+// Our neuron has 2 inputs and 1 output (number of columns in weight matrix).
+// Its goal is to predict next number in the sequence.
+input := V{1, 2} // {x1, x2}
+weight := M{
+    {2}, // how much x1 contributes to the output
+    {3}, // how much x2 contributes to the output
+}
+```
+
+It goes from basic stuff all the way to self-attention and transformer architecture.  
 
 ## Design choices
 No batches.  
