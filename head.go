@@ -3,11 +3,15 @@ package main
 import (
 	"math"
 
-	"github.com/itsubaki/autograd/function"
 	"github.com/itsubaki/autograd/layer"
 	"github.com/itsubaki/autograd/variable"
 
 	"github.com/zakirullin/gpt-go/pkg"
+)
+
+var (
+	Tril          = pkg.Tril
+	MaskedInfFill = pkg.MaskedInfFill
 )
 
 type MultiHeadAttention struct {
@@ -76,19 +80,19 @@ func NewHead(embedSize, headSize int) *Head {
 
 // Self-attention is happening here
 func (h *Head) Forward(input *variable.Variable) *variable.Variable {
-	T := len(input.Data)
 	key := h.Key.Forward(input)
-	query := variable.Transpose(h.Query.Forward(input))
+	query := Transpose(h.Query.Forward(input))
 	wei := MatMul(key, query)
 
-	tril := pkg.Tril(Ones(T, T))
-	wei = pkg.MaskedInfFill(wei, tril)
-	wei = function.Softmax(wei)
+	T := len(input.Data) // number of tokens
+	tril := Tril(Ones(T, T))
+	wei = MaskedInfFill(wei, tril)
+	wei = Softmax(wei)
 	wei = Dropout(dropout)(wei)
 
 	v := h.Value.Forward(input)
 	weightedSum := MatMul(wei, v)
-	normalizedSum := function.MulC(math.Pow(float64(h.embedSize), -0.5), weightedSum)
+	normalizedSum := MulC(math.Pow(float64(h.embedSize), -0.5), weightedSum)
 
 	return normalizedSum
 }

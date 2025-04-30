@@ -47,6 +47,25 @@ func TestLinear(t *testing.T) {
 	areEqual(t, 3, output)
 }
 
+func TestLinearWithTwoInputs(t *testing.T) {
+	layer := NewLinear(2, 1)
+	layer.Weight = M{
+		{1},
+		{1},
+	}.Var()
+
+	// For each input row the weighted output is calculated independently.
+	input := M{
+		{1, 2},
+		{2, 3},
+	}.Var()
+	output := layer.Forward(input)
+	areMatricesEqual(t, M{
+		{3},
+		{5},
+	}, output)
+}
+
 func TestLoss(t *testing.T) {
 	input := V{1, 2}.Var()
 	weight := M{
@@ -157,7 +176,7 @@ func TestSelfAttention(t *testing.T) {
 	areMatricesEqual(t, M{
 		{4, 5, 6}, // embedding for "cat"
 		{1, 2, 1}, // embedding for ", "
-		{4, 6, 7}, // embedding for "can"
+		{4, 6, 7}, // embedding for "dog"
 		{1, 2, 3}, // embedding for " and"
 	}, inputEmbeds)
 
@@ -193,12 +212,34 @@ func TestSelfAttention(t *testing.T) {
 	}, enrichedEmbeds)
 
 	// So, at this point each embedding is enriched with the information from all the previous tokens.
+	// That's the crux of self-attention.
 }
 
 func TestWeightedSelfAttention(t *testing.T) {
+	// In reality, though, we don't pay equal attention to all the previous tokens.
+	// Some previous tokens are more interested to us, some are less.
+
+	// Let's look at token "and" and its {1, 2, 3} embedding.
+	// We treat those "1", "2" and "3" components in same way (some features we don't know about).
+	// But let's split them into 3 categories:
+	// Query - "what I am looking for"
+	// Key - "what I can communicate"
+	// Value - "what I can give you"
+
+	// Since we don't know how to split them, we can use a linear layer to learn that for us.
+	//q := NewLinear(3, 3)
+	//k := NewLinear(3, 3)
+	//v := NewLinear(3, 3)
+	//
+	//embeds := M{
+	//	{4, 5, 6}, // embedding for "cat"
+	//	{1, 2, 1}, // embedding for ", "
+	//	{4, 6, 7}, // embedding for "dog"
+	//	{1, 2, 3}, // embedding for " and"
+	//}.Var()
 
 	// Self-attention is a mechanism that allows the model to focus on different
-	// parts of the input sequence. It does this by computing a weighted sum of
+	// parts of the input sequence. It does so by computing a weighted sum of
 	// the previous input vectors, where the weights are determined by the interest between the input vectors.
 }
 
@@ -227,7 +268,7 @@ func TestTransformer(t *testing.T) {
 
 	// Input contains blockSize consecutive tokens.
 	// Targets contain the expected next token for each input token.
-	// Example: for input=[0,1], targets=[1,2], meaning
+	// Example: for input={0,1}, targets={1,2}, meaning
 	// that next token (target) after 0 is 1, next after 1 is 2.
 	input, targets := data.Sample([]float64{0, 1, 2}, blockSize)
 
@@ -255,6 +296,11 @@ func TestTransformer(t *testing.T) {
 
 func areEqual(t *testing.T, want float64, got *variable.Variable) {
 	t.Helper()
+	if len(got.Data) != 1 {
+		t.Errorf("expected a single value, got %d values", len(got.Data))
+		return
+	}
+
 	if math.Abs(want-Val(got)) > 1e-9 {
 		t.Errorf("value mismatch: want %v, got %v", want, Val(got))
 	}
