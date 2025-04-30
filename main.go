@@ -83,7 +83,7 @@ func main() {
 		// Loss calculation, how much our predicted targets differ from the ground truth targets?
 		loss := CrossEntropy(logits, targets)
 		losses += Val(loss)
-		fmt.Printf("\r%s", strings.Repeat("█", (i%evalSteps)*26/evalSteps)) // progress bar
+		fmt.Printf("\r%s", strings.Repeat("·", (i%evalSteps)*26/evalSteps)) // progress bar
 		if i%evalSteps == 0 {
 			avgLoss := losses / float64(min(i+1, evalSteps))
 			fmt.Printf("\rstep: %5d, loss: %.5f\n", i, avgLoss)
