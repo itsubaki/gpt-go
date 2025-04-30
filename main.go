@@ -74,7 +74,7 @@ func main() {
 		// Forward pass, calculate predictions for every input token.
 		embeds := Rows(tokEmbeds, Flat(input)...) // get embed for every input token
 		embeds = Add(embeds, posEmbeds)           // add positional embedding
-		for _, block := range blocks {
+		for _, block := range blocks {            // self-attention and feed-forward
 			embeds = block.Forward(embeds)
 		}
 		embeds = norm.Forward(embeds)
