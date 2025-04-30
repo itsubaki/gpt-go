@@ -205,6 +205,9 @@ func TestSelfAttention(t *testing.T) {
 		{1, 1, 1, 0}, // third token attends at itself and the two previous tokens ("cat" + ", " + "dog")
 		{1, 1, 1, 1}, // fourth token attends at itself and all the previous tokens ("cat" + ", " + "dog" + " and")
 	}.Var()
+
+	// So, at this point each embedding is enriched with the information from all the previous tokens.
+	// That's the crux of self-attention.
 	enrichedEmbeds := MatMul(tril, inputEmbeds)
 	areMatricesEqual(t, M{
 		{4, 1, 6},
@@ -213,8 +216,6 @@ func TestSelfAttention(t *testing.T) {
 		{10, 19, 17},
 	}, enrichedEmbeds)
 
-	// So, at this point each embedding is enriched with the information from all the previous tokens.
-	// That's the crux of self-attention.
 }
 
 func TestWeightedSelfAttention(t *testing.T) {

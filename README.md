@@ -36,7 +36,7 @@ You can use this repository as a companion to the [Neural Networks: Zero to Hero
 
 In [main_test.go](https://github.com/zakirullin/gpt-go/blob/main/main_test.go) you can find step-by-step explanations.    
 
-Starting from 
+Starting from basic neuron example:
 ```go
 // Our neuron has 2 inputs and 1 output (number of columns in weight matrix).
 // Its goal is to predict next number in the sequence.
@@ -47,7 +47,7 @@ weight := M{
 }
 ```
 
-
+All the way to self-attention mechanism:
 ```go
 // To calculate the sum of all previous tokens, we can multiply by this triangular matrix:
 tril := M{
@@ -56,11 +56,10 @@ tril := M{
     {1, 1, 1, 0}, // third token attends at itself and the two previous tokens ("cat" + ", " + "dog")
     {1, 1, 1, 1}, // fourth token attends at itself and all the previous tokens ("cat" + ", " + "dog" + " and")
 }.Var()
+// So, at this point each embedding is enriched with the information from all the previous tokens.
+// That's the crux of self-attention.
 enrichedEmbeds := MatMul(tril, inputEmbeds)
 ```
-
-
-It goes from basic stuff all the way to self-attention and transformer architecture.  
 
 ## Design choices
 No batches.  
