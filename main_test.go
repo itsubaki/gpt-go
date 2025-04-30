@@ -297,7 +297,7 @@ func TestWeightedSelfAttention(t *testing.T) {
 		{720, 180, 720, 180}, // token " and" is interested in "cat" and "dog", not so much in the others
 	}, attentionScores)
 
-	attentionScores = Softmax(attentionScores)
+	attentionScores = Softmax(attentionScores) // fancy trick to turn {1, 1, no, no} to {0.5, 0.5, 0, 0}
 	areMatricesEqual(t, M{
 		{1, 0, 0, 0},
 		{1, 0, 0, 0},
