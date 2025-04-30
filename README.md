@@ -51,8 +51,8 @@ It goes from basic stuff all the way to self-attention and transformer architect
 No batches.  
 I've given up the complexity of the batch dimension for the sake of better understanding. It's far easier to build intuition with 2D matrices, rather than with 3D tensors. Besides, batches aren't inherent to transformer architecture.  
 
-Removed `gonum` dependency.  
-The `gonum.matmul` gave us ~30% performance boost, but it brought additional complexity. We're not striving for maximum efficiency here, rather for radical simplicity. Current matmul implementation is quite effective, and it's only 40 lines of plain readable code.  
+Removed `gonum`.  
+The `gonum.matmul` gave us ~30% performance boost, but it brought additional dependency. We're not striving for maximum efficiency here, rather for radical simplicity. Current matmul implementation is quite effective, and it's only 40 lines of plain readable code.  
 
 ## Papers
 You don't need to read them to understand the code :)  
@@ -60,7 +60,6 @@ You don't need to read them to understand the code :)
 [Attention Is All You Need](https://arxiv.org/abs/1706.03762)  
 [Deep Residual Learning](https://arxiv.org/abs/1512.03385)  
 [DeepMind WaveNet](https://arxiv.org/abs/1609.03499)  
-[Kaiming initialization](https://arxiv.org/abs/1502.01852)  
 [Batch Normalization](https://arxiv.org/abs/1502.03167)  
 [Deep NN + huge data = breakthrough performance](https://papers.nips.cc/paper_files/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html)  
 [OpenAI GPT-3 paper](https://arxiv.org/abs/2005.14165)  

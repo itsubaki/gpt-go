@@ -126,38 +126,38 @@ func TestGradientDescent(t *testing.T) {
 
 func TestSelfAttention(t *testing.T) {
 	// Suppose we have the following tokens (~words) in our vocabulary:
-	// 0 - "green"
+	// 0 - "cat"
 	// 1 - ", "
-	// 2 - "blue"
+	// 2 - "dog"
 	// 3 - " and"
 
 	// Embeddings are a way to represent words (tokens) as vectors. It encodes the meaning of
 	// the word in a high-dimensional space. Similar words are close to each other.
 	embeds := M{
-		{4, 5, 6}, // embedding for "green"
+		{4, 5, 6}, // embedding for "cat"
 		{1, 2, 1}, // embedding for ", "
-		{4, 6, 7}, // embedding for "blue"
+		{4, 6, 7}, // embedding for "dog"
 		{1, 2, 3}, // embedding for " and"
 	}.Var()
-	// As we can see, embeddings for "green" and "blue" are quite similar.
+	// As we can see, embeddings for "cat" and "dog" are quite similar.
 
 	// The input to transformer models are a sequence of token embeddings.
-	// So if we feed "green, blue and" string to our transformer, we must encode it.
+	// So if we feed "cat, dog and" string to our transformer, we must encode it.
 	// First we tokenize it, i.e. split the sentence into the tokens:
 	input := V{0, 1, 2, 3}.Var()
 
 	// Then convert it to the list of embeddings:
 	//{
-	//	{4, 5, 6}, // embedding for "green"
+	//	{4, 5, 6}, // embedding for "cat"
 	//	{1, 2, 3}, // embedding for ", "
-	//	{4, 6, 7}, // embedding for "blue"
+	//	{4, 6, 7}, // embedding for "dog"
 	//	{1, 2, 3}, // embedding for " and"
 	//}
 	inputEmbeds := Rows(embeds, Flat(input)...)
 	areMatricesEqual(t, M{
-		{4, 5, 6}, // embedding for "green"
+		{4, 5, 6}, // embedding for "cat"
 		{1, 2, 1}, // embedding for ", "
-		{4, 6, 7}, // embedding for "blue"
+		{4, 6, 7}, // embedding for "can"
 		{1, 2, 3}, // embedding for " and"
 	}, inputEmbeds)
 
@@ -166,20 +166,40 @@ func TestSelfAttention(t *testing.T) {
 	// However, by looking at the token "and" alone, we lose the context of the previous tokens (what does "and" refer to?).
 
 	// So, we have to somehow combine the information from the current token and all the previous tokens.
-	// "green" -> "green", no previous tokens}
-	// ", " -> "green" + ", "
-	// "blue" -> "green" + "," + "blue"
-	// " and" -> "green" + "," + "blue" + "and"
+	// "cat" -> "cat", no previous tokens to look at
+	// ", " -> "cat" + ", "
+	// "blue" -> "cat" + ", " + "dog"
+	// " and" -> "cat" + ", " + "dog" + " and"
 	// Since we're operating with numerical representations of the words (embeddings), we can just add them together.
 	// I.e. for token " and" we'll do that:
-	// {4, 5, 6} + {1, 2, 1} + {4, 6, 7} + {1, 2, 3} = {11, 15, 17}
-	// Now our resulting vectors combines more information from the previous tokens. We can predict the next token
-	// more accurately, because we have more context.
+	// {4, 5, 6} + {1, 2, 1} + {4, 6, 7} + {1, 2, 3} = {10, 15, 17}
+	// Now our resulting vector " and" combines more information from the previous tokens. Now we can predict the next
+	// token more accurately, because we have more context.
+
+	// To calculate the sum of all previous tokens, we can multiply by this triangular matrix:
+	tril := M{
+		{1, 0, 0, 0}, // first token attends only at itself ("cat"), it can't look into the future
+		{1, 1, 0, 0}, // second token attends at itself and the previous token ( "cat" + ", ")
+		{1, 1, 1, 0}, // third token attends at itself and the two previous tokens ("cat" + ", " + "dog")
+		{1, 1, 1, 1}, // fourth token attends at itself and all the previous tokens ("cat" + ", " + "dog" + " and")
+
+	}.Var()
+	enrichedEmbeds := MatMul(tril, inputEmbeds)
+	areMatricesEqual(t, M{
+		{4, 5, 6},
+		{5, 7, 7},
+		{9, 13, 14},
+		{10, 15, 17},
+	}, enrichedEmbeds)
+
+	// So, at this point each embedding is enriched with the information from all the previous tokens.
+}
+
+func TestWeightedSelfAttention(t *testing.T) {
 
 	// Self-attention is a mechanism that allows the model to focus on different
 	// parts of the input sequence. It does this by computing a weighted sum of
 	// the previous input vectors, where the weights are determined by the interest between the input vectors.
-
 }
 
 func TestTransformer(t *testing.T) {
@@ -242,17 +262,22 @@ func areEqual(t *testing.T, want float64, got *variable.Variable) {
 
 func areMatricesEqual(t *testing.T, want M, got *variable.Variable) {
 	t.Helper()
-	gotMatrix := got.Data
-
-	if len(want) != len(gotMatrix) {
-		t.Errorf("matrix length mismatch: want length=%d, got length=%d", len(want), len(gotMatrix))
+	if len(want) != len(got.Data) {
+		t.Errorf("matrix length mismatch: want length=%d, got length=%d", len(want), len(got.Data))
 		return
 	}
 
 	for i := range want {
+		if len(want[i]) != len(got.Data[i]) {
+			t.Errorf("matrix row length mismatch at row %d: want length=%d, got length=%d", i, len(want[i]), len(got.Data[i]))
+			return
+		}
+	}
+
+	for i := range want {
 		for j := range want[i] {
-			if math.Abs(want[i][j]-gotMatrix[i][j]) > 1e-9 {
-				t.Errorf("matrix mismatch at row %d, column %d: want %v, got %v", i, j, want[i][j], gotMatrix[i][j])
+			if math.Abs(want[i][j]-got.Data[i][j]) > 1e-9 {
+				t.Errorf("matrix mismatch at row %d, column %d: want %v, got %v", i, j, want[i][j], got.Data[i][j])
 			}
 		}
 	}

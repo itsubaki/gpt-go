@@ -206,17 +206,22 @@ func areSlicesEqual[T comparable](t *testing.T, want, got []T) {
 
 func areMatricesEqual(t *testing.T, want M, got *variable.Variable) {
 	t.Helper()
-	gotMatrix := got.Data
-
-	if len(want) != len(gotMatrix) {
-		t.Errorf("matrix length mismatch: want length=%d, got length=%d", len(want), len(gotMatrix))
+	if len(want) != len(got.Data) {
+		t.Errorf("matrix length mismatch: want length=%d, got length=%d", len(want), len(got.Data))
 		return
 	}
 
 	for i := range want {
+		if len(want[i]) != len(got.Data[i]) {
+			t.Errorf("matrix row length mismatch at row %d: want length=%d, got length=%d", i, len(want[i]), len(got.Data[i]))
+			return
+		}
+	}
+
+	for i := range want {
 		for j := range want[i] {
-			if math.Abs(want[i][j]-gotMatrix[i][j]) > 1e-9 {
-				t.Errorf("matrix mismatch at row %d, column %d: want %v, got %v", i, j, want[i][j], gotMatrix[i][j])
+			if math.Abs(want[i][j]-got.Data[i][j]) > 1e-9 {
+				t.Errorf("matrix mismatch at row %d, column %d: want %v, got %v", i, j, want[i][j], got.Data[i][j])
 			}
 		}
 	}
