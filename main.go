@@ -124,7 +124,7 @@ func main() {
 	}
 
 	// Sample from the model.
-	prompt := "magic forest"
+	prompt := "mysterious island"
 	for {
 		fmt.Printf("\n%s", prompt)
 		context := data.Encode(prompt)
