@@ -13,13 +13,13 @@ import (
 
 // Hyperparameters
 const (
-	blockSize        = 128
-	embedSize        = 264
-	heads            = 6
-	layers           = 6
-	steps            = 10000
+	blockSize        = 32
+	embedSize        = 64
+	heads            = 4
+	layers           = 4
+	steps            = 40000
 	evalSteps        = 1000
-	learningRate     = 0.0001
+	learningRate     = 0.001
 	dropout          = 0.0  // disable some % of our neurons to prevent overfitting, model is likely to generalize
 	lossScale        = 1.0  // we don't use batches, so scaling loss down may help better convergence
 	pretrainedTokens = 5000 // how many of subword pretrained tokens to add on top of default character-based tokens
