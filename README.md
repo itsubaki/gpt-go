@@ -10,13 +10,10 @@ Well.
 My days must follow
 ```
 
-Params and loss:
+Or this:
 ```
-bs=32, es=64, lr=0.0010, ls=1.0, vs=3000, steps=20000
-...
-step: 18000, loss: 5.04248
-step: 19000, loss: 4.97543
-step: 20000, loss: 4.86982
+Captain Nemo, in two hundred thousand feet weary in
+the existence of the world.
 ```
 
 ## How to run
