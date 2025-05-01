@@ -17,13 +17,13 @@ const (
 	embedSize        = 64
 	heads            = 4
 	layers           = 4
-	steps            = 40000
-	evalSteps        = 1000
 	learningRate     = 0.001
-	dropout          = 0.0  // disable some % of our neurons to prevent overfitting, model is likely to generalize
-	lossScale        = 1.0  // we don't use batches, so scaling loss down may help better convergence
-	pretrainedTokens = 5000 // how many of subword pretrained tokens to add on top of default character-based tokens
-	maxTokens        = 50   // tokens limit for generation
+	steps            = 40000 // number of training steps, increase for better results
+	evalSteps        = 1000  // evaluate loss once per every evalSteps
+	dropout          = 0.0   // disable some % of our neurons to prevent overfitting, model is likely to generalize
+	lossScale        = 1.0   // we don't use batches, so scaling loss down may help better convergence
+	pretrainedTokens = 5000  // number of pretrained tokens to add on top of auto-detected characters
+	maxTokens        = 50    // tokens limit for generation
 )
 
 func main() {
@@ -83,7 +83,7 @@ func main() {
 		// Loss calculation, "how much our predicted targets differ from the ground truth targets?"
 		loss := CrossEntropy(logits, targets)
 		losses += Val(loss)
-		fmt.Printf("\r%s", strings.Repeat("·", (i%evalSteps)*25/evalSteps)) // progress bar
+		fmt.Printf("\r%s", strings.Repeat("·", (i%evalSteps)*26/evalSteps)) // progress bar
 		if i%evalSteps == 0 {
 			avgLoss := losses / float64(min(i+1, evalSteps))
 			fmt.Printf("\rstep: %5d, loss: %.4f\n", i, avgLoss)
@@ -106,7 +106,7 @@ func main() {
 	nextTok := func(context []float64) float64 {
 		context = context[max(0, len(context)-blockSize):]
 
-		// Get embeddings for all context in context.
+		// Feed context tokens to the model.
 		embeds := Rows(tokEmbeds, context...)
 		embeds = Add(embeds, posEmbeds)
 		for _, block := range blocks {
