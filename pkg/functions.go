@@ -92,7 +92,8 @@ func Rows(x *variable.Variable, indexes ...float64) *variable.Variable {
 // Returns a matrix of random values from a normal distribution.
 func Normal(rows, cols int) *variable.Variable {
 	rnd := func(_ float64) float64 {
-		return rand.Float64()
+		std := 0.02
+		return rand.NormFloat64() * std
 	}
 
 	m := matrix.Zero(rows, cols)

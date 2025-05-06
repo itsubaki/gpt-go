@@ -1,11 +1,7 @@
 package main
 
 import (
-	"math"
-	"math/rand/v2"
-
 	"github.com/itsubaki/autograd/layer"
-	"github.com/itsubaki/autograd/matrix"
 	"github.com/itsubaki/autograd/variable"
 
 	"github.com/zakirullin/gpt-go/pkg"
@@ -17,7 +13,7 @@ var (
 	Div         = pkg.Div
 	Mul         = variable.Mul
 	Pow         = variable.Pow
-	RandWeights = uniform
+	RandWeights = pkg.Normal
 )
 
 type Linear struct {
@@ -106,18 +102,4 @@ func (ln *LayerNorm) Params() []layer.Parameter {
 		ln.Scale,
 		ln.Shift,
 	}
-}
-
-// Sample values from uniform(-1/sqrt(in_features), 1/sqrt(in_features)).
-// Same weights initialization is used in PyTorch.
-func uniform(inSize, outSize int) *variable.Variable {
-	bound := 1 / math.Sqrt(float64(inSize))
-	rnd := func(_ float64) float64 {
-		return (2 * bound * rand.Float64()) - bound
-	}
-
-	m := matrix.Zero(inSize, outSize)
-	m = matrix.F(m, rnd)
-
-	return variable.NewOf(m...)
 }
