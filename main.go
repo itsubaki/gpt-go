@@ -14,8 +14,8 @@ import (
 // Hyperparameters
 const (
 	blockSize        = 32
-	embedSize        = 128
-	heads            = 8
+	embedSize        = 64
+	heads            = 4
 	layers           = 4
 	learningRate     = 0.0005
 	steps            = 40000 // number of training steps, increase for better results
