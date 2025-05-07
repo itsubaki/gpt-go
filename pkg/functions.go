@@ -1,7 +1,6 @@
 package pkg
 
 import (
-	"fmt"
 	"math"
 	"math/rand/v2"
 
@@ -19,7 +18,7 @@ var (
 func Sample(probs *variable.Variable) float64 {
 	r := rand.Float64()
 
-	// Find the first index where cumulative probability exceeds r
+	// Find the first index where cumulative probability exceeds r.
 	cumulativeProb := 0.0
 	for i, p := range probs.Data[0] {
 		cumulativeProb += p
@@ -28,7 +27,6 @@ func Sample(probs *variable.Variable) float64 {
 		}
 	}
 
-	// Fallback (should rarely happen due to floating point precision)
 	return float64(len(probs.Data)) - 1
 }
 
@@ -39,16 +37,15 @@ func SampleTemp(probs *variable.Variable, temperature float64) float64 {
 	adjustedProbs := make([]float64, len(probs.Data[0]))
 	copy(adjustedProbs, probs.Data[0])
 	if temperature != 1.0 {
-		// Lower temperature: higher probs amplified, lower reduced, more deterministic
-		// Higher temperature: probabilities become more uniform, more random
+		// Lower temperature: higher probs amplified, lower reduced, more deterministic.
+		// Higher temperature: probabilities become more uniform, more random.
 		sum := 0.0
 		for i, p := range adjustedProbs {
-			// Apply temperature by raising to power of 1/temperature
+			// Apply temperature by raising to power of 1/temperature.
 			adjustedProbs[i] = math.Pow(p, 1.0/temperature)
 			sum += adjustedProbs[i]
 		}
 
-		// Re-normalize
 		for i := range adjustedProbs {
 			adjustedProbs[i] /= sum
 		}
@@ -89,7 +86,6 @@ func Normal(rows, cols int) *variable.Variable {
 	return variable.NewOf(m...)
 }
 
-// Only works with 2D tensors
 func Tril(m *variable.Variable) *variable.Variable {
 	result := variable.ZeroLike(m)
 	for i := 0; i < len(m.Data); i++ {
@@ -103,7 +99,7 @@ func Tril(m *variable.Variable) *variable.Variable {
 	return result
 }
 
-// The result would be added to computation graph and tied to m
+// The result would be added to computation graph and tied to m.
 func MaskedInfFill(m, mask *variable.Variable) *variable.Variable {
 	negInfMaskedData := matrix.F2(m.Data, mask.Data, func(a, b float64) float64 {
 		if b == 0 {
@@ -117,11 +113,7 @@ func MaskedInfFill(m, mask *variable.Variable) *variable.Variable {
 	return mMasked
 }
 
-func PrintShape(v *variable.Variable) {
-	fmt.Printf("(%d, %d)\n", len(v.Data), len(v.Data[0]))
-}
-
-// Returns a matrix of 1s
+// Returns a matrix of ones.
 func Ones(m, n int) *variable.Variable {
 	out := make([][]float64, m)
 	for i := range m {
@@ -135,10 +127,10 @@ func Ones(m, n int) *variable.Variable {
 }
 
 func DisableDropout() {
-	variable.Config.Train = false // Prevent dropout
+	variable.Config.Train = false // disables dropout
 }
 
-// Returns the first element of the variable
+// Returns the first element of the variable.
 func Val(x *variable.Variable) float64 {
 	return x.Data[0][0]
 }
