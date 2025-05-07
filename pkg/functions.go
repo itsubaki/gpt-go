@@ -57,21 +57,6 @@ func SampleTemp(probs *variable.Variable, temperature float64) float64 {
 	return Sample(variable.NewOf(adjustedProbs))
 }
 
-// SampleGreedy returns the index of the maximum value.
-// I use that to verify that the model has remembered some patterns.
-func SampleGreedy(probs *variable.Variable) float64 {
-	maxProb := -1.0
-	maxIndex := 0
-	for i, p := range probs.Data[0] {
-		if p > maxProb {
-			maxProb = p
-			maxIndex = i
-		}
-	}
-
-	return float64(maxIndex)
-}
-
 // Returns rows at specified indexes. Negative indexes return rows from the end.
 func Rows(x *variable.Variable, indexes ...float64) *variable.Variable {
 	size := len(x.Data)
@@ -92,6 +77,8 @@ func Rows(x *variable.Variable, indexes ...float64) *variable.Variable {
 // Returns a matrix of random values from a normal distribution.
 func Normal(rows, cols int) *variable.Variable {
 	rnd := func(_ float64) float64 {
+		// Standard deviation = 0.02 is widely used in transformer models like GPT-2.
+		// It prevents too large values in the beginning of training.
 		std := 0.02
 		return rand.NormFloat64() * std
 	}
