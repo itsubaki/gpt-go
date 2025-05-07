@@ -31,7 +31,7 @@ $ go run . -chat
 ## How to understand
 You can use this repository as a companion to the [Neural Networks: Zero to Hero](https://karpathy.ai/zero-to-hero.html) course. Use `git checkout <tag>` to see how the model has evolved over time: `naive`, `bigram`, `multihead`, `block`, `residual`, `full`.  
 
-In [main_test.go](https://github.com/zakirullin/gpt-go/blob/main/main_test.go) you will find explanations starting from basic neuron example
+In [main_test.go](https://github.com/zakirullin/gpt-go/blob/main/main_test.go) you will find explanations starting from basic neuron example:  
 ```go
 // Our neuron has 2 inputs and 1 output (number of columns in weight matrix).
 // Its goal is to predict next number in the sequence.

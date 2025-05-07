@@ -14,14 +14,13 @@ import (
 // Hyperparameters
 const (
 	blockSize        = 32
-	embedSize        = 64
-	heads            = 4
+	embedSize        = 128
+	heads            = 8
 	layers           = 4
-	learningRate     = 0.001
+	learningRate     = 0.0005
 	steps            = 40000 // number of training steps, increase for better results
 	evalSteps        = 1000  // evaluate loss once per every evalSteps
 	dropout          = 0.0   // disable some % of our neurons to prevent overfitting, model is likely to generalize
-	lossScale        = 1.0   // we don't use batches, so scaling loss down may help better convergence
 	pretrainedTokens = 5000  // number of pretrained tokens to add on top of auto-detected characters
 	maxTokens        = 50    // tokens limit for generation
 )
@@ -66,7 +65,7 @@ func main() {
 	// Training loop.
 	losses := 0.0
 	optimizer := pkg.NewAdamW(learningRate)
-	fmt.Printf("bs=%d, es=%d, lr=%.4f, ls=%.2f, vs=%d, steps=%d\n", blockSize, embedSize, learningRate, lossScale, vocabSize, steps)
+	fmt.Printf("bs=%d, es=%d, lr=%.4f, vs=%d, steps=%d\n", blockSize, embedSize, learningRate, vocabSize, steps)
 	for i := 0; i < steps; i++ {
 		// Targets contain the ground truth next token for each input token.
 		input, targets := data.Sample(dataset, blockSize)
@@ -89,7 +88,6 @@ func main() {
 			fmt.Printf("\rstep: %5d, loss: %.4f\n", i, avgLoss)
 			losses = 0
 		}
-		loss = MulC(lossScale, loss)
 
 		// Backward pass, calculate the gradients (how much each parameter contributes to the loss)
 		// for all the parameters (weights, biases, embeds). Loss is the tail of a computation graph.
