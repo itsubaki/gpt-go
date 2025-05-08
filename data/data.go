@@ -153,6 +153,12 @@ func createMergeRules(rules string, numMerges int) {
 		mergedToken := strings.ReplaceAll(matches[3], "\\n", "\n")
 
 		addTokensToVocab(mergedToken)
+
+		for _, token := range []string{left, right, mergedToken} {
+			if _, ok := tokenToID[token]; !ok {
+				panic(fmt.Sprintf("rule '%s' is malformed, token '%s' is missing from vocabulary", m, token))
+			}
+		}
 		addRule(tokenToID[left], tokenToID[right], tokenToID[mergedToken])
 	}
 }
@@ -171,9 +177,6 @@ func addTokensToVocab(tokens ...string) {
 
 func addRule(tok1, tok2, mergedTok int) {
 	key := zip(tok1, tok2)
-	if _, ok := mergeRules[key]; ok {
-		panic(fmt.Sprintf("rule '%d' is duplicated", key))
-	}
 	mergeRules[key] = mergedTok
 	rulesOrder = append(rulesOrder, key)
 }
