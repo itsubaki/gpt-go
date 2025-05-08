@@ -171,6 +171,9 @@ func addTokensToVocab(tokens ...string) {
 
 func addRule(tok1, tok2, mergedTok int) {
 	key := zip(tok1, tok2)
+	if _, ok := mergeRules[key]; ok {
+		panic(fmt.Sprintf("rule '%d' is duplicated", key))
+	}
 	mergeRules[key] = mergedTok
 	rulesOrder = append(rulesOrder, key)
 }

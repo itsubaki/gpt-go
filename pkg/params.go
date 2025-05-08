@@ -80,7 +80,7 @@ func (p *Params) TryLoadPretrained() {
 		key := fmt.Sprintf("%d", i)
 		for j := range p.params[key].Data {
 			if err := binary.Read(file, binary.LittleEndian, &p.params[key].Data[j]); err != nil {
-				panic(err)
+				panic("model shapes mismatch, remove model-* files")
 			}
 		}
 		shape := fmt.Sprintf("%d:%d×%d", i, len(p.params[key].Data), len(p.params[key].Data[0]))
