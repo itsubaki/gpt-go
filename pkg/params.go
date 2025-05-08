@@ -80,7 +80,7 @@ func (p *Params) TryLoadPretrained() {
 		key := fmt.Sprintf("%d", i)
 		for j := range p.params[key].Data {
 			if err := binary.Read(file, binary.LittleEndian, &p.params[key].Data[j]); err != nil {
-				panic("model shapes mismatch, remove model-* files")
+				panic(fmt.Sprintf("model shapes mismatch, remove '%s' file", p.filename()))
 			}
 		}
 		shape := fmt.Sprintf("%d:%d×%d", i, len(p.params[key].Data), len(p.params[key].Data[0]))
@@ -92,7 +92,7 @@ func (p *Params) TryLoadPretrained() {
 		panic(fmt.Errorf("failed to read shapes checksum: %v", err))
 	}
 	if savedChecksum != hash.Sum32() {
-		panic("model shapes mismatch, remove model-* files")
+		panic(fmt.Sprintf("model shapes mismatch, remove '%s' file", p.filename()))
 	}
 
 	fmt.Printf("Loaded pretrained params: %s\n", p.filename())
