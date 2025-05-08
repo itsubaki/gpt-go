@@ -13,6 +13,7 @@ import (
 
 // Hyperparameters
 const (
+	batchSize        = 1
 	blockSize        = 32
 	embedSize        = 64
 	heads            = 4
@@ -21,7 +22,7 @@ const (
 	steps            = 40000 // number of training steps, increase for better results
 	evalSteps        = 1000  // evaluate loss once per every evalSteps
 	dropout          = 0.0   // disable some % of our neurons to prevent overfitting, model is likely to generalize
-	pretrainedTokens = 5000  // number of pretrained tokens to add on top of auto-detected characters
+	pretrainedTokens = 6000  // number of pretrained tokens to add on top of auto-detected characters
 	maxTokens        = 50    // tokens limit for generation
 )
 
@@ -82,6 +83,7 @@ func main() {
 		// Loss calculation, "how much our predicted targets differ from the ground truth targets?"
 		loss := CrossEntropy(logits, targets)
 		losses += Val(loss)
+		loss = Div(loss, Var(batchSize))                                    // scale loss by batch size
 		fmt.Printf("\r%s", strings.Repeat("·", (i%evalSteps)*26/evalSteps)) // progress bar
 		if i%evalSteps == 0 {
 			avgLoss := losses / float64(min(i+1, evalSteps))

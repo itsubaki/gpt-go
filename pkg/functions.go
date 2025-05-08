@@ -113,6 +113,10 @@ func MaskedInfFill(m, mask *variable.Variable) *variable.Variable {
 	return mMasked
 }
 
+func DivC(c float64, x *variable.Variable) *variable.Variable {
+	return variable.MulC(1.0/c, x)
+}
+
 // Returns a matrix of ones.
 func Ones(m, n int) *variable.Variable {
 	out := make([][]float64, m)
@@ -126,13 +130,13 @@ func Ones(m, n int) *variable.Variable {
 	return variable.NewOf(out...)
 }
 
-func DisableDropout() {
-	variable.Config.Train = false // disables dropout
-}
-
 // Returns the first element of the variable.
 func Val(x *variable.Variable) float64 {
 	return x.Data[0][0]
+}
+
+func Var(x float64) *variable.Variable {
+	return variable.New(x)
 }
 
 func Flat(x *variable.Variable) []float64 {
@@ -141,4 +145,8 @@ func Flat(x *variable.Variable) []float64 {
 
 func Millions(num int) float64 {
 	return float64(num) / 1e6
+}
+
+func DisableDropout() {
+	variable.Config.Train = false // disables dropout
 }
