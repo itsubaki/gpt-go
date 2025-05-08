@@ -13,7 +13,6 @@ import (
 
 // Hyperparameters
 const (
-	batchSize        = 32
 	blockSize        = 32
 	embedSize        = 64
 	heads            = 4
@@ -65,7 +64,6 @@ func main() {
 
 	// Training loop.
 	losses := 0.0
-	accumulatedLoss := Var(0)
 	optimizer := pkg.NewAdamW(learningRate)
 	fmt.Printf("bs=%d, es=%d, lr=%.4f, vs=%d, steps=%d\n", blockSize, embedSize, learningRate, vocabSize, steps)
 	for i := 0; i < steps; i++ {
@@ -84,7 +82,6 @@ func main() {
 		// Loss calculation, "how much our predicted targets differ from the ground truth targets?"
 		loss := CrossEntropy(logits, targets)
 		losses += Val(loss)
-		accumulatedLoss = Add(accumulatedLoss, Div(loss, Var(batchSize)))   // scale loss by batch size
 		fmt.Printf("\r%s", strings.Repeat("·", (i%evalSteps)*26/evalSteps)) // progress bar
 		if i%evalSteps == 0 {
 			avgLoss := losses / float64(min(i+1, evalSteps))
@@ -92,16 +89,13 @@ func main() {
 			losses = 0
 		}
 
-		if i%batchSize == 0 {
-			// Backward pass, calculate the gradients (how much each parameter contributes to the loss)
-			// for all the parameters (weights, biases, embeds). Loss is the tail of a computation graph.
-			accumulatedLoss.Backward()
-			accumulatedLoss = Var(0) // reset accumulated loss
+		// Backward pass, calculate the gradients (how much each parameter contributes to the loss)
+		// for all the parameters (weights, biases, embeds). Loss is the tail of a computation graph.
+		loss.Backward()
 
-			// Nudge the parameters in the direction of the gradients, so to minimize the loss.
-			optimizer.Update(params)
-			params.ZeroGrad()
-		}
+		// Nudge the parameters in the direction of the gradients, so to minimize the loss.
+		optimizer.Update(params)
+		params.ZeroGrad()
 	}
 	params.Save()
 	pkg.DisableDropout()

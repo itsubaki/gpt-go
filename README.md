@@ -58,7 +58,7 @@ enrichedEmbeds := MatMul(tril, inputEmbeds)
 
 ## Design choices
 No batches.  
-I've given up the complexity of the batch dimension for the sake of better understanding. It's far easier to build intuition with 2D matrices, rather than with 3D tensors. Besides, batches aren't inherent to the transformer architecture.  
+I've given up the complexity of the batch dimension for the sake of better understanding. It's far easier to build intuition with 2D matrices, rather than with 3D tensors. Besides, batches aren't inherent to the transformer architecture. As an alternative, gradient accumulation was tried. The effect was negligible, so it was removed as well.   
 
 Removed `gonum`.  
 The `gonum.matmul` gave us ~30% performance boost, but it brought additional dependency. We're not striving for maximum efficiency here, rather for radical simplicity. Current matmul implementation is quite effective, and it's only 40 lines of plain readable code.  
