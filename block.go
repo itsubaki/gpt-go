@@ -23,7 +23,6 @@ var (
 	RandEmbeds   = pkg.Normal
 	Rows         = pkg.Rows
 	Val          = pkg.Val
-	Var          = pkg.Var
 	Flat         = pkg.Flat
 )
 

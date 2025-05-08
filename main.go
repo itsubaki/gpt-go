@@ -92,7 +92,6 @@ func main() {
 		// Backward pass, calculate the gradients (how much each parameter contributes to the loss)
 		// for all the parameters (weights, biases, embeds). Loss is the tail of a computation graph.
 		loss.Backward()
-
 		// Nudge the parameters in the direction of the gradients, so to minimize the loss.
 		optimizer.Update(params)
 		params.ZeroGrad()

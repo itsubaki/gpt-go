@@ -135,10 +135,6 @@ func Val(x *variable.Variable) float64 {
 	return x.Data[0][0]
 }
 
-func Var(x float64) *variable.Variable {
-	return variable.New(x)
-}
-
 func Flat(x *variable.Variable) []float64 {
 	return matrix.Flatten(x.Data)
 }
