@@ -351,7 +351,7 @@ func TestTransformer(t *testing.T) {
 	logits := lmHead.Forward(embeds) // converts contextual embeddings to next-token predictions
 
 	// Loss calculation, how much our predicted targets differ from the actual targets?
-	loss := CrossEntropy(logits, targets)
+	loss := SoftmaxCrossEntropy(logits, targets)
 
 	areEqual(t, 2.302585092994046, loss)
 }

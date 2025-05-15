@@ -80,7 +80,7 @@ func main() {
 		logits := lmHead.Forward(embeds) // get scores for the next token for every context-enriched embed
 
 		// Loss calculation, "how much our predicted targets differ from the ground truth targets?"
-		loss := CrossEntropy(logits, targets)
+		loss := SoftmaxCrossEntropy(logits, targets)
 		losses += Val(loss)
 		fmt.Printf("\r%s", strings.Repeat("·", (i%evalSteps)*26/evalSteps)) // progress bar
 		if i%evalSteps == 0 {

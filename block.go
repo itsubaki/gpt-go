@@ -9,21 +9,21 @@ import (
 )
 
 var (
-	Zeros        = variable.Zero
-	Ones         = pkg.Ones
-	ReLU         = function.ReLU
-	Dropout      = function.DropoutSimple
-	MatMul       = pkg.MatMul
-	Add          = variable.Add
-	Sub          = variable.Sub
-	MulC         = variable.MulC
-	Transpose    = variable.Transpose
-	Softmax      = function.Softmax
-	CrossEntropy = function.SoftmaxCrossEntropy
-	RandEmbeds   = pkg.Normal
-	Rows         = pkg.Rows
-	Val          = pkg.Val
-	Flat         = pkg.Flat
+	Zeros               = variable.Zero
+	Ones                = pkg.Ones
+	ReLU                = function.ReLU
+	Dropout             = function.DropoutSimple
+	MatMul              = pkg.MatMul
+	Add                 = variable.Add
+	Sub                 = variable.Sub
+	MulC                = variable.MulC
+	Transpose           = variable.Transpose
+	Softmax             = function.Softmax
+	SoftmaxCrossEntropy = function.SoftmaxCrossEntropy
+	RandEmbeds          = pkg.Normal
+	Rows                = pkg.Rows
+	Val                 = pkg.Val
+	Flat                = pkg.Flat
 )
 
 type Block struct {
