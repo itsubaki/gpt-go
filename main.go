@@ -14,7 +14,7 @@ import (
 // Hyperparameters
 const (
 	blockSize        = 32
-	embedSize        = 64
+	embedSize        = 88
 	heads            = 4
 	layers           = 4
 	learningRate     = 0.0005
@@ -122,7 +122,7 @@ func main() {
 	}
 
 	// Sample from the model.
-	prompt := "mysterious island"
+	prompt := " mysterious island"
 	for {
 		fmt.Printf("\n%s", prompt)
 		context := data.Encode(prompt)
