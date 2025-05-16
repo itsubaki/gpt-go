@@ -16,12 +16,12 @@ const (
 	blockSize        = 32
 	embedSize        = 88
 	heads            = 4
-	layers           = 6
+	layers           = 4
 	learningRate     = 0.0005
 	steps            = 40000 // number of training steps, increase for better results
 	evalSteps        = 1000  // evaluate loss once per every evalSteps
 	dropout          = 0.0   // disable some % of our neurons to prevent overfitting, model is likely to generalize
-	pretrainedTokens = 4000  // number of pretrained tokens to add on top of auto-detected characters
+	pretrainedTokens = 6000  // number of pretrained tokens to add on top of auto-detected characters
 	maxTokens        = 50    // tokens limit for generation
 )
 
