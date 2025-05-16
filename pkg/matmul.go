@@ -37,7 +37,7 @@ func (f *MatMulT) Backward(gy ...*variable.Variable) []*variable.Variable {
 	}
 }
 
-func matmul(m, n matrix.Matrix) *variable.Variable {
+func matmul(m, n *matrix.Matrix) *variable.Variable {
 	mRows, mCols := m.Rows, m.Cols
 	_, nCols := n.Rows, n.Cols
 
