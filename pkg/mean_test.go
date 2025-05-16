@@ -24,7 +24,7 @@ func ExampleMean_withZero() {
 	}.Var()
 
 	result := Mean(a)
-	fmt.Printf("%.6f\n", result.Data[0][0])
+	fmt.Printf("%.6f\n", result.Data.At(0, 0))
 
 	// Output: 0.666667
 }
@@ -48,7 +48,7 @@ func ExampleMean_withNegatives() {
 	}.Var()
 
 	result := Mean(a)
-	fmt.Printf("%.6f %.6f\n", result.Data[0][0], result.Data[1][0])
+	fmt.Printf("%.6f %.6f\n", result.Data.At(0, 0), result.Data.At(1, 0))
 
 	// Output: -0.666667 1.666667
 }

@@ -41,7 +41,7 @@ func ExampleSoftmax_withMasking() {
 	)
 	result := function.Softmax(a)
 
-	for _, row := range result.Data {
+	for _, row := range result.Data.Seq2() {
 		values := make([]string, len(row))
 		for i, val := range row {
 			values[i] = fmt.Sprintf("%.6f", val)

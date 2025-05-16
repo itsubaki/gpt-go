@@ -16,11 +16,11 @@ type MeanT struct {
 // Mean alongside rows
 func (m *MeanT) Forward(x ...*variable.Variable) []*variable.Variable {
 	m.x = x[0]
-	m.n = len(x[0].Data[0])
+	m.n = x[0].Data.Cols
 
-	means := variable.Zero(len(x[0].Data), 1)
-	for i := range x[0].Data {
-		means.Data[i][0] = mean(x[0].Data[i])
+	means := variable.Zero(x[0].Data.Rows, 1)
+	for i, row := range x[0].Data.Seq2() {
+		means.Data.Set(i, 0, mean(row))
 	}
 
 	return []*variable.Variable{
@@ -31,9 +31,9 @@ func (m *MeanT) Forward(x ...*variable.Variable) []*variable.Variable {
 // Derivative of mean(x1, x2) by xn = 1/n
 func (m *MeanT) Backward(gy ...*variable.Variable) []*variable.Variable {
 	g := variable.ZeroLike(m.x)
-	for i := range g.Data {
-		for j := range g.Data[i] {
-			g.Data[i][j] = gy[0].Data[i][0] / float64(m.n)
+	for i := range g.Data.Rows {
+		for j := range g.Data.Cols {
+			g.Data.Set(i, j, gy[0].Data.At(i, 0)/float64(m.n))
 		}
 	}
 

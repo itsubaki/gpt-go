@@ -16,8 +16,8 @@ type CatT struct {
 
 // Concatenate along the columns dimension (dim=1)
 func (f *CatT) Forward(x ...*variable.Variable) []*variable.Variable {
-	rows := len(x[0].Data)
-	f.ColSize = len(x[0].Data[0])
+	rows := x[0].Data.Rows
+	f.ColSize = x[0].Data.Cols
 	totalCols := f.ColSize * len(x)
 
 	result := make([][]float64, rows)
@@ -25,7 +25,7 @@ func (f *CatT) Forward(x ...*variable.Variable) []*variable.Variable {
 		result[i] = make([]float64, totalCols)
 		colOffset := 0
 		for _, v := range x {
-			copy(result[i][colOffset:], v.Data[i])
+			copy(result[i][colOffset:], v.Data.Row(i))
 			colOffset += f.ColSize
 		}
 	}
@@ -41,11 +41,11 @@ func (f *CatT) Backward(gy ...*variable.Variable) []*variable.Variable {
 	// Split along columns
 	for i := range f.NumInputs {
 		colOffset := i * f.ColSize
-		colData := make([][]float64, len(gy[0].Data))
+		colData := make([][]float64, gy[0].Data.Rows)
 
 		for j := range colData {
 			colData[j] = make([]float64, f.ColSize)
-			copy(colData[j], gy[0].Data[j][colOffset:colOffset+f.ColSize])
+			copy(colData[j], gy[0].Data.Row(j)[colOffset:colOffset+f.ColSize])
 		}
 
 		grads[i] = variable.NewOf(colData...)

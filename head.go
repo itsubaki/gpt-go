@@ -84,7 +84,7 @@ func (h *Head) Forward(input *variable.Variable) *variable.Variable {
 	key := h.Key.Forward(input)
 	attentions := MatMul(query, Transpose(key))
 
-	T := len(input.Data) // number of tokens
+	T := input.N() // number of tokens
 	tril := Tril(Ones(T, T))
 	attentions = MaskedInfFill(attentions, tril)
 	attentions = Softmax(attentions)
