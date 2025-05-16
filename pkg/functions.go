@@ -88,8 +88,8 @@ func Normal(rows, cols int) *variable.Variable {
 
 func Tril(m *variable.Variable) *variable.Variable {
 	result := variable.ZeroLike(m)
-	for i := 0; i < len(m.Data); i++ {
-		for j := 0; j < len(m.Data[i]); j++ {
+	for i := range len(m.Data) {
+		for j := range len(m.Data[i]) {
 			if j <= i {
 				result.Data[i][j] = m.Data[i][j]
 			}

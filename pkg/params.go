@@ -49,7 +49,7 @@ func (p *Params) Save() {
 
 	// Save map of params in ordered fashion.
 	hash := crc32.NewIEEE()
-	for i := 0; i < len(p.params); i++ {
+	for i := range len(p.params) {
 		key := fmt.Sprintf("%d", i)
 		for _, row := range p.params[key].Data {
 			if err := binary.Write(file, binary.LittleEndian, row); err != nil {
@@ -76,7 +76,7 @@ func (p *Params) TryLoadPretrained() {
 
 	// Load map of params in ordered fashion.
 	hash := crc32.NewIEEE()
-	for i := 0; i < len(p.params); i++ {
+	for i := range len(p.params) {
 		key := fmt.Sprintf("%d", i)
 		for j := range p.params[key].Data {
 			if err := binary.Read(file, binary.LittleEndian, &p.params[key].Data[j]); err != nil {

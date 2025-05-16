@@ -39,7 +39,7 @@ func (f *CatT) Backward(gy ...*variable.Variable) []*variable.Variable {
 	grads := make([]*variable.Variable, f.NumInputs)
 
 	// Split along columns
-	for i := 0; i < f.NumInputs; i++ {
+	for i := range f.NumInputs {
 		colOffset := i * f.ColSize
 		colData := make([][]float64, len(gy[0].Data))
 

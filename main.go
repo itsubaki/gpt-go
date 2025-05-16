@@ -66,7 +66,7 @@ func main() {
 	losses := 0.0
 	optimizer := pkg.NewAdamW(learningRate)
 	fmt.Printf("bs=%d, es=%d, lr=%.4f, vs=%d, steps=%d\n", blockSize, embedSize, learningRate, vocabSize, steps)
-	for i := 0; i < steps; i++ {
+	for i := range steps {
 		// Targets contain the ground truth next token for each input token.
 		input, targets := data.Sample(dataset, blockSize)
 
@@ -126,7 +126,7 @@ func main() {
 	for {
 		fmt.Printf("\n%s", prompt)
 		context := data.Encode(prompt)
-		for i := 0; i < maxTokens; i++ {
+		for range maxTokens {
 			nextToken := nextTok(context)
 			fmt.Print(data.Decode(nextToken))
 			context = append(context, nextToken)
