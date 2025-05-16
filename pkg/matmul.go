@@ -65,9 +65,9 @@ func matmul(m, n matrix.Matrix) *variable.Variable {
 						// Process the current block with cache-friendly access
 						for i := ii; i < iEnd; i++ {
 							for k := kk; k < kEnd; k++ {
-								aik := m.At(i, k)
+								aik := m.Data[i*mCols+k]
 								for j := jj; j < jEnd; j++ {
-									result.Data.AddAt(i, j, aik*n.At(k, j))
+									result.Data.Data[i*nCols+j] += aik * n.Data[k*nCols+j]
 								}
 							}
 						}
