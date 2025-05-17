@@ -1,2 +1,2 @@
-github.com/itsubaki/autograd v0.0.1 h1:GlGsvCKWZMIv8cQLqh7GaBXuK6wBxQ1unYZBYbN7gFg=
-github.com/itsubaki/autograd v0.0.1/go.mod h1:KhCUsowk1ZUwjV10xjlMtCYucGJLwtQaBFGS43ogV8Y=
+github.com/itsubaki/autograd v0.0.2-0.20250516145629-8973c08ac132 h1:OhYvvCyvzJh7yKnM8NqLgbf+zrM6/LSFvpOGvVkE02M=
+github.com/itsubaki/autograd v0.0.2-0.20250516145629-8973c08ac132/go.mod h1:KhCUsowk1ZUwjV10xjlMtCYucGJLwtQaBFGS43ogV8Y=

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/zakirullin/gpt-go/data"
 	"github.com/zakirullin/gpt-go/pkg"
@@ -63,10 +64,11 @@ func main() {
 	fmt.Printf("Model size: %.3fM\n", pkg.Millions(params.Count()))
 
 	// Training loop.
+	now := time.Now()
 	losses := 0.0
 	optimizer := pkg.NewAdamW(learningRate)
 	fmt.Printf("bs=%d, es=%d, lr=%.4f, vs=%d, steps=%d\n", blockSize, embedSize, learningRate, vocabSize, steps)
-	for i := 0; i < steps; i++ {
+	for i := range steps {
 		// Targets contain the ground truth next token for each input token.
 		input, targets := data.Sample(dataset, blockSize)
 
@@ -85,7 +87,7 @@ func main() {
 		fmt.Printf("\r%s", strings.Repeat("·", (i%evalSteps)*26/evalSteps)) // progress bar
 		if i%evalSteps == 0 {
 			avgLoss := losses / float64(min(i+1, evalSteps))
-			fmt.Printf("\rstep: %5d, loss: %.4f\n", i, avgLoss)
+			fmt.Printf("\rstep: %5d, loss: %.4f, time: %s\n", i, avgLoss, time.Since(now))
 			losses = 0
 		}
 
@@ -96,6 +98,8 @@ func main() {
 		optimizer.Update(params)
 		params.ZeroGrad()
 	}
+	fmt.Printf("\rTraining time: %s\n", time.Since(now))
+
 	params.Save()
 	pkg.DisableDropout()
 	// Training is done.
@@ -126,7 +130,7 @@ func main() {
 	for {
 		fmt.Printf("\n%s", prompt)
 		context := data.Encode(prompt)
-		for i := 0; i < maxTokens; i++ {
+		for range maxTokens {
 			nextToken := nextTok(context)
 			fmt.Print(data.Decode(nextToken))
 			context = append(context, nextToken)

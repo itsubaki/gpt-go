@@ -37,9 +37,9 @@ func (f *MatMulT) Backward(gy ...*variable.Variable) []*variable.Variable {
 	}
 }
 
-func matmul(m, n matrix.Matrix) *variable.Variable {
-	mRows, mCols := len(m), len(m[0])
-	_, nCols := len(n), len(n[0])
+func matmul(m, n *matrix.Matrix) *variable.Variable {
+	mRows, mCols := m.Rows, m.Cols
+	_, nCols := n.Rows, n.Cols
 
 	result := Zeros(mRows, nCols)
 	var wg sync.WaitGroup
@@ -65,9 +65,9 @@ func matmul(m, n matrix.Matrix) *variable.Variable {
 						// Process the current block with cache-friendly access
 						for i := ii; i < iEnd; i++ {
 							for k := kk; k < kEnd; k++ {
-								aik := m[i][k]
+								aik := m.Data[i*mCols+k]
 								for j := jj; j < jEnd; j++ {
-									result.Data[i][j] += aik * n[k][j]
+									result.Data.Data[i*nCols+j] += aik * n.Data[k*nCols+j]
 								}
 							}
 						}

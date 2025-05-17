@@ -67,9 +67,7 @@ func (b *Block) Forward(input *variable.Variable) *variable.Variable {
 
 func (b *Block) Params() []layer.Parameter {
 	var params []layer.Parameter
-	for _, param := range b.saHead.Params() {
-		params = append(params, param)
-	}
+	params = append(params, b.saHead.Params()...)
 	params = append(params, b.ffwd.Weight, b.ffwd.Bias)
 	params = append(params, b.ffwdProj.Weight, b.ffwdProj.Bias)
 	params = append(params, b.norm1.Scale, b.norm1.Shift)

@@ -30,7 +30,7 @@ func (p *Params) Params() layer.Parameters {
 func (p *Params) Count() int {
 	numParams := 0
 	for _, param := range p.params {
-		numParams += len(param.Data) * len(param.Data[0])
+		numParams += param.Data.Rows * param.Data.Cols
 	}
 
 	return numParams
@@ -49,14 +49,14 @@ func (p *Params) Save() {
 
 	// Save map of params in ordered fashion.
 	hash := crc32.NewIEEE()
-	for i := 0; i < len(p.params); i++ {
+	for i := range len(p.params) {
 		key := fmt.Sprintf("%d", i)
-		for _, row := range p.params[key].Data {
+		for _, row := range p.params[key].Data.Seq2() {
 			if err := binary.Write(file, binary.LittleEndian, row); err != nil {
 				panic(err)
 			}
 		}
-		shape := fmt.Sprintf("%d:%d×%d", i, len(p.params[key].Data), len(p.params[key].Data[0]))
+		shape := fmt.Sprintf("%d:%d×%d", i, p.params[key].Data.Rows, p.params[key].Data.Cols)
 		hash.Write([]byte(shape))
 	}
 
@@ -76,14 +76,14 @@ func (p *Params) TryLoadPretrained() {
 
 	// Load map of params in ordered fashion.
 	hash := crc32.NewIEEE()
-	for i := 0; i < len(p.params); i++ {
+	for i := range len(p.params) {
 		key := fmt.Sprintf("%d", i)
-		for j := range p.params[key].Data {
-			if err := binary.Read(file, binary.LittleEndian, &p.params[key].Data[j]); err != nil {
+		for _, row := range p.params[key].Data.Seq2() {
+			if err := binary.Read(file, binary.LittleEndian, &row); err != nil {
 				panic(fmt.Sprintf("model shapes mismatch, remove '%s' file", p.filename()))
 			}
 		}
-		shape := fmt.Sprintf("%d:%d×%d", i, len(p.params[key].Data), len(p.params[key].Data[0]))
+		shape := fmt.Sprintf("%d:%d×%d", i, p.params[key].Data.Rows, p.params[key].Data.Cols)
 		hash.Write([]byte(shape))
 	}
 

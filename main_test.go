@@ -233,11 +233,11 @@ func TestWeightedSelfAttention(t *testing.T) {
 	// We introduce 3 linear layers: query, key and value.
 	query := NewLinear(3, 3)   // converts each embedding into a query vector "what I am looking for"
 	query.Weight = Zeros(3, 3) // manually set values for a good example
-	query.Weight.Data[1][0] = 10
+	query.Weight.Data.Set(1, 0, 10)
 
 	key := NewLinear(3, 3) // converts each embedding into a key vector "what I can communicate"
 	key.Weight = Zeros(3, 3)
-	key.Weight.Data[0][0] = 1 // first neuron is paying attention to the first component of the embedding
+	key.Weight.Data.Set(0, 0, 1) // first neuron is paying attention to the first component of the embedding
 
 	value := NewLinear(3, 3) // converts each embedding into a value vector "what I give you"
 	value.Weight = Ones(3, 3)
@@ -358,8 +358,8 @@ func TestTransformer(t *testing.T) {
 
 func areEqual(t *testing.T, want float64, got *variable.Variable) {
 	t.Helper()
-	if len(got.Data) != 1 {
-		t.Errorf("expected a single value, got %d values", len(got.Data))
+	if got.Data.Rows != 1 {
+		t.Errorf("expected a single value, got %d values", got.Data.Rows)
 		return
 	}
 
@@ -370,22 +370,22 @@ func areEqual(t *testing.T, want float64, got *variable.Variable) {
 
 func areMatricesEqual(t *testing.T, want M, got *variable.Variable) {
 	t.Helper()
-	if len(want) != len(got.Data) {
-		t.Errorf("matrix length mismatch: want length=%d, got length=%d", len(want), len(got.Data))
+	if len(want) != got.Data.Rows {
+		t.Errorf("matrix length mismatch: want length=%d, got length=%d", len(want), got.Data.Rows)
 		return
 	}
 
 	for i := range want {
-		if len(want[i]) != len(got.Data[i]) {
-			t.Errorf("matrix row length mismatch at row %d: want length=%d, got length=%d", i, len(want[i]), len(got.Data[i]))
+		if len(want[i]) != len(got.Data.Row(i)) {
+			t.Errorf("matrix row length mismatch at row %d: want length=%d, got length=%d", i, len(want[i]), len(got.Data.Row(i)))
 			return
 		}
 	}
 
 	for i := range want {
 		for j := range want[i] {
-			if math.Abs(want[i][j]-got.Data[i][j]) > 1e-9 {
-				t.Errorf("matrix mismatch at row %d, column %d: want %v, got %v", i, j, want[i][j], got.Data[i][j])
+			if math.Abs(want[i][j]-got.Data.At(i, j)) > 1e-9 {
+				t.Errorf("matrix mismatch at row %d, column %d: want %v, got %v", i, j, want[i][j], got.Data.At(i, j))
 			}
 		}
 	}

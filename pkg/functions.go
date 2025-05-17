@@ -20,22 +20,22 @@ func Sample(probs *variable.Variable) float64 {
 
 	// Find the first index where cumulative probability exceeds r.
 	cumulativeProb := 0.0
-	for i, p := range probs.Data[0] {
+	for i, p := range probs.Data.Row(0) {
 		cumulativeProb += p
 		if r < cumulativeProb {
 			return float64(i)
 		}
 	}
 
-	return float64(len(probs.Data)) - 1
+	return float64(probs.N()) - 1
 }
 
 // SampleTemp returns a random index based on the given probabilities and temperature.
 // The higher the temperature, the more random the sampling.
 // Usually, temperature is between 0.5 and 0.8.
 func SampleTemp(probs *variable.Variable, temperature float64) float64 {
-	adjustedProbs := make([]float64, len(probs.Data[0]))
-	copy(adjustedProbs, probs.Data[0])
+	adjustedProbs := make([]float64, probs.Data.Cols)
+	copy(adjustedProbs, probs.Data.Row(0))
 	if temperature != 1.0 {
 		// Lower temperature: higher probs amplified, lower reduced, more deterministic.
 		// Higher temperature: probabilities become more uniform, more random.
@@ -56,7 +56,7 @@ func SampleTemp(probs *variable.Variable, temperature float64) float64 {
 
 // Returns rows at specified indexes. Negative indexes return rows from the end.
 func Rows(x *variable.Variable, indexes ...float64) *variable.Variable {
-	size := len(x.Data)
+	size := x.N()
 
 	var intIndexes []int
 	for _, index := range indexes {
@@ -83,15 +83,15 @@ func Normal(rows, cols int) *variable.Variable {
 	m := matrix.Zero(rows, cols)
 	m = matrix.F(m, rnd)
 
-	return variable.NewOf(m...)
+	return variable.NewFrom(m)
 }
 
 func Tril(m *variable.Variable) *variable.Variable {
 	result := variable.ZeroLike(m)
-	for i := 0; i < len(m.Data); i++ {
-		for j := 0; j < len(m.Data[i]); j++ {
+	for i := range m.Data.Rows {
+		for j := range m.Data.Cols {
 			if j <= i {
-				result.Data[i][j] = m.Data[i][j]
+				result.Data.Set(i, j, m.Data.At(i, j))
 			}
 		}
 	}
@@ -108,7 +108,7 @@ func MaskedInfFill(m, mask *variable.Variable) *variable.Variable {
 
 		return a
 	})
-	mMasked := Add(variable.Mul(m, mask), variable.NewOf(negInfMaskedData...))
+	mMasked := Add(variable.Mul(m, mask), variable.NewFrom(negInfMaskedData))
 
 	return mMasked
 }
@@ -132,11 +132,11 @@ func Ones(m, n int) *variable.Variable {
 
 // Returns the first element of the variable.
 func Val(x *variable.Variable) float64 {
-	return x.Data[0][0]
+	return x.Data.At(0, 0)
 }
 
 func Flat(x *variable.Variable) []float64 {
-	return matrix.Flatten(x.Data)
+	return x.Data.Data
 }
 
 func Millions(num int) float64 {

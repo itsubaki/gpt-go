@@ -15,7 +15,7 @@ type AdamW struct {
 	WeightDecay float64 // Weight decay coefficient
 	Hook        []optimizer.Hook
 	iter        int
-	ms, vs      map[*variable.Variable]matrix.Matrix
+	ms, vs      map[*variable.Variable]*matrix.Matrix
 }
 
 func NewAdamW(learningRate float64) AdamW {
@@ -26,8 +26,8 @@ func (o *AdamW) Update(model optimizer.Model) {
 	params := optimizer.Params(model, o.Hook)
 
 	if len(o.ms) == 0 {
-		o.ms = make(map[*variable.Variable]matrix.Matrix)
-		o.vs = make(map[*variable.Variable]matrix.Matrix)
+		o.ms = make(map[*variable.Variable]*matrix.Matrix)
+		o.vs = make(map[*variable.Variable]*matrix.Matrix)
 	}
 
 	o.iter++

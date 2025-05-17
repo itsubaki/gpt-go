@@ -102,7 +102,7 @@ func Sample(data []float64, blockSize int) (*variable.Variable, *variable.Variab
 	x := make([]float64, blockSize)
 	y := make([]float64, blockSize)
 
-	for i := 0; i < blockSize; i++ {
+	for i := range blockSize {
 		x[i] = data[i+offset]
 		y[i] = data[i+offset+1]
 	}
