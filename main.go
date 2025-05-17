@@ -64,9 +64,9 @@ func main() {
 	fmt.Printf("Model size: %.3fM\n", pkg.Millions(params.Count()))
 
 	// Training loop.
-	now := time.Now()
-	losses := 0.0
+	start, now := time.Now(), time.Now()
 	optimizer := pkg.NewAdamW(learningRate)
+	var losses float64
 	fmt.Printf("bs=%d, es=%d, lr=%.4f, vs=%d, steps=%d\n", blockSize, embedSize, learningRate, vocabSize, steps)
 	for i := range steps {
 		// Targets contain the ground truth next token for each input token.
@@ -88,7 +88,7 @@ func main() {
 		if i%evalSteps == 0 {
 			avgLoss := losses / float64(min(i+1, evalSteps))
 			fmt.Printf("\rstep: %5d, loss: %.4f, time: %s\n", i, avgLoss, time.Since(now))
-			losses = 0
+			losses, now = 0, time.Now()
 		}
 
 		// Backward pass, calculate the gradients (how much each parameter contributes to the loss)
@@ -98,7 +98,7 @@ func main() {
 		optimizer.Update(params)
 		params.ZeroGrad()
 	}
-	fmt.Printf("\rTraining time: %s\n", time.Since(now))
+	fmt.Printf("\rTraining time: %s\n", time.Since(start))
 
 	params.Save()
 	pkg.DisableDropout()
