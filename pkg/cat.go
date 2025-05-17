@@ -1,8 +1,6 @@
 package pkg
 
-import (
-	"github.com/itsubaki/autograd/variable"
-)
+import "github.com/itsubaki/autograd/variable"
 
 // Cat concatenates matrices horizontally
 func Cat(x ...*variable.Variable) *variable.Variable {

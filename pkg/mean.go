@@ -1,8 +1,6 @@
 package pkg
 
-import (
-	"github.com/itsubaki/autograd/variable"
-)
+import "github.com/itsubaki/autograd/variable"
 
 func Mean(x ...*variable.Variable) *variable.Variable {
 	return (&variable.Function{Forwarder: &MeanT{}}).First(x...)

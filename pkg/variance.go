@@ -1,8 +1,6 @@
 package pkg
 
-import (
-	"github.com/itsubaki/autograd/variable"
-)
+import "github.com/itsubaki/autograd/variable"
 
 func Variance(x ...*variable.Variable) *variable.Variable {
 	// Calculate mean per row

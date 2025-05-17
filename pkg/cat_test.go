@@ -1,8 +1,6 @@
 package pkg
 
-import (
-	"fmt"
-)
+import "fmt"
 
 func ExampleCat_basic() {
 	a := M{

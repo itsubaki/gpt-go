@@ -5,7 +5,6 @@ import (
 
 	"github.com/itsubaki/autograd/layer"
 	"github.com/itsubaki/autograd/variable"
-
 	"github.com/zakirullin/gpt-go/pkg"
 )
 
