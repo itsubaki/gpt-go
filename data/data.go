@@ -139,7 +139,7 @@ func createMergeRules(rules string, numMerges int) {
 	merges := strings.Split(rules, "\n")
 	merges = merges[:min(numMerges, len(merges))]
 
-	// Mint new tokens, save merge rules
+	// Mint new tokens, save merge rules.
 	for _, m := range merges {
 		re := regexp.MustCompile(`\[(.*?)\]\[(.*?)\] -> \[(.*?)\]`)
 		matches := re.FindStringSubmatch(m)
@@ -147,7 +147,7 @@ func createMergeRules(rules string, numMerges int) {
 			panic(fmt.Sprintf("invalid vocab format: %s", m))
 		}
 
-		// Process Unicode escape sequences in all tokens
+		// Process Unicode escape sequences in all tokens.
 		left := strings.ReplaceAll(matches[1], "\\n", "\n")
 		right := strings.ReplaceAll(matches[2], "\\n", "\n")
 		mergedToken := strings.ReplaceAll(matches[3], "\\n", "\n")
@@ -186,12 +186,12 @@ func normNewLines(text string) string {
 	return strings.Replace(text, "\r", "\n", -1)   // replace remaining Mac line endings
 }
 
-// Zips two tokens into a single int64
+// Zips two tokens into a single int64.
 func zip(tok1, tok2 int) int64 {
 	return int64(tok1)<<32 | int64(tok2&0xFFFFFFFF)
 }
 
-// Unzips a single int64 into two tokens
+// Unzips a single int64 into two tokens.
 func unzip(tok int64) (int, int) {
 	tok1 := int(tok >> 32)
 	tok2 := int(tok & 0xFFFFFFFF)

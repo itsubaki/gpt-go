@@ -18,8 +18,8 @@ const (
 	embedSize        = 88
 	heads            = 4
 	layers           = 4
-	learningRate     = 0.0005
-	steps            = 40000 // number of training steps, increase for better results
+	learningRate     = 0.0001
+	steps            = 80000 // number of training steps, increase for better results
 	evalSteps        = 1000  // evaluate loss once per every evalSteps
 	dropout          = 0.0   // disable some % of our neurons to prevent overfitting, model is likely to generalize
 	pretrainedTokens = 6000  // number of pretrained tokens to add on top of auto-detected characters
@@ -82,6 +82,7 @@ func main() {
 		logits := lmHead.Forward(embeds) // get scores for the next token for every context-enriched embed
 
 		// Loss calculation, "how much our predicted targets differ from the ground truth targets?"
+		// We average the loss over evalSteps iterations to smooth out fluctuations.
 		loss := SoftmaxCrossEntropy(logits, targets)
 		losses += Val(loss)
 		fmt.Printf("\r%s", strings.Repeat("·", (i%evalSteps)*26/evalSteps)) // progress bar
