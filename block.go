@@ -29,8 +29,8 @@ type Block struct {
 	embedSize int
 	headCount int
 	saHead    *MultiHeadAttention
-	ffwd      *Linear
-	ffwdProj  *Linear
+	mlp       *Linear // multi-layer perceptron
+	mlpProj   *Linear // projects the output of the MLP back to the original embedding size
 	norm1     *LayerNorm
 	norm2     *LayerNorm
 }
@@ -40,8 +40,8 @@ func NewBlock(embedSize, numHeads int) *Block {
 		embedSize: embedSize,
 		headCount: numHeads,
 		saHead:    NewMultiHeadAttention(embedSize, numHeads),
-		ffwd:      NewLinear(embedSize, embedSize*4),
-		ffwdProj:  NewLinear(embedSize*4, embedSize),
+		mlp:       NewLinear(embedSize, embedSize*4),
+		mlpProj:   NewLinear(embedSize*4, embedSize),
 		norm1:     NewLayerNorm(embedSize),
 		norm2:     NewLayerNorm(embedSize),
 	}
@@ -54,21 +54,29 @@ func (b *Block) Forward(input *variable.Variable) *variable.Variable {
 	input = Add(input, saOut)        // Add residual attention output back to main path
 
 	// Feed-forward network with residual connection
-	input = b.norm2.Forward(input)                  // Normalize input
-	ffwdExpanded := b.ffwd.Forward(input)           // Expand to higher dimension
-	ffwdActivated := ReLU(ffwdExpanded)             // Apply activation function
-	ffwdOutput := b.ffwdProj.Forward(ffwdActivated) // Project back to original dimension
-	ffwdOutput = Dropout(dropout)(ffwdOutput)       // Dropping out some neurons to prevent overfitting
-	input = Add(input, ffwdOutput)                  // Add feed-forward residual output to main path
+	input = b.norm2.Forward(input)               // Normalize input
+	mlpExpanded := b.mlp.Forward(input)          // Expand to higher dimension
+	mlpActivated := ReLU(mlpExpanded)            // Apply activation function
+	mlpOutput := b.mlpProj.Forward(mlpActivated) // Project back to original dimension
+	mlpOutput = Dropout(dropout)(mlpOutput)      // Dropping out some neurons to prevent overfitting
+	input = Add(input, mlpOutput)                // Add feed-forward residual output to main path
 
 	return input
 }
 
 func (b *Block) Params() []layer.Parameter {
 	var params []layer.Parameter
+<<<<<<< HEAD
 	params = append(params, b.saHead.Params()...)
 	params = append(params, b.ffwd.Weight, b.ffwd.Bias)
 	params = append(params, b.ffwdProj.Weight, b.ffwdProj.Bias)
+=======
+	for _, param := range b.saHead.Params() {
+		params = append(params, param)
+	}
+	params = append(params, b.mlp.Weight, b.mlp.Bias)
+	params = append(params, b.mlpProj.Weight, b.mlpProj.Bias)
+>>>>>>> 53c091154abaa97144a7548386713731e84ee094
 	params = append(params, b.norm1.Scale, b.norm1.Shift)
 	params = append(params, b.norm2.Scale, b.norm2.Shift)
 
