@@ -21,7 +21,9 @@ the existence of the world.
 $ go run .
 ```
 
-It takes about 40 minutes to train on MacBook Air M3. You can train on your own dataset by pointing the `data.dataset` variable to your text corpus.  
+It takes about 40 minutes to train on MacBook Air M3. The trained weights will be saved to `model-1.234M` file. If you rerun the model, it will pick up the saved weights and continue training. The loss should decrease each time, indicating that the model is learning something useful.  
+
+You can train on your own dataset by pointing the `data.dataset` variable to your text corpus.  
 
 To run in chat-only mode once the training is done:  
 ```shell
