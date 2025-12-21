@@ -34,21 +34,24 @@ func Sample(probs *variable.Variable) float64 {
 // The higher the temperature, the more random the sampling.
 // Usually, temperature is between 0.5 and 0.8.
 func SampleTemp(probs *variable.Variable, temperature float64) float64 {
-	adjustedProbs := make([]float64, probs.Data.Cols)
-	copy(adjustedProbs, probs.Data.Row(0))
-	if temperature != 1.0 {
-		// Lower temperature: higher probs amplified, lower reduced, more deterministic.
-		// Higher temperature: probabilities become more uniform, more random.
-		sum := 0.0
-		for i, p := range adjustedProbs {
-			// Apply temperature by raising to power of 1/temperature.
-			adjustedProbs[i] = math.Pow(p, 1.0/temperature)
-			sum += adjustedProbs[i]
-		}
+	if temperature == 1.0 {
+		return Sample(variable.NewOf(probs.Data.Row(0)))
+	}
 
-		for i := range adjustedProbs {
-			adjustedProbs[i] /= sum
-		}
+	adjustedProbs := make([]float64, len(probs.Data.Row(0)))
+	copy(adjustedProbs, probs.Data.Row(0))
+
+	// Lower temperature: higher probs amplified, lower reduced, more deterministic.
+	// Higher temperature: probabilities become more uniform, more random.
+	sum := 0.0
+	for i, p := range adjustedProbs {
+		// Apply temperature by raising to power of 1/temperature.
+		adjustedProbs[i] = math.Pow(p, 1.0/temperature)
+		sum += adjustedProbs[i]
+	}
+
+	for i := range adjustedProbs {
+		adjustedProbs[i] /= sum
 	}
 
 	return Sample(variable.NewOf(adjustedProbs))
